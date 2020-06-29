@@ -8,6 +8,7 @@ use std::fs;
 use hex::FromHex;
 // use wasmi::{ModuleInstance, ImportsBuilder, NopExternals, RuntimeValue::{I32}};
 use sc_executor::{WasmExecutor, WasmExecutionMethod};
+use sp_wasm_interface::HostFunctions;
 use sp_core::{ traits::{ CallInWasm, MissingHostFunctions } };
 
 fn main() {
@@ -15,7 +16,6 @@ fn main() {
         .expect("file cannot be found")
         .parse()
         .expect("unable to parse file content to string");
-        
     let wasm_code_array: Vec<u8> = Vec::from_hex(wasm_code).expect("Decoding failed");
 
     let mut ext = sp_io::TestExternalities::default();
@@ -24,18 +24,17 @@ fn main() {
     let executor = WasmExecutor::new(
         WasmExecutionMethod::Interpreted,
         Some(1024),
-        vec![],
-        8,
+        sp_io::SubstrateHostFunctions::host_functions(),
+        1,
     );
     let res = executor.call_in_wasm(
         &wasm_code_array,
         None,
         "add",
-        &[],
+        &[150, 200],
         &mut ext,
         MissingHostFunctions::Allow).unwrap();
     println!("{:?}", res);
-
 }
 
 // Load wasm binary and prepare it for instantiation.
