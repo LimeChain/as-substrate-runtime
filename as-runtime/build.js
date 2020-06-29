@@ -1,11 +1,11 @@
 const fs = require("fs");
 const WASM_FILE = fs.readFileSync(__dirname + "/build/optimized.wasm");
+// const WASM_FILE = fs.readFileSync(__dirname + "/untouched.wasm");
 const byteArray = new Uint8Array(WASM_FILE);
 
 const result = toHexString(byteArray);
-const wasmCodeFile = JSON.stringify({ code: result });
-fs.writeFile('wasm-code.json', wasmCodeFile, 'utf8', () => {
-    console.info("Successfully created WASM Code JSON");
+fs.writeFile('../rust-runtime/wasm-code', result, 'utf8', () => {
+    console.info("Successfully created WASM Code file");
 });
 
 function toHexString(byteArray) {

@@ -2,3 +2,4 @@ as-runtime/build
 as-runtime/node_modules
 as-runtime/wasm-code.json
 rust-runtime/target
+rust-runtime/wasm-code

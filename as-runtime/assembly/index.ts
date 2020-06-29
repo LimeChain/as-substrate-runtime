@@ -1,5 +1,6 @@
-// The entry file of your WebAssembly module.
+// Export the __heap_base - required by the Substrate Executor
+export { __heap_base }
 
-export function add(a: i32, b: i32): i32 {
-  return a + b;
+export function add(data: i32, len: i32): u64 {
+  return 15;
 }
