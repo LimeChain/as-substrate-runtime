@@ -1,24 +1,20 @@
-import { UInt32 } from "as-scale-codec";
-
-// Export the __heap_base - required by the Substrate Executor
-export { __heap_base }
+/**
+ * Export the __heap_base - required by the Substrate Executor
+ * IMPORTANT! - This is not the actual __heap_base constant of AS. It is used to point Subtrate Executor to write
+ * it's parameters at the start of the memory, which is reserved using --memoryBase (16MB)
+ */
+export const __heap_base = 0;
 
 export function add(data: i32, len: i32): u64 {
+  const arr = deserialise_result(data, len);
   
-  // const a = changetype<ArrayBuffer>(464 as i32);
-  const input = Uint8Array.wrap(new ArrayBuffer(len));
-  // const a = changetype<ArrayBuffer>(data as usize);
-
-  // const ref1 = load<u8>(data);
-  // const ref2 = load<u8>(data, 1);
-
-  const uint32 = new UInt32(data);
-  return encode_ptr_and_size(uint32.toU8a());
+  return serialise_result(arr);
 }
 
-// TODO
-function decode_ptr_and_size(ptr: i32, len: i32): u8[] {
-  return [];
+function deserialise_result(ptr: i32, len: i32): Uint8Array {
+  var input = new ArrayBuffer(len);
+  memory.copy(changetype<usize>(input), ptr, len);
+  return Uint8Array.wrap(input);
 }
 
 /**
@@ -27,10 +23,10 @@ function decode_ptr_and_size(ptr: i32, len: i32): u8[] {
  * @param value_ptr 
  * @param value_len 
  */
-function encode_ptr_and_size(result: u8[]): u64 {
+function serialise_result(result: Uint8Array): u64 {
   let value_ptr = result.dataStart;
   let value_size = result.length;
 
   __retain(value_ptr); // adds ref to the pointer, so it's not GCed
   return ((value_size as u64) << 32) | value_ptr;
-} 
+}
