@@ -493,20 +493,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hello-rust"
-version = "0.1.0"
-dependencies = [
- "hex",
- "sc-executor",
- "sp-core",
- "sp-io",
- "sp-state-machine",
- "sp-wasm-interface",
- "wabt",
- "wasmi",
-]
-
-[[package]]
 name = "hermit-abi"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1114,6 +1100,20 @@ name = "ryu"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
+
+[[package]]
+name = "sandbox-execution-environment"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "sc-executor",
+ "sp-core",
+ "sp-io",
+ "sp-state-machine",
+ "sp-wasm-interface",
+ "wabt",
+ "wasmi",
+]
 
 [[package]]
 name = "sc-executor"

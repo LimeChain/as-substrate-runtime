@@ -1,5 +1,5 @@
 [package]
-name = "hello-rust"
+name = "sandbox-execution-environment"
 version = "0.1.0"
 authors = ["Daniel Ivanov <daniel@limechain.tech>"]
 edition = "2018"
