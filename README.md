@@ -1,4 +1,7 @@
-# Substrate Runtime in AssemblyScript
+# Substrate Runtime in AssemblyScript (WIP)
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 This is a Substrate PoC Runtime written in AssemblyScript
 
 ## Build AS WASM
