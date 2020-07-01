@@ -1,5 +1,5 @@
-as-runtime/build
-as-runtime/node_modules
-as-runtime/wasm-code.json
-rust-runtime/target
-rust-runtime/wasm-code
+runtime/build
+runtime/node_modules
+runtime/wasm-code.json
+sandbox/target
+sandbox/wasm-code
