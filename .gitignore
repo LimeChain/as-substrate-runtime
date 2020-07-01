@@ -1,5 +1,0 @@
-runtime/build
-runtime/node_modules
-runtime/wasm-code.json
-sandbox/target
-sandbox/wasm-code
