@@ -1,4 +1,3 @@
 runtime/build/
-runtime/node_modules/
 sandbox/target/
 sandbox/wasm-code
