@@ -1,14 +1,12 @@
-# as-runtime-playground
-This is a playground for AS research
+# Substrate Runtime in AssemblyScript
+This is a Substrate PoC Runtime written in AssemblyScript
 
 ## Build AS WASM
 
-1. Go to `as-runtime`
+1. Go to `runtime`
 2. execute `npm run asbuild`
-New `wasm-code.json` will be generated
+New `wasm-code` will be generated in the `sandbox` folder.
 
 ## Build Rust Project
-1. Go to `rust-runtime`
-2. Copy the `code` from the `wasm-code.json` file
-3. Paste the `code` into `src/main` -> `wasm_code` variable
-4. Execute `cargo run`
+1. Go to `sandbox`
+2. Execute `cargo run`
