@@ -10,3 +10,7 @@ New `wasm-code` will be generated in the `sandbox` folder.
 ## Build Rust Project
 1. Go to `sandbox`
 2. Execute `cargo run`
+
+
+# **License**
+This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)
