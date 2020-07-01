@@ -10,7 +10,7 @@ Substrate PoC Runtime written in AssemblyScript
 2. execute `npm run asbuild`
 New `wasm-code` will be generated in the `sandbox` folder.
 
-## Build Rust Project
+## Build the Sandbox
 1. Go to `sandbox`
 2. Execute `cargo build`
 
