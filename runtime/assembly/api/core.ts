@@ -1,6 +1,6 @@
 import { Serialiser } from "./serialiser";
 import { RuntimeVersion } from "../models/runtime-version";
-import { ApisVec } from "../models/apis-vec";
+import { SupportedAPIs } from "../models/supported-apis";
 
 /**
  * Returns the version data encoded in ABI format as per the specification
@@ -21,8 +21,10 @@ function getRuntimeVersionConfig(): RuntimeVersion {
     const AUTHORING_VERSION: u32 = 1;
     const SPEC_VERSION: u32 = 1;
     const IMPL_VERSION: u32 = 1;
-    const APIS_VEC: ApisVec = new ApisVec();
+
+    const APIS_VEC: SupportedAPIs = new SupportedAPIs();
     APIS_VEC.addAPI([1, 1, 1, 1, 1, 1, 1, 1], 10);
+    
     const TRANSACTION_VERSION: u32 = 1;
 
     return new RuntimeVersion(

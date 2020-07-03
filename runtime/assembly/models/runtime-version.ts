@@ -1,5 +1,5 @@
 import { ScaleString, UInt32 } from "as-scale-codec";
-import { ApisVec } from "./apis-vec";
+import { SupportedAPIs } from "./supported-apis";
 
 
 /**
@@ -44,7 +44,7 @@ export class RuntimeVersion {
     /**
      * List of supported API "features" along with their versions
      */
-    private apis: ApisVec
+    private apis: SupportedAPIs
 
     /**
      * All existing dispatches are fully compatible when this number doesn't change. If this
@@ -52,7 +52,7 @@ export class RuntimeVersion {
      */
     private transactionVersion: UInt32
 
-    constructor(specName: string, implName: string, authoringVersion: u32, specVersion: u32, implVersion: u32, apis: ApisVec, transactionVersion: u32) {
+    constructor(specName: string, implName: string, authoringVersion: u32, specVersion: u32, implVersion: u32, apis: SupportedAPIs, transactionVersion: u32) {
         this.specName = new ScaleString(specName);
         this.implName = new ScaleString(implName);
         this.authoringVersion = new UInt32(authoringVersion);
