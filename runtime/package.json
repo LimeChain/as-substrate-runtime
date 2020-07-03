@@ -11,8 +11,10 @@
   },
   "author": "Daniel Ivanov <daniel-k-ivanov>",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "as-scale-codec": "0.0.5"
+  },
   "devDependencies": {
-    "assemblyscript": "0.13.0"
+    "assemblyscript": "^0.13.2"
   }
 }
