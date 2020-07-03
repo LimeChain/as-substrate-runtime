@@ -1,5 +1,5 @@
 import { ScaleString, UInt32 } from "as-scale-codec";
-import { SupportedAPIs } from "./supported-apis";
+import { SupportedAPIs } from ".";
 
 
 /**
