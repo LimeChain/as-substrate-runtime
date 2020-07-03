@@ -12,8 +12,8 @@ export class ApisVec {
         this.apis = new Map<u8[], UInt32>();
     }
 
-    addApi(apiId: u8[], version: u32): void {
-        this.apis.set(apiId,new UInt32(version));
+    addAPI(apiId: u8[], version: u32): void {
+        this.apis.set(apiId, new UInt32(version));
     }
 
     toU8a(): u8[] {
