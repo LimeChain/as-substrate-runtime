@@ -79,19 +79,20 @@ fn main() {
         extrinsics_root: Default::default(),
         digest: Default::default(),
     };
-    // let mut b = Block {
-    //     header: h,
-    //     extrinsics: vec![],
-    // };
+    
+    let b = Block {
+        header: h,
+        extrinsics: vec![],
+    };
         
     let res1 = executor.call_in_wasm(
         &wasm_code_array,
         None,
         "Core_execute_block",
-        &[],
+        &b.encode(),
         &mut ext,
         MissingHostFunctions::Allow).unwrap();
-    println!("{:?}", <bool>::decode(&mut res1.as_ref()));
+    println!("{:?}", res1);
 }
 
 fn get_wasm_code_arr () -> Vec<u8> {

@@ -1855,6 +1855,7 @@ dependencies = [
  "hex",
  "parity-scale-codec",
  "sc-executor",
+ "serde",
  "sp-application-crypto",
  "sp-consensus-babe",
  "sp-core",
