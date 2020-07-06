@@ -6,14 +6,55 @@ extern crate sp_io;
 
 use std::fs;
 use hex::FromHex;
-use std::borrow::Cow;
-// use wasmi::{ModuleInstance, ImportsBuilder, NopExternals, RuntimeValue::{I32}};
+use sp_application_crypto::{sr25519};
+use sp_consensus_babe::{AuthorityId};
 use sc_executor::{WasmExecutor, WasmExecutionMethod};
 use sp_wasm_interface::HostFunctions;
-use sp_core::{ traits::{ CallInWasm, MissingHostFunctions } };
-use parity_scale_codec::{Decode};
-use sp_runtime::{RuntimeString};
-use sp_version::{RuntimeVersion, ApiId};
+use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }, RuntimeDebug, ChangesTrieConfiguration };
+use parity_scale_codec::{Decode, Encode};
+use sp_runtime::{
+    traits::{
+        BlakeTwo256,
+        Verify
+    }
+ };
+use sp_version::{RuntimeVersion};
+
+pub type AccountSignature = sr25519::Signature;
+pub type AccountId = <AccountSignature as Verify>::Signer;
+
+/// Calls in transactions.
+#[derive(Clone, PartialEq, Eq, Encode, Decode, RuntimeDebug)]
+pub struct Transfer {
+	pub from: AccountId,
+	pub to: AccountId,
+	pub amount: u64,
+	pub nonce: u64,
+}
+
+/// Extrinsic for test-runtime.
+#[derive(Clone, PartialEq, Eq, Encode, Decode, RuntimeDebug)]
+pub enum Extrinsic {
+	AuthoritiesChange(Vec<AuthorityId>),
+	Transfer {
+		transfer: Transfer,
+		signature: AccountSignature,
+		exhaust_resources_when_not_first: bool,
+	},
+	IncludeData(Vec<u8>),
+	StorageChange(Vec<u8>, Option<Vec<u8>>),
+	ChangesTrieConfigUpdate(Option<ChangesTrieConfiguration>),
+}
+
+#[cfg(feature = "std")]
+impl serde::Serialize for Extrinsic {
+	fn serialize<S>(&self, seq: S) -> Result<S::Ok, S::Error> where S: ::serde::Serializer {
+		self.using_encoded(|bytes| seq.serialize_bytes(bytes))
+	}
+}
+
+pub type Header = sp_runtime::generic::Header<u64, BlakeTwo256>;
+pub type Block = sp_runtime::generic::Block<Header, Extrinsic>;
 
 fn main() {
     let wasm_code_array = get_wasm_code_arr();
@@ -30,7 +71,27 @@ fn main() {
         &mut ext,
         MissingHostFunctions::Allow).unwrap();
     println!("{:?}", <RuntimeVersion>::decode(&mut res.as_ref()));
-
+    
+    let h = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 1,
+        state_root: Default::default(),
+        extrinsics_root: Default::default(),
+        digest: Default::default(),
+    };
+    // let mut b = Block {
+    //     header: h,
+    //     extrinsics: vec![],
+    // };
+        
+    let res1 = executor.call_in_wasm(
+        &wasm_code_array,
+        None,
+        "Core_execute_block",
+        &[],
+        &mut ext,
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", <bool>::decode(&mut res1.as_ref()));
 }
 
 fn get_wasm_code_arr () -> Vec<u8> {
