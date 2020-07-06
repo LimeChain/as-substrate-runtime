@@ -9,30 +9,35 @@ export class Block {
     /**
      * Block header hash
      */
-    private headerHash: Hash
+    public headerHash: Hash
     /**
      * Block Header
      */
-    private header: Header
+    public header: Header
     /**
      * Array of Extrinsics
      */
-    private body: Extrinsic[]
+    public body: Extrinsic[]
     /**
      * Block Receipt
      */
-    private receipt: ByteArray
+    public receipt: ByteArray
     /**
      * Block message queue
      */
-    private messageQueue: ByteArray
+    public messageQueue: ByteArray
     /**
      * Block Justification
      */
-    private justification: ByteArray
+    public justification: ByteArray
 
-    constructor() {
-        // TODO
+    constructor(header: Header) {
+        this.headerHash = new Hash([]);
+        this.header = header;
+        this.body = [];
+        this.receipt = new ByteArray([]);
+        this.messageQueue = new ByteArray([]);
+        this.justification = new ByteArray([]);
     }
 
     /**
@@ -40,19 +45,26 @@ export class Block {
      */
     toU8a(): u8[] {
         // Encode headerHash and header
-        let encoded = this.headerHash.toU8a()
-            .concat(this.header.toU8a());
+        // let encoded = this.headerHash.toU8a()
+            //
+            // .concat(this.header.toU8a());
             
-        // Encode body
-        encoded = encoded.concat((new CompactInt(this.body.length)).toU8a())
-        for (let i = 0; i < this.body.length; i++) {
-            encoded = encoded.concat(this.body[i].toU8a())
-        }
+        // // Encode body
+        // encoded = encoded.concat((new CompactInt(this.body.length)).toU8a())
+        // for (let i = 0; i < this.body.length; i++) {
+        //     encoded = encoded.concat(this.body[i].toU8a())
+        // }
 
-        // Encode Receipt, MessageQueue and Justification
-        return encoded.concat(this.receipt.toU8a())
-            .concat(this.messageQueue.toU8a())
-            .concat(this.justification.toU8a())
-    } 
+        // // Encode Receipt, MessageQueue and Justification
+        // return encoded.concat(this.receipt.toU8a())
+        //     .concat(this.messageQueue.toU8a())
+        //     .concat(this.justification.toU8a())
+        return this.header.toU8a();
+    }
+
+    static fromU8Array(input: u8[]): Block {
+        const header = Header.fromU8Array(input);
+        return new Block(header);
+    }
 
 }

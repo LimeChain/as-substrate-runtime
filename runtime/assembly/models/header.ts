@@ -1,5 +1,7 @@
-import { Hash, Int64 } from "as-scale-codec";
-
+import { Hash, Int64, CompactInt, Bytes } from "as-scale-codec";
+import { Utils } from "../utils";
+import { Option } from "./option";
+import { constants } from "./../constants";
 /**
  * Class representing a Block Header into the Substrate Runtime
  */
@@ -13,7 +15,7 @@ export class Header {
      * Integer, which represents the index of the current block in the chain.
      * It is equal to the number of the ancestor blocks.
      */
-    private number: Int64
+    private number: CompactInt
     /**
      * Root of the Merkle trie, whose leaves implement the storage of the system.
      */
@@ -26,16 +28,60 @@ export class Header {
      * Field used to store any chain-specific auxiliary data, which could help the light clients interact with the block 
      * without the need of accessing the full storage as well as consensus-related data including the block signature. 
      */
-    private digest: Hash
+    private digest: Option<Hash>
+
+    constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digest: Option<Hash>) {
+        this.parentHash = parentHash;
+        this.number = number;
+        this.stateRoot = stateRoot;
+        this.extrinsicsRoot = extrinsicsRoot;
+        this.digest = digest;
+    }
 
     /**
     * SCALE Encodes the Header into u8[]
     */
     toU8a(): u8[] {
+        let digest = this.digest.isSome() ? (<Hash>this.digest.unwrap()).toU8a() : constants.EMPTY_BYTE_ARRAY;
+
         return this.parentHash.toU8a()
             .concat(this.number.toU8a())
             .concat(this.stateRoot.toU8a())
-            .concat(this.extrinsicsRoot.toU8a()
-            .concat(this.digest.toU8a()));
+            .concat(this.extrinsicsRoot.toU8a())
+            .concat(digest);
+    }
+
+    /**
+     * Instanciates new Header object from SCALE encoded byte array
+     * @param input - SCALE encoded Header
+     */
+    static fromU8Array(input: u8[]): Header {
+        const parentHash = Hash.fromU8a(input);
+        input = input.slice(parentHash.encodedLength());
+        
+        const data = Bytes.decodeCompactInt(input);
+        const number = new CompactInt(data.value);
+        input = input.slice(data.decBytes);
+
+        const stateRoot = Hash.fromU8a(input);
+        input = input.slice(stateRoot.encodedLength());
+
+        const extrinsicsRoot = Hash.fromU8a(input);
+        input = input.slice(extrinsicsRoot.encodedLength());
+
+        const digest = this.decodeOptionalHash(input);
+        
+        return new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
+    }
+
+    private static decodeOptionalHash(input: u8[]): Option<Hash> {
+        let valueOption = new Option<Hash>(null);
+        if (Utils.isSet(input)) {
+            valueOption.value = Hash.fromU8a(input);
+            input = input.slice((<Hash>valueOption.unwrap()).encodedLength())
+        } else {
+            input.slice(1);
+        }
+        return valueOption
     }
 }
