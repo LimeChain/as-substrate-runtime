@@ -1075,6 +1075,85 @@ dependencies = [
 name = "libsecp256k1"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "057eba5432d3e740e313c6e13c9153d0cb76b4f71bfc2e5242ae5bdb7d41af67"
+dependencies = [
+ "bytes",
+ "futures",
+ "lazy_static",
+ "libp2p-core",
+ "libp2p-core-derive",
+ "libp2p-swarm",
+ "multihash",
+ "parity-multiaddr",
+ "parking_lot 0.10.2",
+ "pin-project",
+ "smallvec 1.4.0",
+ "wasm-timer",
+]
+
+[[package]]
+name = "libp2p-core"
+version = "0.19.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a0387b930c3d4c2533dc4893c1e0394185ddcc019846121b1b27491e45a2c08"
+dependencies = [
+ "asn1_der",
+ "bs58",
+ "ed25519-dalek",
+ "either",
+ "fnv",
+ "futures",
+ "futures-timer 3.0.2",
+ "lazy_static",
+ "libsecp256k1",
+ "log",
+ "multihash",
+ "multistream-select",
+ "parity-multiaddr",
+ "parking_lot 0.10.2",
+ "pin-project",
+ "prost",
+ "prost-build",
+ "rand",
+ "ring",
+ "rw-stream-sink",
+ "sha2",
+ "smallvec 1.4.0",
+ "thiserror",
+ "unsigned-varint 0.4.0",
+ "void",
+ "zeroize",
+]
+
+[[package]]
+name = "libp2p-core-derive"
+version = "0.19.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f09548626b737ed64080fde595e06ce1117795b8b9fc4d2629fa36561c583171"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "libp2p-swarm"
+version = "0.19.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce53ff4d127cf8b39adf84dbd381ca32d49bd85788cee08e6669da2495993930"
+dependencies = [
+ "futures",
+ "libp2p-core",
+ "log",
+ "rand",
+ "smallvec 1.4.0",
+ "void",
+ "wasm-timer",
+]
+
+[[package]]
+name = "libsecp256k1"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fc1e2c808481a63dc6da2074752fdd4336a3c8fcc68b83db6f1fd5224ae7962"
 dependencies = [
  "arrayref",
@@ -2040,8 +2119,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f7d94d0bede923b3cea61f3f1ff57ff8cdfd77b400fb8f9998949e0cf04163df"
 dependencies = [
  "block-buffer",
+ "byte-tools",
  "digest",
- "fake-simd",
+ "keccak",
  "opaque-debug",
 ]
 

@@ -14,9 +14,11 @@ New `wasm-code` will be generated in the `sandbox` folder.
 1. Go to `sandbox`
 2. Execute `cargo build`
 
-## Run the Sandbox
+## Test out the AssemblyScript Runtime
 1. Go to `sandbox`
-2. Execute `cargo run`
+2. Execute `cargo test`
+3. To see the results of the called methods, execute `cargo test -- --nocapture`
+
 
 # **License**
 This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)
