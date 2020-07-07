@@ -31,6 +31,14 @@ export class Extrinsic {
      */
     public signature: ByteArray
 
+    constructor() {
+        this.from = new Hash([]);
+        this.to = new Hash([]);
+        this.amount = new UInt64(0);
+        this.nonce = new UInt64(0);
+        this.signature = new ByteArray([]);
+    }
+
     /**
     * SCALE Encodes the Header into u8[]
     */

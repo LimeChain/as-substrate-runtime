@@ -22,8 +22,8 @@ export function Core_execute_block(data: i32, len: i32): u64 {
     const block = Block.fromU8Array(input);
 
     // return Serialiser.serialise_result((new Bool(true)).toU8a()); // Return mocked `true`
-    // return Serialiser.serialise_result(input);
-    return Serialiser.serialise_result(block.toU8a());
+    return Serialiser.serialise_result(input);
+    // return Serialiser.serialise_result(block.toU8a());
 }
 
 /**
