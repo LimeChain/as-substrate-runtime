@@ -1,21 +1,15 @@
-extern crate wasmi;
-extern crate wabt;
-extern crate hex;
-extern crate sp_wasm_interface;
-extern crate sp_io;
+extern crate sandbox_execution_environment;
 
-use std::fs;
-use hex::FromHex;
-use std::borrow::Cow;
-// use wasmi::{ModuleInstance, ImportsBuilder, NopExternals, RuntimeValue::{I32}};
-use sc_executor::{WasmExecutor, WasmExecutionMethod};
-use sp_wasm_interface::HostFunctions;
-use sp_core::{ traits::{ CallInWasm, MissingHostFunctions } };
-use parity_scale_codec::{Decode};
-use sp_runtime::{RuntimeString};
-use sp_version::{RuntimeVersion, ApiId};
+use sandbox_execution_environment::get_wasm_code_arr;
+use sandbox_execution_environment::Block;
+use sandbox_execution_environment::get_wasm_executor;
+use sandbox_execution_environment::Header;
+use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
+use parity_scale_codec::{Decode, Encode};
+use sp_version::{RuntimeVersion};
 
-fn main() {
+
+pub fn main() {
     let wasm_code_array = get_wasm_code_arr();
     let executor = get_wasm_executor();
 
@@ -30,25 +24,40 @@ fn main() {
         &mut ext,
         MissingHostFunctions::Allow).unwrap();
     println!("{:?}", <RuntimeVersion>::decode(&mut res.as_ref()));
+    
+    let h = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 1,
+        state_root: Default::default(),
+        extrinsics_root: Default::default(),
+        digest: Default::default(),
+    };
+    
+    let b = Block {
+        header: h.clone(),
+        extrinsics: vec![],
+    };
+        
+    let res1 = executor.call_in_wasm(
+        &wasm_code_array,
+        None,
+        "Core_execute_block",
+        &b.encode(),
+        &mut ext,
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", <Block>::decode(&mut res1.as_ref()));
 
+
+    let res2 = executor.call_in_wasm(
+        &wasm_code_array,
+        None,
+        "Core_initialize_block",
+        &h.encode(),
+        &mut ext,
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", <Header>::decode(&mut res2.as_ref()));
 }
 
-fn get_wasm_code_arr () -> Vec<u8> {
-    let wasm_code:String = fs::read_to_string("wasm-code")
-        .expect("file cannot be found")
-        .parse()
-        .expect("unable to parse file content to string");
-    return Vec::from_hex(wasm_code).expect("Decoding failed");
-}
-
-fn get_wasm_executor () -> WasmExecutor {
-    return WasmExecutor::new(
-        WasmExecutionMethod::Interpreted,
-        Some(1024),
-        sp_io::SubstrateHostFunctions::host_functions(),
-        1,
-    );
-}
 
 // Not used
 // fn get_runtime_version () -> RuntimeVersion {
