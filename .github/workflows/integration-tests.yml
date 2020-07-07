@@ -9,7 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build
+    - name: Build AssemblyScript Runtime
+      run: |
+        cd runtime && npm install
+        cd runtime && npm run asbuild
+    - name: Build Rust Sandbox
       run: cd sandbox && cargo build --verbose
     - name: Run tests
       run: cd sandbox && cargo test --verbose
