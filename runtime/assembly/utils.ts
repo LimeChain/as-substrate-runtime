@@ -12,4 +12,12 @@ export namespace Utils {
         return res;
     }
 
+    /**
+     * Returns true/false depending on the Option whether it is Some or None
+     * @param bytes - SCALE Encoded bytes
+     */
+    export function isSet(bytes: u8[]): bool {
+        return bytes[0] != 0;
+    }
+
 }

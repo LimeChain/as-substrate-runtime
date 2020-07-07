@@ -1,6 +1,6 @@
 import { Serialiser } from "./serialiser";
-import { RuntimeVersion } from "../models/runtime-version";
-import { SupportedAPIs } from "../models/supported-apis";
+import { RuntimeVersion, SupportedAPIs, Block } from "../models";
+import { Bool } from "as-scale-codec";
 
 /**
  * Returns the version data encoded in ABI format as per the specification
@@ -10,6 +10,18 @@ import { SupportedAPIs } from "../models/supported-apis";
 export function Core_version(data: i32, len: i32): u64 {
     const version = getRuntimeVersionConfig();
     return Serialiser.serialise_result(version.toU8a());
+}
+
+/**
+ * Executes a full block by executing all exctrinsics included in it and update state accordingly.
+ * @param data - i32 pointer to the start of the arguments passed
+ * @param len - i32 length (in bytes) of the arguments passed
+ */
+export function Core_execute_block(data: i32, len: i32): u64 {
+    const input = Serialiser.deserialise_input(data, len);
+    const block = Block.fromU8Array(input);
+
+    return Serialiser.serialise_result((new Bool(true)).toU8a()); // Return mocked `true`
 }
 
 /**
