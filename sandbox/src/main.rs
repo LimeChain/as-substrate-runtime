@@ -98,21 +98,18 @@ fn main() {
             number: 1,
             state_root: hex!("e8ff7b3dd4375f6f3a76e24a1999e2a7be2d15b353e49ac94ace1eae3e80eb87").into(),
             extrinsics_root: hex!("03170a2e7597b7b7e3d84c05391d139a62b157e78786d8c082f29dcf4c111314").into(),
-            digest: Digest { logs: vec![DigestItem::Other(vec![1])], }, //
+            digest: Default::default(),
         },
-        extrinsics: vec![],
+        extrinsics: vec![
+            Transfer {
+                from: AccountKeyring::Alice.into(),
+                to: AccountKeyring::Bob.into(),
+                amount: 69,
+                nonce: 0,
+            }.into_signed_tx()
+        ],
     };
 
-    /**
-     * 
-    Transfer {
-            from: AccountKeyring::Alice.into(),
-            to: AccountKeyring::Bob.into(),
-            amount: 69,
-            nonce: 0,
-        }.into_signed_tx()
-        */
-        
     let res1 = executor.call_in_wasm(
         &wasm_code_array,
         None,

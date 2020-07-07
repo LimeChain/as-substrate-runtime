@@ -1,6 +1,7 @@
+
 export class Extrinsic {
     
-    // TODO -> Specififc to the Account-Based Runtime
+    //TODO    
 
     toU8a(): u8[] {
         return [];

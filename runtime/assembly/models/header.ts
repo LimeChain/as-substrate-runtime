@@ -2,6 +2,7 @@ import { Hash, CompactInt, Bytes } from "as-scale-codec";
 import { Utils } from "../utils";
 import { Option } from "./";
 import { Constants } from "./../constants";
+import { DecodedData } from "../codec/decoded-data";
 
 /**
  * Class representing a Block Header into the Substrate Runtime
@@ -29,7 +30,7 @@ export class Header {
      * Field used to store any chain-specific auxiliary data, which could help the light clients interact with the block 
      * without the need of accessing the full storage as well as consensus-related data including the block signature. 
      */
-    private digest: Option<Hash>
+    private digest: Option<Hash> // TODO not ready..
 
     constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digest: Option<Hash>) {
         this.parentHash = parentHash;
@@ -57,7 +58,7 @@ export class Header {
      * @param input - SCALE encoded Header
      * TODO - avoid slicing the aray for better performance
      */
-    static fromU8Array(input: u8[]): Header {
+    static fromU8Array(input: u8[]): DecodedData<Header> {
         const parentHash = Hash.fromU8a(input);
         input = input.slice(parentHash.encodedLength());
         
@@ -73,7 +74,8 @@ export class Header {
 
         const digest = this.decodeOptionalHash(input);
         
-        return new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
+        const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
+        return new DecodedData(result, input);
     }
 
     /**

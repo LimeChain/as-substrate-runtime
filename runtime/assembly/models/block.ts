@@ -1,5 +1,7 @@
-import { Hash, CompactInt, ByteArray } from "as-scale-codec";
-import { Header, Extrinsic } from ".";
+import { Hash, ByteArray } from "as-scale-codec";
+import { Header, Extrinsic, Option } from ".";
+import { DecodedData } from "../codec/decoded-data";
+import { Constants } from "../constants";
 
 /**
  * Class representing a Block into the Substrate Runtime
@@ -9,7 +11,7 @@ export class Block {
     /**
      * Block header hash
      */
-    public headerHash: Hash
+    public headerHash: Option<Hash>
     /**
      * Block Header
      */
@@ -21,23 +23,23 @@ export class Block {
     /**
      * Block Receipt
      */
-    public receipt: ByteArray
+    public receipt: Option<ByteArray>
     /**
      * Block message queue
      */
-    public messageQueue: ByteArray
+    public messageQueue: Option<ByteArray>
     /**
      * Block Justification
      */
-    public justification: ByteArray
+    public justification: Option<ByteArray>
 
     constructor(header: Header) {
-        this.headerHash = new Hash([]);
+        this.headerHash = new Option<Hash>(null);
         this.header = header;
         this.body = [];
-        this.receipt = new ByteArray([]);
-        this.messageQueue = new ByteArray([]);
-        this.justification = new ByteArray([]);
+        this.receipt = new Option<ByteArray>(null);
+        this.messageQueue = new Option<ByteArray>(null);
+        this.justification = new Option<ByteArray>(null);
     }
 
     /**
@@ -45,21 +47,15 @@ export class Block {
      */
     toU8a(): u8[] {
         // Encode headerHash and header
-        // let encoded = this.headerHash.toU8a()
-            //
-            // .concat(this.header.toU8a());
-            
-        // // Encode body
-        // encoded = encoded.concat((new CompactInt(this.body.length)).toU8a())
-        // for (let i = 0; i < this.body.length; i++) {
-        //     encoded = encoded.concat(this.body[i].toU8a())
-        // }
+        let encoded = this.header.toU8a();
+        if (this.body.length == 0) {
+            encoded = encoded.concat(Constants.EMPTY_BYTE_ARRAY);
+        } else {
+            //TODO - support for extrinsics
+            throw new Error('not supported yet');
+        }
 
-        // // Encode Receipt, MessageQueue and Justification
-        // return encoded.concat(this.receipt.toU8a())
-        //     .concat(this.messageQueue.toU8a())
-        //     .concat(this.justification.toU8a())
-        return this.header.toU8a();
+        return encoded;
     }
 
     /**
@@ -67,8 +63,11 @@ export class Block {
      * @param input - SCALE encoded Block
      */
     static fromU8Array(input: u8[]): Block {
-        const header = Header.fromU8Array(input);
-        return new Block(header);
+        const decodedHeader: DecodedData<Header> = Header.fromU8Array(input);
+        
+        // TODO - Only the header is supported for now
+
+        return new Block(decodedHeader.result);
     }
 
 }
