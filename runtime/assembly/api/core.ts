@@ -1,6 +1,6 @@
 import { Serialiser } from "./serialiser";
-import { RuntimeVersion, SupportedAPIs, Block } from "../models";
-import { Bool } from "as-scale-codec";
+import { RuntimeVersion, SupportedAPIs, Block, Header } from "../models";
+import { Bool, Int8 } from "as-scale-codec";
 
 /**
  * Returns the version data encoded in ABI format as per the specification
@@ -22,6 +22,19 @@ export function Core_execute_block(data: i32, len: i32): u64 {
     const block = Block.fromU8Array(input);
 
     return Serialiser.serialise_result((new Bool(true)).toU8a()); // Return mocked `true`
+}
+
+/**
+ * Initializes the Block instance from the passed argument
+ * @param data - i32 pointer to the start of the arguments passed
+ * @param len - i32 length ( in bytes ) of the arguments passed
+ */
+
+export function Core_initialize_block(data: i32, len: i32): u64 {
+    const input = Serialiser.deserialise_input(data, len);
+    const header = Header.fromU8Array(input);
+    const result = new Int8(0);
+    return Serialiser.serialise_result(result.toU8a()); // Returns None (in this case 0 encoded to array of bytes)
 }
 
 /**

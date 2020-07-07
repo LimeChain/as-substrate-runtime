@@ -83,3 +83,25 @@ fn test_core_execute_block_mock() {
     println!("{:?}", result);
     assert_eq!(result, [0x1]);
 }
+
+#[test]
+fn test_core_initialize_block() {
+    let mut setup = Setup::new();
+    let h = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 1,
+        state_root: Default::default(),
+        extrinsics_root: Default::default(),
+        digest: Default::default(),
+    };
+
+    let result = setup.executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        "Core_initialize_block",
+        &h.encode(),
+        &mut setup.ext.ext(),
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", result);
+    assert_eq!(result, [0x00]);
+}
