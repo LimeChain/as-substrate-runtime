@@ -24,11 +24,9 @@ impl Setup{
 }
 
 #[test]
-// necessary variables to execute wasm code
 fn test_core_version() {
-    // default value for the vector
     let mut setup = Setup::new();
-    let a: Vec<(ApiId, u32)> = vec![([1,1,1,1,1,1,1,1], 10)];
+    let test_api: Vec<(ApiId, u32)> = vec![([1,1,1,1,1,1,1,1], 10)];
 
     let version = RuntimeVersion {
         spec_name: RuntimeString::Borrowed("Node-test"),
@@ -36,7 +34,7 @@ fn test_core_version() {
         authoring_version: 1,
         spec_version: 1,
         impl_version: 1,
-        apis: Cow::<[([u8; 8], u32)]>::Owned(a),
+        apis: Cow::<[([u8; 8], u32)]>::Owned(test_api),
         transaction_version: 1
     };
 
@@ -48,7 +46,6 @@ fn test_core_version() {
         &mut setup.ext.ext(),
         MissingHostFunctions::Allow).unwrap();
     let wasm_version = <RuntimeVersion>::decode(&mut res.as_ref());
-    // the 
     assert_eq!(wasm_version.is_ok(), true);
-    assert_eq!(wasm_version.iter().next(), Some(&version));    
+    assert_eq!(wasm_version.iter().next(), Some(&version));
 }
