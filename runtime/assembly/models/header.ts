@@ -1,7 +1,8 @@
-import { Hash, Int64, CompactInt, Bytes } from "as-scale-codec";
+import { Hash, CompactInt, Bytes } from "as-scale-codec";
 import { Utils } from "../utils";
-import { Option } from "./option";
-import { constants } from "./../constants";
+import { Option } from "./";
+import { Constants } from "./../constants";
+
 /**
  * Class representing a Block Header into the Substrate Runtime
  */
@@ -42,7 +43,7 @@ export class Header {
     * SCALE Encodes the Header into u8[]
     */
     toU8a(): u8[] {
-        let digest = this.digest.isSome() ? (<Hash>this.digest.unwrap()).toU8a() : constants.EMPTY_BYTE_ARRAY;
+        let digest = this.digest.isSome() ? (<Hash>this.digest.unwrap()).toU8a() : Constants.EMPTY_BYTE_ARRAY;
 
         return this.parentHash.toU8a()
             .concat(this.number.toU8a())
@@ -54,6 +55,7 @@ export class Header {
     /**
      * Instanciates new Header object from SCALE encoded byte array
      * @param input - SCALE encoded Header
+     * TODO - avoid slicing the aray for better performance
      */
     static fromU8Array(input: u8[]): Header {
         const parentHash = Hash.fromU8a(input);
@@ -74,6 +76,11 @@ export class Header {
         return new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
     }
 
+    /**
+     * Decodes the byte array into Optional Hash and slices it depending on the decoding
+     * TODO - move this function to a proper place
+     * @param input - SCALE Encded byte array
+     */
     private static decodeOptionalHash(input: u8[]): Option<Hash> {
         let valueOption = new Option<Hash>(null);
         if (Utils.isSet(input)) {
@@ -82,6 +89,6 @@ export class Header {
         } else {
             input.slice(1);
         }
-        return valueOption
+        return valueOption;
     }
 }

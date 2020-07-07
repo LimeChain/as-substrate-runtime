@@ -139,18 +139,3 @@ fn get_wasm_executor () -> WasmExecutor {
         1,
     );
 }
-
-// Not used
-// fn get_runtime_version () -> RuntimeVersion {
-//     let a: Vec<(ApiId, u32)> = vec![([1,1,1,1,1,1,1,1], 10)];
-
-//     return RuntimeVersion {
-//         spec_name: RuntimeString::from("a"),
-//         impl_name: RuntimeString::from("a"),
-//         authoring_version: 1,
-//         spec_version: 1,
-//         impl_version: 1,
-//         apis: Cow::<[([u8; 8], u32)]>::Owned(a),
-//         transaction_version: 1
-//     };
-// }

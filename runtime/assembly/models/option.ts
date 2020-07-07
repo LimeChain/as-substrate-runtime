@@ -1,6 +1,6 @@
 
 /**
- * Class representing an optional value similar to Rust Option
+ * Class representing an optional value (T or null)
  */
 export class Option<T> {
 

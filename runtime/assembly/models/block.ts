@@ -62,6 +62,10 @@ export class Block {
         return this.header.toU8a();
     }
 
+    /**
+     * Instanciates new Block object from SCALE encoded byte array
+     * @param input - SCALE encoded Block
+     */
     static fromU8Array(input: u8[]): Block {
         const header = Header.fromU8Array(input);
         return new Block(header);
