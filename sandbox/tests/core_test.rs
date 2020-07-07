@@ -46,6 +46,7 @@ fn test_core_version() {
         &mut setup.ext.ext(),
         MissingHostFunctions::Allow).unwrap();
     let wasm_version = <RuntimeVersion>::decode(&mut res.as_ref());
+    println!("{:?}", Some(&version));
     assert_eq!(wasm_version.is_ok(), true);
     assert_eq!(wasm_version.iter().next(), Some(&version));
 }
