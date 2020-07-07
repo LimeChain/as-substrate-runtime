@@ -15,6 +15,7 @@
     "as-scale-codec": "0.0.5"
   },
   "devDependencies": {
+    "@as-pect/cli": "^4.0.0",
     "assemblyscript": "^0.13.2"
   }
 }
