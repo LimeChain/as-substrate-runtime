@@ -96,8 +96,8 @@ fn main() {
         header: Header {
             parent_hash: [69u8; 32].into(),
             number: 1,
-            state_root: hex!("e8ff7b3dd4375f6f3a76e24a1999e2a7be2d15b353e49ac94ace1eae3e80eb87").into(),
-            extrinsics_root: hex!("03170a2e7597b7b7e3d84c05391d139a62b157e78786d8c082f29dcf4c111314").into(),
+            state_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+            extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
             digest: Default::default(),
         },
         extrinsics: vec![

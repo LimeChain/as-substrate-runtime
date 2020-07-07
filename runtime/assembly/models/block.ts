@@ -1,4 +1,4 @@
-import { Hash, ByteArray } from "as-scale-codec";
+import { Hash, ByteArray, Bytes } from "as-scale-codec";
 import { Header, Extrinsic, Option } from ".";
 import { DecodedData } from "../codec/decoded-data";
 import { Constants } from "../constants";
@@ -65,7 +65,14 @@ export class Block {
     static fromU8Array(input: u8[]): Block {
         const decodedHeader: DecodedData<Header> = Header.fromU8Array(input);
         
-        // TODO - Only the header is supported for now
+        const extrinsicsLength = Bytes.decodeCompactInt(input);
+        input = input.slice(extrinsicsLength.decBytes);
+        let extrinsics: Extrinsic[] = [];
+        for (let i = 0; i < extrinsicsLength.value; i++) {
+            const decodedExtrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(input);
+            extrinsics.push(decodedExtrinsic.result);
+            input = decodedExtrinsic.input;
+        }
 
         return new Block(decodedHeader.result);
     }
