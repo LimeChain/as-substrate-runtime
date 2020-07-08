@@ -12,25 +12,25 @@ export class Header {
     /**
      * 32-byte Blake hash of the header of the parent of the block
      */
-    private parentHash: Hash
+    public parentHash: Hash
     /**
      * Integer, which represents the index of the current block in the chain.
      * It is equal to the number of the ancestor blocks.
      */
-    private number: CompactInt
+    public number: CompactInt
     /**
      * Root of the Merkle trie, whose leaves implement the storage of the system.
      */
-    private stateRoot: Hash
+    public stateRoot: Hash
     /**
      * Field reserved for the Runtime to validate the integrity of the extrinsics composing the block body.
      */
-    private extrinsicsRoot: Hash
+    public extrinsicsRoot: Hash
     /**
      * Field used to store any chain-specific auxiliary data, which could help the light clients interact with the block 
      * without the need of accessing the full storage as well as consensus-related data including the block signature. 
      */
-    private digest: Option<Hash> // TODO not ready..
+    public digest: Option<Hash> // TODO not ready..
 
     constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digest: Option<Hash>) {
         this.parentHash = parentHash;
@@ -92,5 +92,21 @@ export class Header {
             input.slice(1);
         }
         return valueOption;
+    }
+
+    @inline @operator('==')
+    static eq(a: Header, b: Header): bool {
+        let areEqual = a.parentHash == b.parentHash
+            && a.number == b.number
+            && a.stateRoot == b.stateRoot
+            && a.extrinsicsRoot == b.extrinsicsRoot
+        
+        if (a.digest.isSome() && b.digest.isSome()) {
+            return areEqual && (<Hash>a.digest.unwrap()) == (<Hash>b.digest.unwrap());;
+        } else if (!a.digest.isSome() && !b.digest.isSome()) {
+            return areEqual;
+        }else {
+            return false;
+        }
     }
 }

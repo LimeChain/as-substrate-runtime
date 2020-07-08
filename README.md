@@ -14,7 +14,11 @@ New `wasm-code` will be generated in the `sandbox` folder.
 1. Go to `sandbox`
 2. Execute `cargo build`
 
-## Test out the AssemblyScript Runtime
+## Run the Unit tests for the AssemblyScript Runtime
+1. Go to `runtime`
+2. Execute `npm run test`
+
+## Run the Integration Tests for the AssemblyScript Runtime
 1. Go to `sandbox`
 2. Execute `cargo test`
 3. To see the results of the called methods, execute `cargo test -- --nocapture`

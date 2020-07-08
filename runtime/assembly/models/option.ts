@@ -27,5 +27,5 @@ export class Option<T> {
     unwrap(): T | null {
         return this.value;
     }
-
+    
 }
