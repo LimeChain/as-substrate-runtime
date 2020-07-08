@@ -61,7 +61,7 @@ export class Header {
     static fromU8Array(input: u8[]): DecodedData<Header> {
         const parentHash = Hash.fromU8a(input);
         input = input.slice(parentHash.encodedLength());
-        
+
         const data = Bytes.decodeCompactInt(input);
         const number = new CompactInt(data.value);
         input = input.slice(data.decBytes);
