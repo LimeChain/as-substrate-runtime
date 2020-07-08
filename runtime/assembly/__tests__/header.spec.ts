@@ -14,10 +14,4 @@ describe("Header", () => {
     __retain(changetype<usize>(decodedData))
   });
 
-  it("should instanciate header with digest from SCALE encoded Byte array", () => {
-
-    // TODO
-    
-  });
-
 });

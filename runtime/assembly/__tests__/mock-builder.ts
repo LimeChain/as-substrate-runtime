@@ -19,7 +19,7 @@ export namespace MockBuilder {
             0,
             0
         ];
-        const header = MockHelper._getHeaderInstanceWithoutDigest();
+        const header = MockHelper._getHeaderInstance();
         const block = new Block(header);
         return new MockResult(block, EMPTY_BLOCK);
     }
