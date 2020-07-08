@@ -1,10 +1,6 @@
 import { Serialiser } from "./serialiser";
 import { RuntimeVersion, SupportedAPIs, Block, Header } from "../models";
-<<<<<<< HEAD
 import { Bool } from "as-scale-codec";
-=======
-import { Bool, Int8 } from "as-scale-codec";
->>>>>>> a40b847... Add core_initialize_block and test
 
 /**
  * Returns the version data encoded in ABI format as per the specification
