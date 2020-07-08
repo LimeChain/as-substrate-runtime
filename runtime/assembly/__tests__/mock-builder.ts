@@ -19,7 +19,7 @@ export namespace MockBuilder {
             0,
             0
         ];
-        const header = MockHelper._getHeaderInstance();
+        const header = MockHelper._getHeaderInstanceWithoutDigest();
         const block = new Block(header);
         return new MockResult(block, EMPTY_BLOCK);
     }
@@ -27,8 +27,8 @@ export namespace MockBuilder {
     /**
      * Returns SCALE Encoded Header Mock and Instance of that Header
      */
-    export function getHeaderMock(): MockResult<Header> {
-        const SCALE_HEADER: u8[] = [
+    export function getHeaderWithoutDigestMock(): MockResult<Header> {
+        const HEADER_WITHOUT_DIGEST: u8[] = [
             69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69,
             4,
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -36,7 +36,7 @@ export namespace MockBuilder {
             0
         ];
 
-        return new MockResult(MockHelper._getHeaderInstance(), SCALE_HEADER);
+        return new MockResult(MockHelper._getHeaderInstanceWithoutDigest(), HEADER_WITHOUT_DIGEST);
     }
 
 }
@@ -49,7 +49,7 @@ namespace MockHelper {
      * Returns a Header instance with a populated parent hash, block number, stateRoot and extrinsics root.
      * Used Internally in the mock builder
      */
-    export function _getHeaderInstance(): Header {
+    export function _getHeaderInstanceWithoutDigest(): Header {
         const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
         const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
         const blockNumber = new CompactInt(1);
