@@ -26,5 +26,4 @@ export class Serialiser {
         __retain(value_ptr); // adds ref to the pointer, so it's not GCed
         return ((value_size as u64) << 32) | value_ptr;
     }
-
 }
