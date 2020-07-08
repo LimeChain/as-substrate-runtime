@@ -77,4 +77,10 @@ export class Block {
         return new Block(decodedHeader.result);
     }
 
+    @inline @operator('==')
+    static eq(a: Block, b: Block): bool {
+        // TODO
+        return a.header == b.header;
+    }
+
 }

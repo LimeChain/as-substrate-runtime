@@ -93,4 +93,20 @@ export class Header {
         }
         return valueOption;
     }
+
+    @inline @operator('==')
+    static eq(a: Header, b: Header): bool {
+        let areEqual = a.parentHash == b.parentHash
+            && a.number == b.number
+            && a.stateRoot == b.stateRoot
+            && a.extrinsicsRoot == b.extrinsicsRoot
+        
+        if (a.digest.isSome() && b.digest.isSome()) {
+            return areEqual && (<Hash>a.digest.unwrap()) == (<Hash>b.digest.unwrap());;
+        } else if (!a.digest.isSome() && !b.digest.isSome()) {
+            return areEqual;
+        }else {
+            return false;
+        }
+    }
 }
