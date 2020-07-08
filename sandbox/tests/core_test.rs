@@ -103,5 +103,5 @@ fn test_core_initialize_block() {
         &mut setup.ext.ext(),
         MissingHostFunctions::Allow).unwrap();
     println!("{:?}", result);
-    assert_eq!(result, [0x00]);
+    assert_eq!(result, [0u8; 0]);
 }

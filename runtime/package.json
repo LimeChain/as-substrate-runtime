@@ -4,7 +4,8 @@
   "description": "AssemblyScript PoC Account-based Substrate Runtime",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "asp --verbose",
+    "test:ci": "asp --summary",
     "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --use abort=",
     "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --optimize --use abort=",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized && node build.js"
@@ -15,6 +16,7 @@
     "as-scale-codec": "0.0.6"
   },
   "devDependencies": {
+    "@as-pect/cli": "^4.0.0",
     "assemblyscript": "^0.13.3"
   }
 }
