@@ -1,25 +1,20 @@
 extern crate sandbox_execution_environment;
 extern crate hex;
-
 use sandbox_execution_environment::get_wasm_code_arr;
 use sandbox_execution_environment::get_wasm_executor;
-use sandbox_execution_environment::{ Block, Header };
-
+use sandbox_execution_environment::{ Block, Header, Transfer };
 use sp_version::{ApiId, RuntimeVersion};
 use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
 use parity_scale_codec::{Encode, Decode};
-
+use sp_keyring::AccountKeyring;
 use sp_runtime::{ RuntimeString };
-
 use std::borrow::Cow;
 use hex_literal::hex;
-
 struct Setup {
     executor: sc_executor::WasmExecutor,
     wasm_code_array: Vec<u8>,
     ext: sp_io::TestExternalities
 }
-
 impl Setup{
     fn new() -> Self {
         Self {
@@ -29,12 +24,10 @@ impl Setup{
         }
     }
 }
-
 #[test]
 fn test_core_version() {
     let mut setup = Setup::new();
     let test_api: Vec<(ApiId, u32)> = vec![([1,1,1,1,1,1,1,1], 10)];
-
     let version = RuntimeVersion {
         spec_name: RuntimeString::Borrowed("Node-test"),
         impl_name: RuntimeString::Borrowed("AssemblyScript"),
@@ -44,7 +37,6 @@ fn test_core_version() {
         apis: Cow::<[([u8; 8], u32)]>::Owned(test_api),
         transaction_version: 1
     };
-
     let res = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
         None,
@@ -57,11 +49,9 @@ fn test_core_version() {
     assert_eq!(wasm_version.is_ok(), true);
     assert_eq!(wasm_version.iter().next(), Some(&version));
 }
-
 #[test]
 fn test_core_execute_block_mock() {
     let mut setup = Setup::new();
-
     let b = Block {
         header: Header {
             parent_hash: [69u8; 32].into(),
@@ -72,7 +62,6 @@ fn test_core_execute_block_mock() {
         },
         extrinsics: vec![],
     };
-
     let result = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
         None,
@@ -100,6 +89,26 @@ fn test_core_initialize_block() {
         None,
         "Core_initialize_block",
         &h.encode(),
+        &mut setup.ext.ext(),
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", result);
+    assert_eq!(result, [0u8; 0]);
+}
+
+#[test]
+fn test_block_builder_apply_extrinsics() {
+    let mut setup = Setup::new();
+    let ex = Transfer {
+        from: AccountKeyring::Alice.into(),
+        to: AccountKeyring::Bob.into(),
+        amount: 69,
+        nonce: 0,
+    }.into_signed_tx();
+    let result = setup.executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        "BlockBuilder_apply_extrinsic",
+        &ex.encode(),
         &mut setup.ext.ext(),
         MissingHostFunctions::Allow).unwrap();
     println!("{:?}", result);

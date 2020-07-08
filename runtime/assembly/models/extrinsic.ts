@@ -31,12 +31,12 @@ export class Extrinsic {
      */
     public signature: ByteArray
 
-    constructor() {
-        this.from = new Hash([]);
-        this.to = new Hash([]);
-        this.amount = new UInt64(0);
-        this.nonce = new UInt64(0);
-        this.signature = new ByteArray([]);
+    constructor(from: Hash, to: Hash, amount: UInt64, nonce: UInt64, signature: ByteArray) {
+        this.from = from;
+        this.to = to;
+        this.amount = amount;
+        this.nonce = nonce;
+        this.signature = signature;
     }
 
     /**
@@ -52,7 +52,22 @@ export class Extrinsic {
      * TODO - avoid slicing the aray for better performance
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic> {
-        const extrinsic = new Extrinsic();
+        const from = Hash.fromU8a(input);
+        input = input.slice(from.encodedLength());
+
+        const to = Hash.fromU8a(input);
+        input = input.slice(to.encodedLength());
+
+        const amount = UInt64.fromU8a(input);
+        input = input.slice(amount.encodedLength());
+
+        const nonce = UInt64.fromU8a(input);
+        input = input.slice(nonce.encodedLength());
+
+        const signature = ByteArray.fromU8a(input);
+        input = input.slice(signature.encodedLength());
+        
+        const extrinsic = new Extrinsic(from, to, amount, nonce, signature);
 
         return new DecodedData(extrinsic, input);
     }
