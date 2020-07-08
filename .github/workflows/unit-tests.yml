@@ -1,4 +1,4 @@
-name: Unit Tests
+name: AssemblyScript Runtime Unit Tests
 
 on: [push]
 jobs:
