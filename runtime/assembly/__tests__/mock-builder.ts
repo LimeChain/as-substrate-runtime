@@ -1,6 +1,6 @@
 import { MockResult } from "./mock-result";
-import { Block, Option, Header, Inherent } from "../models";
-import { Hash, CompactInt, UInt64 } from "as-scale-codec";
+import { Block, Option, Header, Extrinsic, Inherent } from "../models";
+import { Hash, CompactInt, UInt64, ByteArray } from "as-scale-codec";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -53,6 +53,16 @@ export namespace MockBuilder {
         return new MockResult(MockHelper._getEmptyInherentInstance(), DEFAULT_INHERENT);
      }
 
+    export function getDefaultExtrinsic(): MockResult<Extrinsic> {
+        const DEFAULT_EXTRINSIC: u8[] = [
+            1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 
+            125, 142, 175, 4, 21, 22, 135, 115, 99, 38, 201, 254, 161, 126, 37, 252, 82, 135, 97, 54, 147, 201, 18, 144, 156, 178, 38, 170, 71, 148, 242, 106, 
+            69, 0, 0, 0, 0, 0, 0, 0, 
+            5, 0, 0, 0, 0, 0, 0, 0, 
+            0
+        ];
+        return new MockResult(MockHelper._getExtrinsicInstance(), DEFAULT_EXTRINSIC);
+    }
 }
 
 /**
@@ -78,5 +88,14 @@ namespace MockHelper {
         const headers: Header[] = [Header.emptyHeader()];
 
         return new Inherent(timestamp, babeslot, finalnum, headers);
+    }
+    
+    export function _getExtrinsicInstance(): Extrinsic {
+        const from = Hash.fromU8a([1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162]);
+        const to  = Hash.fromU8a([125, 142, 175, 4, 21, 22, 135, 115, 99, 38, 201, 254, 161, 126, 37, 252, 82, 135, 97, 54, 147, 201, 18, 144, 156, 178, 38, 170, 71, 148, 242, 106]);
+        const amount: UInt64 = new UInt64(69);
+        const nonce: UInt64 = new UInt64(5);
+        const signature = ByteArray.fromU8a([0]);
+        return new Extrinsic(from, to, amount, nonce, signature);
     }
 }

@@ -1,4 +1,4 @@
-import { Hash, UInt64, ByteArray } from "as-scale-codec";
+import { Hash, UInt64, ByteArray, Bytes, BIT_LENGTH } from "as-scale-codec";
 import { DecodedData } from "../codec/decoded-data";
 
 /**
@@ -43,12 +43,16 @@ export class Extrinsic {
     * SCALE Encodes the Header into u8[]
     */
     toU8a(): u8[] {
-        return [];
+        return this.from.toU8a()
+            .concat(this.to.toU8a())
+            .concat(this.amount.toU8a())
+            .concat(this.nonce.toU8a())
+            .concat(this.signature.toU8a());
     }
 
     /**
-     * Instanciates new Header object from SCALE encoded byte array
-     * @param input - SCALE encoded Header
+     * Instanciates new Extrinsic object from SCALE encoded byte array
+     * @param input - SCALE encoded Extrinsic
      * TODO - avoid slicing the aray for better performance
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic> {
@@ -58,10 +62,10 @@ export class Extrinsic {
         const to = Hash.fromU8a(input);
         input = input.slice(to.encodedLength());
 
-        const amount = UInt64.fromU8a(input);
+        const amount = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
         input = input.slice(amount.encodedLength());
 
-        const nonce = UInt64.fromU8a(input);
+        const nonce = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
         input = input.slice(nonce.encodedLength());
 
         const signature = ByteArray.fromU8a(input);
@@ -70,5 +74,15 @@ export class Extrinsic {
         const extrinsic = new Extrinsic(from, to, amount, nonce, signature);
 
         return new DecodedData(extrinsic, input);
+    }
+    @inline @operator('==')
+    static eq(a: Extrinsic, b: Extrinsic): bool {
+        let equal = 
+            a.from == b.from 
+            && a.to == b.to
+            && a.amount.value == b.amount.value
+            && a.nonce.value == b.nonce.value
+            && a.signature.toString() == b.signature.toString();
+        return equal;
     }
 }
