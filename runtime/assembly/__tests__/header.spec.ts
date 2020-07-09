@@ -1,16 +1,23 @@
 import { Header } from '../models/header';
-const SCALE_HEADER: u8[] = [
-  69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69,
-  4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-];
+import { MockBuilder } from './mock-builder';
+
 
 describe("Header", () => {
+
   it("should instanciate header from SCALE encoded Byte array", () => {
-    const decodedData = Header.fromU8Array(SCALE_HEADER);
-    const header: Header = decodedData.result;
-    expect(header.toU8a()).toHaveLength(SCALE_HEADER.length);
-    expect(header.toU8a().toString()).toBe(SCALE_HEADER.toString());
-    __retain(changetype<usize>(decodedData.result));
+    const mock = MockBuilder.getHeaderWithoutDigestMock();
+    const decodedData = Header.fromU8Array(mock.bytes);
+
+    assert(decodedData.result == mock.expectedObject, "header was not instanciated properly");
+
+    __retain(changetype<usize>(mock));
+    __retain(changetype<usize>(decodedData))
   });
+
+  it("should instanciate header with digest from SCALE encoded Byte array", () => {
+
+    // TODO
+    
+  });
+
 });

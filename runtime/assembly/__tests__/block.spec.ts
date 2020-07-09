@@ -12,10 +12,6 @@ describe("Block", () => {
     __retain(changetype<usize>(block))
   });
 
-  it("should instanciate empty block with digest from SCALE encoded Byte array", () => {
-    // TODO
-  });
-
   it("should instanciate block from SCALE encoded Byte array", () => {
     // TODO
   });
