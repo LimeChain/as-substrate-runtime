@@ -1,6 +1,6 @@
 import { MockResult } from "./mock-result";
-import { Block, Option, Header } from "../models";
-import { Hash, CompactInt } from "as-scale-codec";
+import { Block, Option, Header, Inherent } from "../models";
+import { Hash, CompactInt, UInt64 } from "as-scale-codec";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -39,6 +39,20 @@ export namespace MockBuilder {
         return new MockResult(MockHelper._getHeaderInstanceWithoutDigest(), HEADER_WITHOUT_DIGEST);
     }
 
+    /**
+     * Returns SCALE encoded Inherent Mock and Instance of that Mock
+     */
+
+     export function getInherentMock(): MockResult<Inherent> {
+        const DEFAULT_INHERENT: u8[] = [
+            0, 0, 0, 0, 0, 0, 0, 0, 
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0
+        ];
+
+        return new MockResult(MockHelper._getEmptyInherentInstance(), DEFAULT_INHERENT);
+     }
+
 }
 
 /**
@@ -55,5 +69,14 @@ namespace MockHelper {
         const blockNumber = new CompactInt(1);
         const digest = new Option<Hash>(null);
         return new Header(hash69, blockNumber, hash255, hash255, digest);
+    }
+
+    export function _getEmptyInherentInstance(): Inherent {
+        const timestamp: UInt64 = new UInt64(0);
+        const babeslot: UInt64 = new UInt64(0);
+        const finalnum: CompactInt = new CompactInt(0);
+        const headers: Header[] = [Header.emptyHeader()];
+
+        return new Inherent(timestamp, babeslot, finalnum, headers);
     }
 }

@@ -3,4 +3,5 @@ export * from './extrinsic';
 export * from './header';
 export * from './runtime-version';
 export * from './supported-apis';
-export * from './option'
+export * from './option';
+export * from './inherent';
