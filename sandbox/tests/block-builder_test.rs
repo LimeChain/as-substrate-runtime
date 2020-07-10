@@ -39,3 +39,18 @@ fn test_block_builder_inherent_extrinsics() {
     println!("{:?}", Some(&inh));
     assert_eq!(Some(&inh), res.iter().next());
 }
+
+#[test]
+fn test_block_builder_check_inherent_result() {
+    let mut setup = Setup::new();
+    let expected_result = sp_inherents::CheckInherentsResult::new();
+    let result = setup.executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        "BlockBuilder_check_inherents",
+        &expected_result.encode(),
+        &mut setup.ext.ext(),
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", result);
+    assert_eq!(result, [0x1]);
+}

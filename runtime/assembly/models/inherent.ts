@@ -1,5 +1,5 @@
 import { Header } from './header';
-import {UInt64, CompactInt, BIT_LENGTH, Bytes} from 'as-scale-codec';
+import {UInt64, CompactInt, BIT_LENGTH, Bytes, Bool} from 'as-scale-codec';
 import {Constants} from '../constants';
 
 /**
@@ -80,4 +80,42 @@ import {Constants} from '../constants';
         
     }
 }
+
+// export class CheckInherentResult{
+//     /**
+//      *  Did the check succeed?
+//      */
+//     public okay: Bool;
+
+//     /**
+//      *  Did we encounter a fatal error?
+//      */
+//     public error: Bool;
+
+//     /**
+//      *  We use the `InherentData` to store our errors.
+//      */
+//     public errors: Inherent[]
+
+//     toU8a(): u8[]{
+//         let result: u8[] = this.okay.toU8a().concat(this.error.toU8a());
+//         for (let i = 0; this.errors.length; i++){
+//             result = result.concat(this.errors[i].toU8a());
+//         }
+//         return result;
+//     }
+
+//     constructor(okay: Bool, error: Bool, errors: Inherent[]){
+//         this.okay = okay;
+//         this.error = error;
+//         this.errors = errors;
+//     }
+
+//     static default(): CheckInherentResult {
+//         let okay = new Bool(true);
+//         let error = new Bool(false);
+//         let errors: Inherent[] = [];
+//         return new CheckInherentResult(okay, error, errors);
+//     }
+// }
 
