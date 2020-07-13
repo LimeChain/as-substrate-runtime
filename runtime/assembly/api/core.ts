@@ -19,9 +19,10 @@ export function Core_version(data: i32, len: i32): u64 {
  */
 export function Core_execute_block(data: i32, len: i32): u64 {
     const input = Serialiser.deserialise_input(data, len);
-    const block = Block.fromU8Array(input);
+    // const block = Block.fromU8Array(input);
 
-    return Serialiser.serialise_result((new Bool(true)).toU8a()); // Return mocked `true`
+    // return Serialiser.serialise_result((new Bool(true)).toU8a()); // Return mocked `true`
+    return Serialiser.serialise_result(input);
 }
 
 /**

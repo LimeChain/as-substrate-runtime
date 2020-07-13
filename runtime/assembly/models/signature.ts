@@ -28,4 +28,8 @@ export class Signature {
         return areEqual;
     }
 
+    toString(): string {
+        return this.value.toString();
+    }
+
 }

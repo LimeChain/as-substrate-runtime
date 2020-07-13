@@ -1,6 +1,6 @@
 import { Hash, UInt64, BIT_LENGTH } from "as-scale-codec";
 import { DecodedData } from "../codec/decoded-data";
-import { Signature } from "./signature";
+import { Signature } from ".";
 import { Constants } from "./../constants";
 
 /**
@@ -88,5 +88,18 @@ export class Extrinsic {
             && a.nonce.value == b.nonce.value
             && a.signature == b.signature;
         return equal;
+    }
+
+    @inline @operator('!=')
+    static notEq(a: Extrinsic, b: Extrinsic): bool {
+        return !Extrinsic.eq(a, b);
+    }
+
+    toString(): string {
+        return "{ from: " + this.from.toString() +
+            ", to: " + this.to.toString() +
+            ", amount: " + this.amount.value.toString() +
+            ", nonce: " + this.nonce.value.toString() +
+            ", signature: " + this.signature.toString() + " }";
     }
 }

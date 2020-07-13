@@ -51,7 +51,7 @@ fn test_core_execute_block_mock() {
                 from: AccountKeyring::Alice.into(),
                 to: AccountKeyring::Bob.into(),
                 amount: 69,
-                nonce: 0,
+                nonce: 15,
             }.into_signed_tx()
         ],
     };

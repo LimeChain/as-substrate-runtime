@@ -1,7 +1,7 @@
 import { MockResult } from "./mock-result";
 import { Block, Option, Header, Extrinsic, Inherent } from "../models";
-import { Hash, CompactInt, UInt64, ByteArray } from "as-scale-codec";
-import { Signature } from "../models/signature";
+import { Hash, CompactInt, UInt64 } from "as-scale-codec";
+import { Signature } from "../models";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -21,8 +21,28 @@ export namespace MockBuilder {
             0
         ];
         const header = MockHelper._getHeaderInstanceWithoutDigest();
-        const block = new Block(header);
+        const block = new Block(header, []);
         return new MockResult(block, EMPTY_BLOCK);
+    }
+
+    export function getBlockWithExtrinsic(): MockResult<Block> {
+        const BLOCK_WITH_EXTRINSIC: u8[] = [
+            69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69,
+            4,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            0,
+            4,
+            1, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162,
+            125, 142, 175, 4, 21, 22, 135, 115, 99, 38, 201, 254, 161, 126, 37, 252, 82, 135, 97, 54, 147, 201, 18, 144, 156, 178, 38, 170, 71, 148, 242, 106,
+            69, 0, 0, 0, 0, 0, 0, 0,
+            5, 0, 0, 0, 0, 0, 0, 0,
+            72, 43, 234, 45, 159, 200, 43, 162, 117, 34, 73, 0, 41, 24, 219, 106, 202, 41, 220, 128, 114, 102, 33, 40, 235, 200, 34, 98, 249, 135, 134, 116, 39, 94, 159, 122, 148, 102, 158, 5, 178, 195, 144, 165, 149, 149, 118, 250, 97, 192, 228, 0, 216, 37, 219, 207, 7, 240, 82, 75, 243, 191, 237, 138, 0
+        ];
+
+        const header = MockHelper._getHeaderInstanceWithoutDigest();
+        const extrinsic = MockHelper._getExtrinsicInstance();
+        return new MockResult(new Block(header, [extrinsic]), BLOCK_WITH_EXTRINSIC)
     }
 
     /**

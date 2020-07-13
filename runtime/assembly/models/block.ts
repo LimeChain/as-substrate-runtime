@@ -66,6 +66,7 @@ export class Block {
      */
     static fromU8Array(input: u8[]): DecodedData<Block> {
         const decodedHeader: DecodedData<Header> = Header.fromU8Array(input);
+        input = decodedHeader.input;
 
         const extrinsicsLength = Bytes.decodeCompactInt(input);
         input = input.slice(extrinsicsLength.decBytes);
@@ -75,15 +76,23 @@ export class Block {
             extrinsics.push(decodedExtrinsic.result);
             input = decodedExtrinsic.input;
         }
-
+        
         const block = new Block(decodedHeader.result, extrinsics);
         return new DecodedData(block, input);
     }
 
     @inline @operator('==')
     static eq(a: Block, b: Block): bool {
-        // TODO
-        return a.header == b.header;
+        if (a.body.length != b.body.length) {
+            return false;
+        } else {
+            for (let i = 0; i < a.body.length; i++) {
+                if (a.body[i] != b.body[i]) {
+                    return false;
+                }
+            }
+            return a.header == b.header;
+        }
     }
 
 }
