@@ -1,4 +1,4 @@
-import { Hash, CompactInt, Bytes } from "as-scale-codec";
+import { Hash, CompactInt, Bytes, ByteArray } from "as-scale-codec";
 import { Utils } from "../utils";
 import { Option } from "./";
 import { Constants } from "./../constants";
