@@ -1,4 +1,4 @@
-import { Hash, CompactInt, Bytes } from "as-scale-codec";
+import { Hash, CompactInt, Bytes, ByteArray } from "as-scale-codec";
 import { Utils } from "../utils";
 import { Option } from "./";
 import { Constants } from "./../constants";
@@ -94,6 +94,17 @@ export class Header {
         return valueOption;
     }
 
+
+    static emptyHeader(): Header {
+        const zeroHash: Hash = Hash.fromU8a((new Array<u8>(32).fill(0)));
+        const parentHash: Hash = zeroHash;
+        const number: CompactInt = new CompactInt(0);
+        const stateRoot: Hash = zeroHash;
+        const extrinsicsRoot: Hash = zeroHash;
+        const digest: Option<Hash> = new Option(zeroHash);
+
+        return new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
+    }
     @inline @operator('==')
     static eq(a: Header, b: Header): bool {
         let areEqual = a.parentHash == b.parentHash

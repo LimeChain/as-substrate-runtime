@@ -21,6 +21,8 @@ sp-version = "2.0.0-rc4"
 sp-application-crypto = "2.0.0-rc4"
 sp-consensus-babe = "0.8.0-rc4"
 sp-keyring = "2.0.0-rc4"
+sp-inherents = "2.0.0-rc4"
+sp-std = "2.0.0-rc4"
 
 serde = { version = "1.0.101", optional = true, features = ["derive"] }
 hex-literal = "0.2.1"

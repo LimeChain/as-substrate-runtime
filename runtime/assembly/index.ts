@@ -9,3 +9,7 @@ export const __heap_base = 0;
  * Export the WASM API functions
  */
 export * from "./api/core";
+export * from "./api/block-builder";
+export * from "./api/parachain-host";
+export * from "./api/grandpa-api";
+export * from "./api/others";
