@@ -28,6 +28,20 @@ pub struct Transfer {
 	pub nonce: u64,
 }
 
+impl Transfer {
+	/// Convert into a signed extrinsic.
+	#[cfg(feature = "std")]
+	pub fn into_signed_tx(self) -> Extrinsic {
+		let signature = sp_keyring::AccountKeyring::from_public(&self.from)
+			.expect("Creates keyring from public key.").sign(&self.encode()).into();
+		Extrinsic::Transfer {
+			transfer: self,
+			signature,
+			exhaust_resources_when_not_first: false,
+		}
+	}
+}
+
 /// Extrinsic for test-runtime.
 #[derive(Clone, PartialEq, Eq, Encode, Decode, RuntimeDebug)]
 pub enum Extrinsic {

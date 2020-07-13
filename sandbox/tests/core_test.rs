@@ -8,7 +8,7 @@ use sandbox_execution_environment::{ Block, Header };
 use sp_version::{ApiId, RuntimeVersion};
 use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
 use parity_scale_codec::{Encode, Decode};
-
+use sp_keyring::AccountKeyring;
 use sp_runtime::{ RuntimeString };
 
 use std::borrow::Cow;
@@ -70,7 +70,14 @@ fn test_core_execute_block_mock() {
             extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
             digest: Default::default(),
         },
-        extrinsics: vec![],
+        extrinsics: vec![
+            sandbox_execution_environment::Transfer {
+                from: AccountKeyring::Alice.into(),
+                to: AccountKeyring::Bob.into(),
+                amount: 69,
+                nonce: 0,
+            }.into_signed_tx()
+        ],
     };
 
     let result = setup.executor.call_in_wasm(
@@ -82,26 +89,4 @@ fn test_core_execute_block_mock() {
         MissingHostFunctions::Allow).unwrap();
     println!("{:?}", result);
     assert_eq!(result, [0x1]);
-}
-
-#[test]
-fn test_core_initialize_block() {
-    let mut setup = Setup::new();
-    let h = Header {
-        parent_hash: [69u8; 32].into(),
-        number: 1,
-        state_root: Default::default(),
-        extrinsics_root: Default::default(),
-        digest: Default::default(),
-    };
-
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
-        "Core_initialize_block",
-        &h.encode(),
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
-    println!("{:?}", result);
-    assert_eq!(result, [0u8; 0]);
 }
