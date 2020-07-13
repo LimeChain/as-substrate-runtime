@@ -64,6 +64,14 @@ export namespace MockBuilder {
         ];
         return new MockResult(MockHelper._getExtrinsicInstance(), DEFAULT_EXTRINSIC);
     }
+
+    export function getInvalidExtrinsic(): u8[] {
+        // the minimum length of the input should be 144
+        const INVALID_EXTRINSIC: u8[] = [
+            37, 219, 207, 7, 240, 82, 75, 243, 191, 237, 138, 0
+        ];
+        return INVALID_EXTRINSIC;
+    }
 }
 
 /**
@@ -86,7 +94,7 @@ namespace MockHelper {
         const timestamp: UInt64 = new UInt64(0);
         const babeslot: UInt64 = new UInt64(0);
         const finalnum: CompactInt = new CompactInt(0);
-        const headers: Header[] = [Header.emptyHeader()];
+        const headers: Header[] = [];
 
         return new Inherent(timestamp, babeslot, finalnum, headers);
     }

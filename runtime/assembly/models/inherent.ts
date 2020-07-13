@@ -10,28 +10,28 @@ import {Constants} from '../constants';
     /**
      * Unix epoch time in number of milliseconds
      */
-    public timestamp: UInt64;
+    public timstmp0: UInt64;
 
     /**
      * Babe Slot Number6.5 of the current building block
      */
-    public babeslot: UInt64;
+    public babeSlot: UInt64;
 
     /**
      * Header number3:6 of the last finalized block
      */
-    public finalnum: CompactInt;
+    public finalNum: CompactInt;
 
     /**
      * Provides a list of potential uncle block headers3:6 for a given block
      */
-    public uncles: Header[];
+    public uncles00: Header[];
 
-    constructor(timestamp: UInt64, babeslot: UInt64, finalnum: CompactInt, uncles: Header[]){
-        this.timestamp = timestamp;
-        this.babeslot = babeslot;
-        this.finalnum = finalnum;
-        this.uncles = uncles;
+    constructor(timstmp0: UInt64, babeSlot: UInt64, finalNum: CompactInt, uncles00: Header[]){
+        this.timstmp0 = timstmp0;
+        this.babeSlot = babeSlot;
+        this.finalNum = finalNum;
+        this.uncles00 = uncles00;
     }
 
     /**
@@ -39,9 +39,9 @@ import {Constants} from '../constants';
      */
     toU8a(): u8[] {
         // populating with empty_byte_array for now
-        return this.timestamp.toU8a()
-            .concat(this.babeslot.toU8a())
-            .concat(this.finalnum.toU8a())
+        return this.timstmp0.toU8a()
+            .concat(this.babeSlot.toU8a())
+            .concat(this.finalNum.toU8a())
             .concat(Constants.EMPTY_BYTE_ARRAY);
     }
     /**
@@ -49,30 +49,30 @@ import {Constants} from '../constants';
      * @param input Takes SCALE encoded array of bytes as an argument
      */
     static fromU8Array(input: u8 []): Inherent {
-        const timestamp: UInt64 = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
-        input = input.slice(timestamp.encodedLength());
+        const timstmp0: UInt64 = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(timstmp0.encodedLength());
 
-        const babeslot: UInt64 = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
-        input = input.slice(babeslot.encodedLength());
+        const babeSlot: UInt64 = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(babeSlot.encodedLength());
 
         const final = Bytes.decodeCompactInt(input);
-        const finalnum = new CompactInt(final.value);
+        const finalNum = new CompactInt(final.value);
         input = input.slice(final.decBytes);
 
-        let headers: Header[] = [Header.emptyHeader()];
+        let headers: Header[] = [];
         
-        return new Inherent(timestamp, babeslot, finalnum, headers);
+        return new Inherent(timstmp0, babeSlot, finalNum, headers);
     }
 
     @inline @operator('==')
     static eq(a: Inherent, b: Inherent): bool {
-        let equal: bool = a.timestamp.value == b.timestamp.value
-            && a.babeslot.value == b.babeslot.value
-            && a.finalnum.value == b.finalnum.value;
+        let equal: bool = a.timstmp0.value == b.timstmp0.value
+            && a.babeSlot.value == b.babeSlot.value
+            && a.finalNum.value == b.finalNum.value;
         let arrEqual: bool = true;
         // assumes that arrays have the same length - just a mock :)
-        for (let i=0; i<a.uncles.length; i++){
-            if (!(a.uncles[i] == b.uncles[i])){
+        for (let i=0; i<a.uncles00.length; i++){
+            if (!(a.uncles00[i] == b.uncles00[i])){
                 arrEqual = false;
             }
         }
@@ -80,42 +80,3 @@ import {Constants} from '../constants';
         
     }
 }
-
-// export class CheckInherentResult{
-//     /**
-//      *  Did the check succeed?
-//      */
-//     public okay: Bool;
-
-//     /**
-//      *  Did we encounter a fatal error?
-//      */
-//     public error: Bool;
-
-//     /**
-//      *  We use the `InherentData` to store our errors.
-//      */
-//     public errors: Inherent[]
-
-//     toU8a(): u8[]{
-//         let result: u8[] = this.okay.toU8a().concat(this.error.toU8a());
-//         for (let i = 0; this.errors.length; i++){
-//             result = result.concat(this.errors[i].toU8a());
-//         }
-//         return result;
-//     }
-
-//     constructor(okay: Bool, error: Bool, errors: Inherent[]){
-//         this.okay = okay;
-//         this.error = error;
-//         this.errors = errors;
-//     }
-
-//     static default(): CheckInherentResult {
-//         let okay = new Bool(true);
-//         let error = new Bool(false);
-//         let errors: Inherent[] = [];
-//         return new CheckInherentResult(okay, error, errors);
-//     }
-// }
-
