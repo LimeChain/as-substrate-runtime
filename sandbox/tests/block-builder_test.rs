@@ -55,3 +55,31 @@ fn test_block_builder_check_inherent_result() {
     println!("{:?}", result);
     assert_eq!(result, [0x1]);
 }
+
+#[test]
+fn test_block_builder_finalize_block() {
+    let mut setup = Setup::new();
+    let result = setup.executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        "BlockBuilder_finalize_block",
+        &[],
+        &mut setup.ext.ext(),
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", result);
+    assert_eq!(result, [0x1]);
+}
+
+#[test]
+fn test_block_builder_random_seed() {
+    let mut setup = Setup::new();
+    let result = setup.executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        "BlockBuilder_random_seed",
+        &[],
+        &mut setup.ext.ext(),
+        MissingHostFunctions::Allow).unwrap();
+    println!("{:?}", result);
+    assert_eq!(result, [0u8; 0]);
+}
