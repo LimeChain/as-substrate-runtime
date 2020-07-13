@@ -11,8 +11,9 @@ fn test_block_builder_apply_extrinsics() {
         from: AccountKeyring::Alice.into(),
         to: AccountKeyring::Bob.into(),
         amount: 69,
-        nonce: 0,
+        nonce: 5,
     }.into_signed_tx();
+    
     let result = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
         None,
