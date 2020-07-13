@@ -9,13 +9,15 @@ import { Constants } from "../constants";
 export class Block {
 
     /**
-     * Block header hash
-     */
-    public headerHash: Option<Hash>
-    /**
      * Block Header
      */
     public header: Header
+
+    /**
+     * Block header hash
+     */
+    public headerHash: Option<Hash>
+    
     /**
      * Array of Extrinsics
      */
@@ -33,10 +35,10 @@ export class Block {
      */
     public justification: Option<ByteArray>
 
-    constructor(header: Header) {
-        this.headerHash = new Option<Hash>(null);
+    constructor(header: Header, body: Extrinsic[]) {
         this.header = header;
-        this.body = [];
+        this.headerHash = new Option<Hash>(null);
+        this.body = body;
         this.receipt = new Option<ByteArray>(null);
         this.messageQueue = new Option<ByteArray>(null);
         this.justification = new Option<ByteArray>(null);
@@ -62,19 +64,20 @@ export class Block {
      * Instanciates new Block object from SCALE encoded byte array
      * @param input - SCALE encoded Block
      */
-    static fromU8Array(input: u8[]): Block {
+    static fromU8Array(input: u8[]): DecodedData<Block> {
         const decodedHeader: DecodedData<Header> = Header.fromU8Array(input);
-        
-        // const extrinsicsLength = Bytes.decodeCompactInt(input);
-        // input = input.slice(extrinsicsLength.decBytes);
-        // let extrinsics: Extrinsic[] = [];
-        // for (let i = 0; i < <i32>extrinsicsLength.value; i++) {
-        //     const decodedExtrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(input);
-        //     extrinsics.push(decodedExtrinsic.result);
-        //     input = decodedExtrinsic.input;
-        // }
 
-        return new Block(decodedHeader.result);
+        const extrinsicsLength = Bytes.decodeCompactInt(input);
+        input = input.slice(extrinsicsLength.decBytes);
+        let extrinsics: Extrinsic[] = [];
+        for (let i = 0; i < <i32>extrinsicsLength.value; i++) {
+            const decodedExtrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(input);
+            extrinsics.push(decodedExtrinsic.result);
+            input = decodedExtrinsic.input;
+        }
+
+        const block = new Block(decodedHeader.result, extrinsics);
+        return new DecodedData(block, input);
     }
 
     @inline @operator('==')
