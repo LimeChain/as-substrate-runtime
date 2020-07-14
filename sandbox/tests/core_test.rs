@@ -2,10 +2,10 @@ extern crate sandbox_execution_environment;
 extern crate hex;
 use sandbox_execution_environment::{ Block, Header, Setup };
 use sp_version::{ApiId, RuntimeVersion};
-use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }, ChangesTrieConfiguration};
+use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
 use parity_scale_codec::{Encode, Decode};
 use sp_keyring::AccountKeyring;
-use sp_runtime::{ RuntimeString, Digest, DigestItem, generic::ChangesTrieSignal };
+use sp_runtime::{ RuntimeString, Digest, DigestItem, };
 use std::borrow::Cow;
 use hex_literal::hex;
 
@@ -54,22 +54,21 @@ fn test_core_execute_block_mock() {
 				],
 			},
         },
-        extrinsics: vec![]
+        extrinsics: vec![
+            sandbox_execution_environment::Transfer {
+                from: AccountKeyring::Alice.into(),
+                to: AccountKeyring::Bob.into(),
+                amount: 69,
+                nonce: 15,
+            }.into_signed_tx(),
+            sandbox_execution_environment::Transfer {
+                from: AccountKeyring::Alice.into(),
+                to: AccountKeyring::Bob.into(),
+                amount: 70,
+                nonce: 16,
+            }.into_signed_tx()
+        ]
     };
-
-
-            // sandbox_execution_environment::Transfer {
-            //     from: AccountKeyring::Alice.into(),
-            //     to: AccountKeyring::Bob.into(),
-            //     amount: 69,
-            //     nonce: 15,
-            // }.into_signed_tx(),
-            // sandbox_execution_environment::Transfer {
-            //     from: AccountKeyring::Alice.into(),
-            //     to: AccountKeyring::Bob.into(),
-            //     amount: 70,
-            //     nonce: 16,
-            // }.into_signed_tx()
 
     let result = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
