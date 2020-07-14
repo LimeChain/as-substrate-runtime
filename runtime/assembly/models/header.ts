@@ -31,14 +31,14 @@ export class Header {
      * Field used to store any chain-specific auxiliary data, which could help the light clients interact with the block 
      * without the need of accessing the full storage as well as consensus-related data including the block signature. 
      */
-    public digest: Option<DigestItem[]>
+    public digests: Option<DigestItem[]>
 
-    constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digest: Option<DigestItem[]>) {
+    constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digests: Option<DigestItem[]>) {
         this.parentHash = parentHash;
         this.number = number;
         this.stateRoot = stateRoot;
         this.extrinsicsRoot = extrinsicsRoot;
-        this.digest = digest;
+        this.digests = digests;
     }
 
     /**
@@ -46,8 +46,8 @@ export class Header {
     */
     toU8a(): u8[] {
         let digest:u8[] = [];
-        if (this.digest.isSome()) {
-            let digestItemArray = <DigestItem[]>this.digest.unwrap();
+        if (this.digests.isSome()) {
+            let digestItemArray = <DigestItem[]>this.digests.unwrap();
             const length = new CompactInt(digestItemArray.length);
             digest.concat(length.toU8a());
             digestItemArray = digestItemArray.splice(length.encodedLength());
@@ -74,7 +74,7 @@ export class Header {
     static fromU8Array(input: u8[]): DecodedData<Header> {
         const parentHash = Hash.fromU8a(input);
         input = input.slice(parentHash.encodedLength());
-
+        
         const data = Bytes.decodeCompactInt(input);
         const number = new CompactInt(data.value);
         input = input.slice(data.decBytes);
@@ -84,7 +84,6 @@ export class Header {
 
         const extrinsicsRoot = Hash.fromU8a(input);
         input = input.slice(extrinsicsRoot.encodedLength());
-
         const digest = this.decodeOptionalDigest(input);
         
         const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest.result);
@@ -102,7 +101,7 @@ export class Header {
             let itemsLength = CompactInt.fromU8a(input);
             input = input.slice(itemsLength.encodedLength());
             digestOption = new Option<DigestItem[]>(new Array<DigestItem>());
-
+            
             for (let i = 0; i < itemsLength.value; i++) {
                 let decodedItem = DigestItem.fromU8Array(input);
                 (<DigestItem[]>digestOption.unwrap()).push(decodedItem.result);
@@ -120,13 +119,18 @@ export class Header {
             && a.number == b.number
             && a.stateRoot == b.stateRoot
             && a.extrinsicsRoot == b.extrinsicsRoot;
-        
-        if (a.digest.isSome() && b.digest.isSome()) {
-            return areEqual && Utils.areArraysEqual(<DigestItem[]>a.digest.unwrap(), <DigestItem[]>b.digest.unwrap());
-        } else if (!a.digest.isSome() && !b.digest.isSome()) {
+
+        if (a.digests.isSome() && b.digests.isSome()) {
+            return areEqual && Utils.areArraysEqual(<DigestItem[]>a.digests.unwrap(), <DigestItem[]>b.digests.unwrap());
+        } else if (!a.digests.isSome() && !b.digests.isSome()) {
             return areEqual;
         }else {
             return false;
         }
+    }
+
+    @inline @operator('!=')
+    static notEq(a: Header, b: Header): bool {
+        return !Header.eq(a, b);
     }
 }
