@@ -51,7 +51,7 @@ export class Header {
             const length = new CompactInt(digestItemArray.length);
             digest.concat(length.toU8a());
             digestItemArray = digestItemArray.splice(length.encodedLength());
-
+            
             for (let i = 0; i < length.value; i++){
                 digest = digest.concat(digestItemArray[i].toU8a());
             }

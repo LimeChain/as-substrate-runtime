@@ -28,11 +28,12 @@ export class Seal extends BaseConsensusItem {
     }
 
     /**
-     * Implementation of abstract function.
-     * Returns the Digest Item type
-     */
-    getDigestType(): DigestItemType {
-        return DigestItemType.Seal;
+      * SCALE Encodes the Seal DigestItem into u8[]
+      */
+    toU8a(): u8[] {
+        let encoded: u8[] = [<u8>DigestItemType.Seal];
+        return encoded.concat(this.consensusEngineId)
+            .concat(this.value.toU8a());
     }
 
 }

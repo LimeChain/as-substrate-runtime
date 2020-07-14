@@ -24,15 +24,6 @@ export abstract class BaseConsensusItem extends DigestItem {
     }
 
     /**
-     * SCALE Encodes the Consensus DigestItem into u8[]
-     */
-    toU8a(): u8[] {
-        let encoded: u8[] = [<u8>this.getDigestType()];
-        return encoded.concat(this.consensusEngineId)
-            .concat(this.value.toU8a());
-    }
-
-    /**
      * Checks whether the value passed is equal to this instance
      * @param other
      */
@@ -40,6 +31,4 @@ export abstract class BaseConsensusItem extends DigestItem {
         return Utils.areArraysEqual(this.consensusEngineId, other.consensusEngineId)
             && this.value == other.value;
     }
-
-    abstract getDigestType(): DigestItemType;
 }
