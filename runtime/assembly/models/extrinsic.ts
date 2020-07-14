@@ -105,11 +105,4 @@ export class Extrinsic {
         return !Extrinsic.eq(a, b);
     }
 
-    toString(): string {
-        return "{ from: " + this.from.toString() +
-            ", to: " + this.to.toString() +
-            ", amount: " + this.amount.value.toString() +
-            ", nonce: " + this.nonce.value.toString() +
-            ", signature: " + this.signature.toString() + " }";
-    }
 }
