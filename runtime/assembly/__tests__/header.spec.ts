@@ -20,4 +20,11 @@ describe("Header", () => {
     
   });
 
+  it("should instanciate header with many digests from SCALE encoded Byte array", () => {
+
+    // TODO
+
+  });
+
+
 });
