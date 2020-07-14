@@ -1,6 +1,6 @@
-import { DigestItem, Other, ChangeTrieRoot, Consensus } from "../models";
+import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models";
 import { MockBuilder } from "./mock-builder";
-import { Byte, ByteArray, Hash } from "as-scale-codec";
+import { ByteArray, Hash } from "as-scale-codec";
 import { Utils } from "../utils";
 import { MockConstants } from "./mock-constants";
 
@@ -55,22 +55,56 @@ describe("Digest Item", () => {
     it("Should encode Consensus Digest Item", () => {
         const consensusEngineId: u8[] = [97, 117, 114, 97];
         const consensusValue = ByteArray.fromU8a([12, 1, 1, 1]); 
-        const changeTrie = new Consensus(consensusEngineId, consensusValue);
-        assert(Utils.areArraysEqual(changeTrie.toU8a(), MockConstants.CONSENSUS_DIGEST), "Consensus Digest was not encoded successfully");
+        const consensus = new Consensus(consensusEngineId, consensusValue);
+        assert(Utils.areArraysEqual(consensus.toU8a(), MockConstants.CONSENSUS_DIGEST), "Consensus Digest was not encoded successfully");
 
-        __retain(changetype<usize>(changeTrie));
+        __retain(changetype<usize>(consensus));
     });
 
     it("Should instanciate Seal Digest Item", () => {
+        const mock = MockBuilder.getSealDigestItemMock();
+        const digestItem = DigestItem.fromU8Array(mock.bytes);
+        assert(digestItem.result == mock.expectedObject, "Seal Digest Item was not instanciated properly");
 
+        __retain(changetype<usize>(mock));
+        __retain(changetype<usize>(digestItem));
     })
+
+    throws("Should throw when trying to instanciate Seal with invalid bytes", () => {
+        // Should throw because Engine ID must be 4 bytes
+        const seal = new Seal([1], ByteArray.fromU8a([1, 1, 1, 1]));
+    });
+
+    it("Should encode Seal Digest Item", () => {
+        const consensusEngineId: u8[] = [1, 1, 1, 1];
+        const consensusValue = ByteArray.fromU8a([12, 2, 2, 2]);
+        const seal = new Seal(consensusEngineId, consensusValue);
+        assert(Utils.areArraysEqual(seal.toU8a(), MockConstants.SEAL_DIGEST), "Seal Digest was not encoded successfully");
+
+        __retain(changetype<usize>(seal));
+    });
 
     it("Should instanciate PreRuntime Digest Item", () => {
+        const mock = MockBuilder.getPreRuntimeDigestItemMock();
+        const digestItem = DigestItem.fromU8Array(mock.bytes);
+        assert(digestItem.result == mock.expectedObject, "PreRuntime Digest Item was not instanciated properly");
 
-    })
+        __retain(changetype<usize>(mock));
+        __retain(changetype<usize>(digestItem));
+    });
 
-    it("Should instanciate ChangesTrieSignal Digest Item", () => {
+    throws("Should throw when trying to instanciate PreRuntime with invalid bytes", () => {
+        // Should throw because Engine ID must be 4 bytes
+        const preRuntime = new PreRuntime([1], ByteArray.fromU8a([1, 1, 1, 1]));
+    });
 
-    })
+    it("Should encode PreRuntime Digest Item", () => {
+        const consensusEngineId: u8[] = [1, 1, 1, 1];
+        const consensusValue = ByteArray.fromU8a([12, 2, 2, 2]);
+        const preRuntime = new PreRuntime(consensusEngineId, consensusValue);
+        assert(Utils.areArraysEqual(preRuntime.toU8a(), MockConstants.PRERUNTIME_DIGEST), "Seal Digest was not encoded successfully");
+
+        __retain(changetype<usize>(preRuntime));
+    });
 
 });

@@ -1,5 +1,7 @@
 import { DecodedData } from "../../codec/decoded-data";
 import { Other, Consensus, ChangeTrieRoot } from ".";
+import { Seal } from "./seal";
+import { PreRuntime } from "./pre-runtime";
 
 /**
  * Types of the digest items
@@ -73,10 +75,10 @@ export abstract class DigestItem {
                 return Consensus.fromU8Array(input);
             }
             case DigestItemType.Seal: {
-
+                return Seal.fromU8Array(input);
             }
             case DigestItemType.PreRuntime: {
-
+                return PreRuntime.fromU8Array(input);
             }
             default: {
                 throw new Error("DigestItem: Unsupported DigestItem type: " + type.toString());
