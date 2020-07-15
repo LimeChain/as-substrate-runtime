@@ -4,19 +4,19 @@ import { DecodedData } from "../../codec/decoded-data";
 import { Constants } from "../../constants";
 
 /**
- * Class representing Consensus Digest Item into the Substrate Runtime
+ * Class representing PreRuntime Digest Item into the Substrate Runtime
  */
-export class Consensus extends BaseConsensusItem {
-   
+export class PreRuntime extends BaseConsensusItem {
+
     constructor(consensusEngineId: u8[], value: ByteArray) {
-        super(DigestItemType.Consensus, consensusEngineId, value);
+        super(DigestItemType.PreRuntime, consensusEngineId, value);
     }
 
     /**
-     * Instanciates Consensus DigestItem from SCALE Encoded Bytes
+     * Instanciates PreRuntime DigestItem from SCALE Encoded Bytes
      */
     static fromU8Array(input: u8[]): DecodedData<DigestItem> {
-        assert(input.length > Constants.CONSENSUS_ENGINE_ID_LENGTH, "Consensus Digest Item: Input bytes are invalid. EOF");
+        assert(input.length > Constants.CONSENSUS_ENGINE_ID_LENGTH, "PreRuntime Digest Item: Input bytes are invalid. EOF");
 
         const consensusEngineId = input.slice(0, Constants.CONSENSUS_ENGINE_ID_LENGTH);
         input = input.slice(Constants.CONSENSUS_ENGINE_ID_LENGTH);
@@ -24,14 +24,15 @@ export class Consensus extends BaseConsensusItem {
         const value = ByteArray.fromU8a(input);
         input = input.slice(value.encodedLength());
 
-        return new DecodedData<DigestItem>(new Consensus(consensusEngineId, value), input);
+        return new DecodedData<DigestItem>(new PreRuntime(consensusEngineId, value), input);
     }
 
     /**
      * Implementation of abstract function.
-     * Returns the Digest Item type 
+     * Returns the Digest Item type
      */
     getDigestType(): DigestItemType {
-        return DigestItemType.Consensus;
+        return DigestItemType.PreRuntime;
     }
+
 }

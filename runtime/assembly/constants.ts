@@ -14,4 +14,9 @@ export namespace Constants {
      * Length of the InherentIdentifier in InherentData
      */
     export const INHERENT_IDENTIFIER_LENGTH = 8;
+
+    /**
+     * Number of bytes for the Consensus Engine IDs
+     */
+    export const CONSENSUS_ENGINE_ID_LENGTH = 4;
 }

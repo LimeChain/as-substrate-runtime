@@ -61,5 +61,4 @@ export namespace MockConstants {
     export const CONSENSUS_DIGEST: u8[] = [4, 97, 117, 114, 97, 12, 1, 1, 1];
     export const SEAL_DIGEST: u8[] = [5, 1, 1, 1, 1, 12, 2, 2, 2];
     export const PRERUNTIME_DIGEST: u8[] = [6, 1, 1, 1, 1, 12, 2, 2, 2];
-    export const CHANGES_TRIE_SIGNAL_DIGEST: u8[] = [7, 0, 1, 1, 0, 0, 0, 2, 0, 0, 0];
 }

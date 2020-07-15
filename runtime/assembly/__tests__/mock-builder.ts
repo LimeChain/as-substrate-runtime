@@ -1,9 +1,9 @@
 import { MockResult } from "./mock-result";
 import { Block, Option, Header, Extrinsic, InherentData } from "../models";
-import { Hash, CompactInt, UInt64, ByteArray, ScaleString, Bool } from "as-scale-codec";
+import { Hash, CompactInt, UInt64, Bool, ByteArray, ScaleString } from "as-scale-codec";
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
-import { DigestItem, Other, ChangeTrieRoot, Consensus } from "../models/digest-items";
+import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -87,7 +87,7 @@ export namespace MockBuilder {
     }
 
     /**
-     * Returns SCALE Encoded ChangeTrieRoot with type Option and Instance of that Digest Item
+     * Returns SCALE Encoded ChangeTrieRoot and Instance of that Digest Item
      */
     export function getChangeTrieRootDigestItemMock(): MockResult<DigestItem> {
         const changeTrieRoot = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
@@ -95,12 +95,30 @@ export namespace MockBuilder {
     }
 
     /**
-     * Returns SCALE Encoded ChangeTrieRoot with type Option and Instance of that Digest Item
+     * Returns SCALE Encoded Consensus and Instance of that Digest Item
      */
     export function getConsensusDigestItemMock(): MockResult<DigestItem> {
         const consensusEngineId: u8[] = [97, 117, 114, 97];
         const consensusValue = ByteArray.fromU8a([12, 1, 1, 1]); 
         return new MockResult(new Consensus(consensusEngineId, consensusValue), MockConstants.CONSENSUS_DIGEST);
+    }
+
+    /**
+     * Returns SCALE Encoded Seal and Instance of that Digest Item
+     */
+    export function getSealDigestItemMock(): MockResult<DigestItem> {
+        const consensusEngineId: u8[] = [1, 1, 1, 1];
+        const consensusValue = ByteArray.fromU8a([12, 2, 2, 2]);
+        return new MockResult(new Seal(consensusEngineId, consensusValue), MockConstants.SEAL_DIGEST);
+    }
+
+    /**
+     * Returns SCALE Encoded PreRuntime and Instance of that Digest Item
+     */
+    export function getPreRuntimeDigestItemMock(): MockResult<DigestItem> {
+        const consensusEngineId: u8[] = [1, 1, 1, 1];
+        const consensusValue = ByteArray.fromU8a([12, 2, 2, 2]);
+        return new MockResult(new PreRuntime(consensusEngineId, consensusValue), MockConstants.PRERUNTIME_DIGEST);
     }
 }
 
