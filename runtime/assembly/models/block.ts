@@ -45,7 +45,7 @@ export class Block {
     }
 
     toU8a(): u8[] {
-        // TODO
+        // TODO fix in another PR
         return [];
     }
 

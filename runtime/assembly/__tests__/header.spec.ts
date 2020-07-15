@@ -44,6 +44,7 @@ describe("Header", () => {
     __retain(changetype<usize>(header));
   });
 
+  // TODO fix in another PR
   // it("should encode header with digests correctly", () => {
   //   const header = MockHelper.getHeaderInstanceWithDigests();
     
