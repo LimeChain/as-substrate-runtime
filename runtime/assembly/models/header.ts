@@ -74,8 +74,8 @@ export class Header {
 
         const digest = this.decodeOptionalHash(input);
         
-        const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
-        return new DecodedData(result, input);
+        const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest.result);
+        return new DecodedData(result, digest.input);
     }
 
     /**
@@ -83,15 +83,15 @@ export class Header {
      * TODO - move this function to a proper place
      * @param input - SCALE Encded byte array
      */
-    private static decodeOptionalHash(input: u8[]): Option<Hash> {
+    private static decodeOptionalHash(input: u8[]): DecodedData<Option<Hash>> {
         let valueOption = new Option<Hash>(null);
         if (Utils.isSet(input)) {
             valueOption.value = Hash.fromU8a(input);
             input = input.slice((<Hash>valueOption.unwrap()).encodedLength())
         } else {
-            input.slice(1);
+            input = input.slice(1);
         }
-        return valueOption;
+        return new DecodedData<Option<Hash>>(valueOption, input);
     }
 
     @inline @operator('==')
