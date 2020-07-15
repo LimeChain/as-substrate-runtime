@@ -44,6 +44,7 @@ export class Header {
     /**
     * SCALE Encodes the Header into u8[]
     */
+    // TODO fix in another PR
     toU8a(): u8[] {
         let digest:u8[] = [];
         if (this.digests.isSome()) {
