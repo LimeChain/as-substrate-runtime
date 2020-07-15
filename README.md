@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Unit Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/Unit%20Tests/badge.svg)
 ![Integration Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/Integration%20Tests/badge.svg)
+
+
 Account-Based Substrate PoC Runtime written in AssemblyScript.
 The project is funded by [Web3 Foundation](https://web3.foundation/) via their [General Grants Program](https://github.com/w3f/General-Grants-Program) 🙏
 
@@ -13,11 +15,11 @@ This PoC can be considered the first step towards a general framework for develo
 
 ## Roadmap
 
-#### :white_check_mark:    Milestone 1 - WASM API Mock
+#### Milestone 1 - WASM API Mock :white_check_mark: 
 
 In this milestone, the communication mechanism between the Host and Runtime will be established. The runtime will be able to access input passed from the Host and will be able to return data back to the Host as response. The Polkadot WASM API entries are mocked in this milestone.
 
-#### :soon: Milestone 2 - Storage Module
+#### Milestone 2 - Storage Module
 In this milestone the basic functionality for setting and getting storage from the AS Runtime using the Polkadot HOST API will be implemented.
 
 #### Milestone 3 - Support for Aura consensus
