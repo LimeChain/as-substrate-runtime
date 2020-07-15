@@ -2,6 +2,7 @@ import { Hash, ByteArray, Bytes } from "as-scale-codec";
 import { Header, Extrinsic, Option } from ".";
 import { DecodedData } from "../codec/decoded-data";
 import { Constants } from "../constants";
+import { Utils } from "../utils";
 
 /**
  * Class representing a Block into the Substrate Runtime
@@ -83,16 +84,7 @@ export class Block {
 
     @inline @operator('==')
     static eq(a: Block, b: Block): bool {
-        if (a.body.length != b.body.length) {
-            return false;
-        } else {
-            for (let i = 0; i < a.body.length; i++) {
-                if (a.body[i] != b.body[i]) {
-                    return false;
-                }
-            }
-            return a.header == b.header;
-        }
+        return a.header == b.header && Utils.areArraysEqual(a.body, b.body);
     }
 
 }

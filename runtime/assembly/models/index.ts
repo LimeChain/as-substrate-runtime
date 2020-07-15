@@ -5,4 +5,5 @@ export * from './runtime-version';
 export * from './supported-apis';
 export * from './option';
 export * from './inherentData';
-export * from './signature'
+export * from './signature';
+export * from './digest-items';

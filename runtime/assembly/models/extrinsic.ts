@@ -1,4 +1,4 @@
-import { Hash, UInt64, BIT_LENGTH } from "as-scale-codec";
+import { Hash, UInt64, BIT_LENGTH, Bool } from "as-scale-codec";
 import { DecodedData } from "../codec/decoded-data";
 import { Signature } from ".";
 import { Constants } from "./../constants";
@@ -33,12 +33,18 @@ export class Extrinsic {
      */
     public signature: Signature
 
-    constructor(from: Hash, to: Hash, amount: UInt64, nonce: UInt64, signature: Signature) {
+    /**
+     * Determines whether to exhaust the gas. Default false
+     */
+    public exhaustResourcesWhenNotFirst: Bool
+
+    constructor(from: Hash, to: Hash, amount: UInt64, nonce: UInt64, signature: Signature, exhaustResourcesWhenNotFirst: Bool) {
         this.from = from;
         this.to = to;
         this.amount = amount;
         this.nonce = nonce;
         this.signature = signature;
+        this.exhaustResourcesWhenNotFirst = exhaustResourcesWhenNotFirst;
     }
 
     /**
@@ -49,7 +55,8 @@ export class Extrinsic {
             .concat(this.to.toU8a())
             .concat(this.amount.toU8a())
             .concat(this.nonce.toU8a())
-            .concat(this.signature.value);
+            .concat(this.signature.value)
+            .concat(this.exhaustResourcesWhenNotFirst.toU8a());
     }
 
     /**
@@ -73,8 +80,11 @@ export class Extrinsic {
 
         const signature = new Signature(input.slice(0, Constants.SIGNATURE_LENGTH));
         input = input.slice(signature.value.length);
+
+        const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
+        input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
         
-        const extrinsic = new Extrinsic(from, to, amount, nonce, signature);
+        const extrinsic = new Extrinsic(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
 
         return new DecodedData(extrinsic, input);
     }
