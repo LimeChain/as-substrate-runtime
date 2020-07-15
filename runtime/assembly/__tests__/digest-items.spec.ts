@@ -1,6 +1,6 @@
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models";
-import { MockBuilder } from "./mock-builder";
-import { ByteArray, Hash } from "as-scale-codec";
+import { MockBuilder, MockHelper } from "./mock-builder";
+import { ByteArray } from "as-scale-codec";
 import { Utils } from "../utils";
 import { MockConstants } from "./mock-constants";
 
@@ -32,7 +32,7 @@ describe("Digest Item", () => {
     });
 
     it("Should encode ChangeTrieRoot Digest Item", () => {
-        const changeTrie = new ChangeTrieRoot(Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]));
+        const changeTrie = new ChangeTrieRoot(MockHelper.getPopulatedHash(255));
         assert(Utils.areArraysEqual(changeTrie.toU8a(), MockConstants.CHANGE_TRIE_ROOT_DIGEST), "ChangeTrieRoot Digest was not encoded successfully");
 
         __retain(changetype<usize>(changeTrie));
