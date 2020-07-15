@@ -1,6 +1,6 @@
 import { MockResult } from "./mock-result";
-import { Block, Option, Header, Extrinsic, Inherent } from "../models";
-import { Hash, CompactInt, UInt64, ByteArray } from "as-scale-codec";
+import { Block, Option, Header, Extrinsic, InherentData } from "../models";
+import { Hash, CompactInt, UInt64, ByteArray, ScaleString, Byte, BIT_LENGTH } from "as-scale-codec";
 import { Signature } from "../models/signature";
 
 /**
@@ -44,10 +44,21 @@ export namespace MockBuilder {
      * Returns SCALE encoded Inherent Mock and Instance of that Mock
      */
 
-     export function getInherentMock(): MockResult<Inherent> {
+     export function getInherentMock(): MockResult<InherentData> {
         const DEFAULT_INHERENT: u8[] = [
-            0, 0, 0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 0, 0,
+            16, 
+            98, 97, 98, 101, 115, 108, 111, 116, 
+            32, 2, 0, 0, 0, 0, 0, 0, 0, 
+            102, 105, 110, 97, 108, 110, 117, 109, 
+            4, 4, 
+            116, 105, 109, 115, 116, 109, 112, 48, 
+            32, 1, 0, 0, 0, 0, 0, 0, 0, 
+            117, 110, 99, 108, 101, 115, 48, 48, 
+            141, 1, 4, 
+            69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 
+            4, 
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
             0
         ];
 
@@ -89,14 +100,29 @@ namespace MockHelper {
         const digest = new Option<Hash>(null);
         return new Header(hash69, blockNumber, hash255, hash255, digest);
     }
+    /**
+     * Returns an InherentData instance 
+     * Used internally in the mock builder
+     */
+    export function _getEmptyInherentInstance(): InherentData {
+        const timestamp: UInt64 = new UInt64(1);
+        const babeslot: UInt64 = new UInt64(2);
+        const finalnum: CompactInt = new CompactInt(1);
 
-    export function _getEmptyInherentInstance(): Inherent {
-        const timestamp: UInt64 = new UInt64(0);
-        const babeslot: UInt64 = new UInt64(0);
-        const finalnum: CompactInt = new CompactInt(0);
-        const headers: Header[] = [];
+        const header1 = _getHeaderInstanceWithoutDigest();
+        let headerU8: u8[] = [];
+        headerU8 = headerU8.concat((new CompactInt(1)).toU8a());
+        headerU8 = headerU8.concat(header1.toU8a());
 
-        return new Inherent(timestamp, babeslot, finalnum, headers);
+        __retain(changetype<usize>(header1));
+
+        const data: Map<ScaleString, ByteArray> = new Map<ScaleString, ByteArray>();
+        data.set(new ScaleString('babeslot'), new ByteArray(babeslot.toU8a()));
+        data.set(new ScaleString('finalnum'),  new ByteArray(finalnum.toU8a()));
+        data.set((new ScaleString('timstmp0')),  new ByteArray(timestamp.toU8a()));
+        data.set((new ScaleString('uncles00')), new ByteArray(headerU8));
+        
+        return new InherentData(data);
     }
     
     export function _getExtrinsicInstance(): Extrinsic {

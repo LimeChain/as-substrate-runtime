@@ -1,8 +1,10 @@
 extern crate sandbox_execution_environment;
-use sandbox_execution_environment::{ Transfer, Inherent, Setup };
+use sandbox_execution_environment::{ Transfer, Setup, Header};
 use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
-use parity_scale_codec::{Encode, Decode};
+use parity_scale_codec::{Encode, Compact};
+pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
 use sp_keyring::AccountKeyring;
+use hex_literal::hex;
 
 #[test]
 fn test_block_builder_apply_extrinsics() {
@@ -28,7 +30,41 @@ fn test_block_builder_apply_extrinsics() {
 #[test]
 fn test_block_builder_inherent_extrinsics() {
     let mut setup = Setup::new();
-    let inh = Inherent::new();
+    let mut inh = InherentData::new();
+    
+    const TM_KEY: InherentIdentifier = *b"timstmp0";
+    let tm_value: u64 = 1;
+    
+    const BS_KEY: InherentIdentifier = *b"babeslot";
+    let bs_value: u64 = 2;
+    
+    const FN_KEY: InherentIdentifier = *b"finalnum";
+    let fn_value: Compact<u64> = Compact(1);
+
+    const UN_KEY: InherentIdentifier = *b"uncles00";
+
+    let header_1: Header = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 1,
+        state_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        digest: Default::default(),
+    };
+    let header_2: Header = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 3,
+        state_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        digest: Default::default(),
+    };
+
+    let un_value: [Header; 2] = [header_1, header_2];
+    
+    inh.put_data(TM_KEY, &tm_value).unwrap();
+    inh.put_data(BS_KEY, &bs_value).unwrap();
+    inh.put_data(FN_KEY, &fn_value).unwrap();
+    inh.put_data(UN_KEY, &un_value).unwrap();
+
     let result = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
         None,
@@ -36,9 +72,10 @@ fn test_block_builder_inherent_extrinsics() {
         &inh.encode(),
         &mut setup.ext.ext(),
         MissingHostFunctions::Allow).unwrap();
-    let res = <Inherent>::decode(&mut result.as_ref());
-    println!("{:?}", Some(&inh));
-    assert_eq!(Some(&inh), res.iter().next());
+
+    println!("{:?}", &inh.encode());
+    println!("{:?}", result);
+    assert_eq!(&result, &inh.encode());
 }
 
 #[test]

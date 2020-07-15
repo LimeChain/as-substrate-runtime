@@ -8,5 +8,10 @@ export namespace Constants {
     /**
      * Length of the bytes of a signature
      */
-    export const SIGNATURE_LENGTH = 64; 
+    export const SIGNATURE_LENGTH = 64;
+
+    /**
+     * Length of the InherentIdentifier in InherentData
+     */
+    export const INHERENT_IDENTIFIER_LENGTH = 8;
 }
