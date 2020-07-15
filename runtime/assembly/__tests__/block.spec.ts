@@ -35,17 +35,10 @@ describe("Block", () => {
     __retain(changetype<usize>(block))
   });
 
-  // TODO
+  // TODO will fix in another PR
   // it("should encode block without digests correctly", () => {
-  //   const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
-  //   const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
-  //   const blockNumber = new CompactInt(1);
-  //   const digest = new Option<DigestItem[]>(null);
-  //   const header = new Header(hash69, blockNumber, hash255, hash255, digest);
-
-  //   assert(Utils.areArraysEqual(header.toU8a(), MockConstants.HEADER_WITHOUT_DIGEST), "Header without digests was not encoded successfully");
-  //   __retain(changetype<usize>(header));
   // });
 
   // TODO Should encode block with digests correctly
+  // TODO will fix in another PR
 });
