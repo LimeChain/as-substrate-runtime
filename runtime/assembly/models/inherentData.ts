@@ -1,4 +1,4 @@
-import {UInt64, CompactInt, BIT_LENGTH, Bytes, ScaleString, ByteArray} from 'as-scale-codec';
+import { CompactInt, Bytes, ScaleString, ByteArray } from 'as-scale-codec';
 import { Constants } from '../constants';
 import { DecodedData } from '../codec/decoded-data';
 

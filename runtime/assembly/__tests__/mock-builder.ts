@@ -1,6 +1,6 @@
 import { MockResult } from "./mock-result";
 import { Block, Option, Header, Extrinsic, InherentData } from "../models";
-import { Hash, CompactInt, UInt64, Bool, ByteArray } from "as-scale-codec";
+import { Hash, CompactInt, UInt64, Bool, ByteArray, ScaleString } from "as-scale-codec";
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
