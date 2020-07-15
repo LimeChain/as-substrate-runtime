@@ -57,7 +57,7 @@ The Integration tests are written in Rust. They are calling into the WASM code a
 2. Whether the API functions are returning the correct responses.
 
 ### 0. Prerequisite
-- Have `Rustup` installed so that you can build and run the Integration tests
+- Have `rust` installed so that you can build and run the Integration tests
 
 ### 1. Building the Runtime
 1. Go to `./runtime`
