@@ -56,23 +56,28 @@ The Integration tests are written in Rust. They are calling into the WASM code a
 1. Whether the WASM code exposes the required API functions.
 2. Whether the API functions are returning the correct responses.
 
-### Building the Runtime
+### 0. Prerequisite
+- Have `Rustup` installed so that you can build and run the Integration tests
+
+### 1. Building the Runtime
 1. Go to `./runtime`
-2. Execute `npm run install`
+2. Execute `npm install`
 3. Execute `npm run asbuild`
 New `wasm-code` binary file will be generated in the `../sandbox` folder.
 
-### Running the Unit Tests
+### 2. Running the Unit Tests
 1. Go to `./runtime`
 2. Execute `npm run test`
 
-### Compile the Rust test Environment (Sandbox)
+### 3. Compile the Rust Environment (Sandbox)
 1. Go to `./sandbox`
 2. Execute `cargo build`
+* The build might take a couple of minutes. 
 
-### Run the Integration Tests
+### 4. Run the Integration Tests
 1. Go to `./sandbox`
 2. Execute `cargo test`
+
 *To see the results of the called methods, execute the commant with `cargo test -- --nocapture`
 
 # **License**
