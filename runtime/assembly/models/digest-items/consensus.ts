@@ -28,10 +28,11 @@ export class Consensus extends BaseConsensusItem {
     }
 
     /**
-     * Implementation of abstract function.
-     * Returns the Digest Item type 
+     * SCALE Encodes the Consensus DigestItem into u8[]
      */
-    getDigestType(): DigestItemType {
-        return DigestItemType.Consensus;
+    toU8a(): u8[] {
+        let encoded: u8[] = [<u8>DigestItemType.Consensus];
+        return encoded.concat(this.consensusEngineId)
+            .concat(this.value.toU8a());
     }
 }

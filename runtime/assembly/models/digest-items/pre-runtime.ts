@@ -28,11 +28,12 @@ export class PreRuntime extends BaseConsensusItem {
     }
 
     /**
-     * Implementation of abstract function.
-     * Returns the Digest Item type
+     * SCALE Encodes the PreRuntime DigestItem into u8[]
      */
-    getDigestType(): DigestItemType {
-        return DigestItemType.PreRuntime;
+    toU8a(): u8[] {
+        let encoded: u8[] = [<u8>DigestItemType.PreRuntime];
+        return encoded.concat(this.consensusEngineId)
+            .concat(this.value.toU8a());
     }
 
 }

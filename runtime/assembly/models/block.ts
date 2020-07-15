@@ -44,6 +44,11 @@ export class Block {
         this.justification = new Option<ByteArray>(null);
     }
 
+    toU8a(): u8[] {
+        // TODO
+        return [];
+    }
+
     /**
      * Instanciates new Block object from SCALE encoded byte array
      * @param input - SCALE encoded Block
