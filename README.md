@@ -9,14 +9,15 @@ The project is funded by [Web3 Foundation](https://web3.foundation/) via their [
 
 Currently the most matured way of developing Runtimes is using the Substrate framework (in Rust). The goal of this project is to deliver an Account-Based Substrate Runtime written in AssemblyScript as PoC.
 
-This PoC be considered the first step towards a general framework for developing runtimes in AssemblyScript.
+This PoC can be considered the first step towards a general framework for developing runtimes in AssemblyScript.
 
 ## Roadmap
 
-#### Milestone 1 - WASM API Mock
+#### :white_check_mark: Milestone 1 - WASM API Mock
+
 In this milestone, the communication mechanism between the Host and Runtime will be established. The runtime will be able to access input passed from the Host and will be able to return data back to the Host as response. The Polkadot WASM API entries are mocked in this milestone.
 
-#### Milestone 2 - Storage Module
+#### :soon: Milestone 2 - Storage Module
 In this milestone the basic functionality for setting and getting storage from the AS Runtime using the Polkadot HOST API will be implemented.
 
 #### Milestone 3 - Support for Aura consensus
@@ -28,6 +29,20 @@ In this milestone the State transition function will be implemented into the AS 
 2.  Run its Aura consensus.
 3.  Sync/Initialize/Execute blocks.
 4.  Being able to process Account Balance transfers (Extrinsics)
+
+## Project Structure
+The most important components of this project are the following:
+```
+as-substrate-runtime
+│
+└───runtime
+│   └───assembly
+│       └─── __tests__     <--- Runtime unit tests
+│       └─── api           <--- WASM API (Core, BlockBuilder, etc..)
+│       └─── models        <--- Runtime model classes (block, header, extrinsic, etc...)
+│  
+└───sandbox                <--- Rust environment for testing the Runtime
+```
 
 ## Playing with the Runtime
 The runtime has 2 types of tests so far -> Integration and Unit tests
