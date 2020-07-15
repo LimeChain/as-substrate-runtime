@@ -1,7 +1,6 @@
 import { Hash, ByteArray, Bytes } from "as-scale-codec";
 import { Header, Extrinsic, Option } from ".";
 import { DecodedData } from "../codec/decoded-data";
-import { Constants } from "../constants";
 import { Utils } from "../utils";
 
 /**
@@ -43,22 +42,6 @@ export class Block {
         this.receipt = new Option<ByteArray>(null);
         this.messageQueue = new Option<ByteArray>(null);
         this.justification = new Option<ByteArray>(null);
-    }
-
-    /**
-     * SCALE Encodes the Block into u8[]
-     */
-    toU8a(): u8[] {
-        // Encode headerHash and header
-        let encoded = this.header.toU8a();
-        if (this.body.length == 0) {
-            encoded = encoded.concat(Constants.EMPTY_BYTE_ARRAY);
-        } else {
-            //TODO - support for extrinsics
-            throw new Error('not supported yet');
-        }
-
-        return encoded;
     }
 
     /**

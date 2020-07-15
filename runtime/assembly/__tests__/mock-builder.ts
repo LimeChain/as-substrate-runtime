@@ -30,10 +30,27 @@ export namespace MockBuilder {
     }
 
     /**
+     * Returns SCALE Encoded Block with extrinsics and digests mock and instance of that block
+     */
+    export function getBlockWithExtrinsicsAndDigests(): MockResult<Block> {
+        const header = MockHelper._getHeaderInstanceWithDigests();
+        const extrinsic1 = MockHelper._getExtrinsicInstance1();
+        const extrinsic2 = MockHelper._getExtrinsicInstance2();
+        return new MockResult(new Block(header, [extrinsic1, extrinsic2]), MockConstants.BLOCK_WITH_EXTRINSIC_AND_DIGESTS)
+    }
+
+    /**
      * Returns SCALE Encoded Header Mock and Instance of that Header
      */
     export function getHeaderWithoutDigestMock(): MockResult<Header> {
         return new MockResult(MockHelper._getHeaderInstanceWithoutDigest(), MockConstants.HEADER_WITHOUT_DIGEST);
+    }
+
+    /**
+     * Returns SCALE Encoded Header with Digests Mock and Instance of that Header
+     */
+    export function getHeaderWithDigestsMock(): MockResult<Header> {
+        return new MockResult(MockHelper._getHeaderInstanceWithDigests(), MockConstants.HEADER_WITH_DIGEST);
     }
 
     /**
@@ -160,6 +177,27 @@ namespace MockHelper {
         data.set((new ScaleString('uncles00')), new ByteArray(headerU8));
         
         return new InherentData(data);
+
+    /**
+     * Returns a Header instance with a populated parent hash, block number, stateRoot, extrinsics root and digests.
+     * Used Internally in the mock builder
+     */
+    export function _getHeaderInstanceWithDigests(): Header {
+        const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
+        const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
+        const blockNumber = new CompactInt(1);
+
+        const digest = new Option<DigestItem[]>(MockHelper._getDigests());
+        return new Header(hash69, blockNumber, hash255, hash255, digest);
+    }
+
+    export function _getEmptyInherentInstance(): Inherent {
+        const timestamp: UInt64 = new UInt64(0);
+        const babeslot: UInt64 = new UInt64(0);
+        const finalnum: CompactInt = new CompactInt(0);
+        const headers: Header[] = [];
+
+        return new Inherent(timestamp, babeslot, finalnum, headers);
     }
     
     export function _getExtrinsicInstance1(): Extrinsic {
@@ -181,4 +219,15 @@ namespace MockHelper {
         const exhaustResource = new Bool(false);
         return new Extrinsic(from, to, amount, nonce, signature, exhaustResource);
     }
-}
+
+    export function _getDigests(): DigestItem[] {
+        const digestsArr = new Array<DigestItem>();
+        digestsArr.push(new Other(ByteArray.fromU8a([12, 1, 1, 1])));
+        const trieRootValue = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
+        digestsArr.push(new ChangeTrieRoot(trieRootValue));
+        digestsArr.push(new Consensus([97, 117, 114, 97], ByteArray.fromU8a([12, 1, 1, 1])));
+        digestsArr.push(new Seal([1, 1, 1, 1], ByteArray.fromU8a([12, 2, 2, 2])));
+        digestsArr.push(new PreRuntime([1, 1, 1, 1], ByteArray.fromU8a([12, 2, 2, 2])));
+        return digestsArr;
+    }
+ }

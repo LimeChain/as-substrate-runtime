@@ -25,8 +25,14 @@ describe("Block", () => {
     __retain(changetype<usize>(block))
   });
 
-  it("should instanciate block with extrinsic and header digest from  SCALE Encoded Byte Array", () => {
-    //TODO;
+  it("should instanciate block with extrinsics and header digests from  SCALE Encoded Byte Array", () => {
+    const mock = MockBuilder.getBlockWithExtrinsicsAndDigests();
+    const block = Block.fromU8Array(mock.bytes);
+
+    assert(block.result == mock.expectedObject, "block with extrinsic and digests was not instanciated properly");
+
+    __retain(changetype<usize>(mock));
+    __retain(changetype<usize>(block))
   });
 
 });

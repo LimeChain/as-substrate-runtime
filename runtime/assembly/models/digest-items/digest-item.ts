@@ -93,4 +93,9 @@ export abstract class DigestItem {
     static eq(a: DigestItem, b: DigestItem): bool {
         return a.typeId === b.typeId && a.equals(b);
     }
+
+    @inline @operator('!=')
+    static notEq(a: DigestItem, b: DigestItem): bool {
+        return !DigestItem.eq(a, b);
+    }
 }

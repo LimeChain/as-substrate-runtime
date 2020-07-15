@@ -46,15 +46,17 @@ fn test_core_execute_block_mock() {
             extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
             digest: Digest {
 				logs: vec![
-                    DigestItem::ChangesTrieSignal(ChangesTrieSignal::NewConfiguration(Some(ChangesTrieConfiguration::new(1, 2))))
+                    DigestItem::Other(vec![1,1,1]),
+                    DigestItem::ChangesTrieRoot(hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into()),
+                    DigestItem::Consensus([b'a', b'u', b'r', b'a'], vec![1,1,1]),
+                    DigestItem::Seal([1, 1, 1, 1], vec![2, 2, 2]),
+                    DigestItem::PreRuntime([1, 1, 1, 1], vec![2, 2, 2])
 				],
 			},
         },
-        extrinsics: vec![],
+        extrinsics: vec![]
     };
-    // DigestItem::Other(vec![1,1,1])
-    // DigestItem::ChangesTrieRoot(hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into())
-    // DigestItem::Consensus([b'a', b'u', b'r', b'a'], vec![1,1,1])
+
 
             // sandbox_execution_environment::Transfer {
             //     from: AccountKeyring::Alice.into(),
@@ -68,7 +70,6 @@ fn test_core_execute_block_mock() {
             //     amount: 70,
             //     nonce: 16,
             // }.into_signed_tx()
-        
 
     let result = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
