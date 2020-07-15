@@ -14,7 +14,7 @@ export namespace MockBuilder {
      * Returns SCALE Encoded Empty Block mock and instance of that block
      */
     export function getEmptyBlockMock(): MockResult<Block> {
-        const header = MockHelper.getHeaderInstanceWithoutDigest();
+        const header = MockHelper._getHeaderInstanceWithoutDigest();
         const block = new Block(header, []);
         return new MockResult(block, MockConstants.EMPTY_BLOCK);
     }
@@ -23,9 +23,9 @@ export namespace MockBuilder {
      * Returns SCALE Encoded Block with extrinsics mock and instance of that block
      */
     export function getBlockWithExtrinsics(): MockResult<Block> {
-        const header = MockHelper.getHeaderInstanceWithoutDigest();
-        const extrinsic1 = MockHelper.getExtrinsicInstance1();
-        const extrinsic2 = MockHelper.getExtrinsicInstance2();
+        const header = MockHelper._getHeaderInstanceWithoutDigest();
+        const extrinsic1 = MockHelper._getExtrinsicInstance1();
+        const extrinsic2 = MockHelper._getExtrinsicInstance2();
         return new MockResult(new Block(header, [extrinsic1, extrinsic2]), MockConstants.BLOCK_WITH_EXTRINSIC)
     }
 
@@ -33,9 +33,9 @@ export namespace MockBuilder {
      * Returns SCALE Encoded Block with extrinsics and digests mock and instance of that block
      */
     export function getBlockWithExtrinsicsAndDigests(): MockResult<Block> {
-        const header = MockHelper.getHeaderInstanceWithDigests();
-        const extrinsic1 = MockHelper.getExtrinsicInstance1();
-        const extrinsic2 = MockHelper.getExtrinsicInstance2();
+        const header = MockHelper._getHeaderInstanceWithDigests();
+        const extrinsic1 = MockHelper._getExtrinsicInstance1();
+        const extrinsic2 = MockHelper._getExtrinsicInstance2();
         return new MockResult(new Block(header, [extrinsic1, extrinsic2]), MockConstants.BLOCK_WITH_EXTRINSIC_AND_DIGESTS)
     }
 
@@ -43,28 +43,28 @@ export namespace MockBuilder {
      * Returns SCALE Encoded Header Mock and Instance of that Header
      */
     export function getHeaderWithoutDigestMock(): MockResult<Header> {
-        return new MockResult(MockHelper.getHeaderInstanceWithoutDigest(), MockConstants.HEADER_WITHOUT_DIGEST);
+        return new MockResult(MockHelper._getHeaderInstanceWithoutDigest(), MockConstants.HEADER_WITHOUT_DIGEST);
     }
 
     /**
      * Returns SCALE Encoded Header with Digests Mock and Instance of that Header
      */
     export function getHeaderWithDigestsMock(): MockResult<Header> {
-        return new MockResult(MockHelper.getHeaderInstanceWithDigests(), MockConstants.HEADER_WITH_DIGEST);
+        return new MockResult(MockHelper._getHeaderInstanceWithDigests(), MockConstants.HEADER_WITH_DIGEST);
     }
 
     /**
      * Returns SCALE encoded Inherent Mock and Instance of that Mock
      */
      export function getInherentMock(): MockResult<Inherent> {
-         return new MockResult(MockHelper.getEmptyInherentInstance(), MockConstants.DEFAULT_INHERENT);
+         return new MockResult(MockHelper._getEmptyInherentInstance(), MockConstants.DEFAULT_INHERENT);
      }
 
     /**
      * Returns SCALE encoded extrinsic mock and Instance of that mock
      */
     export function getDefaultExtrinsic(): MockResult<Extrinsic> {
-        return new MockResult(MockHelper.getExtrinsicInstance1(), MockConstants.DEFAULT_EXTRINSIC);
+        return new MockResult(MockHelper._getExtrinsicInstance1(), MockConstants.DEFAULT_EXTRINSIC);
     }
 
     /**
@@ -124,12 +124,12 @@ export namespace MockBuilder {
 /**
  * Namesapce containing helper functions for the Mock Builder. Should be used only internally
  */
-export namespace MockHelper {
+namespace MockHelper {
     /**
      * Returns a Header instance with a populated parent hash, block number, stateRoot and extrinsics root.
      * Used Internally in the mock builder
      */
-    export function getHeaderInstanceWithoutDigest(): Header {
+    export function _getHeaderInstanceWithoutDigest(): Header {
         const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
         const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
         const blockNumber = new CompactInt(1);
@@ -141,16 +141,16 @@ export namespace MockHelper {
      * Returns a Header instance with a populated parent hash, block number, stateRoot, extrinsics root and digests.
      * Used Internally in the mock builder
      */
-    export function getHeaderInstanceWithDigests(): Header {
+    export function _getHeaderInstanceWithDigests(): Header {
         const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
         const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
         const blockNumber = new CompactInt(1);
 
-        const digest = new Option<DigestItem[]>(MockHelper.getDigests());
+        const digest = new Option<DigestItem[]>(MockHelper._getDigests());
         return new Header(hash69, blockNumber, hash255, hash255, digest);
     }
 
-    export function getEmptyInherentInstance(): Inherent {
+    export function _getEmptyInherentInstance(): Inherent {
         const timestamp: UInt64 = new UInt64(0);
         const babeslot: UInt64 = new UInt64(0);
         const finalnum: CompactInt = new CompactInt(0);
@@ -159,7 +159,7 @@ export namespace MockHelper {
         return new Inherent(timestamp, babeslot, finalnum, headers);
     }
     
-    export function getExtrinsicInstance1(): Extrinsic {
+    export function _getExtrinsicInstance1(): Extrinsic {
         const from = Hash.fromU8a(MockConstants.ALICE_ADDRESS);
         const to  = Hash.fromU8a(MockConstants.BOB_ADDRESS);
         const amount: UInt64 = new UInt64(69);
@@ -169,7 +169,7 @@ export namespace MockHelper {
         return new Extrinsic(from, to, amount, nonce, signature, exhaustResource);
     }
 
-    export function getExtrinsicInstance2(): Extrinsic {
+    export function _getExtrinsicInstance2(): Extrinsic {
         const from = Hash.fromU8a(MockConstants.ALICE_ADDRESS);
         const to = Hash.fromU8a(MockConstants.BOB_ADDRESS);
         const amount: UInt64 = new UInt64(70);
@@ -179,7 +179,7 @@ export namespace MockHelper {
         return new Extrinsic(from, to, amount, nonce, signature, exhaustResource);
     }
 
-    export function getDigests(): DigestItem[] {
+    export function _getDigests(): DigestItem[] {
         const digestsArr = new Array<DigestItem>();
         digestsArr.push(new Other(ByteArray.fromU8a([12, 1, 1, 1])));
         const trieRootValue = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);

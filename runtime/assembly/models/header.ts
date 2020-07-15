@@ -44,14 +44,12 @@ export class Header {
     /**
     * SCALE Encodes the Header into u8[]
     */
-    // TODO fix in another PR
     toU8a(): u8[] {
         let digest:u8[] = [];
         if (this.digests.isSome()) {
             let digestItemArray = <DigestItem[]>this.digests.unwrap();
             const length = new CompactInt(digestItemArray.length);
-            digest.concat(length.toU8a());
-            digestItemArray = digestItemArray.splice(length.encodedLength());
+            digest = digest.concat(length.toU8a());
             
             for (let i = 0; i < length.value; i++){
                 digest = digest.concat(digestItemArray[i].toU8a());

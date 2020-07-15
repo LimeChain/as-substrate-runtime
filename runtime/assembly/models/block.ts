@@ -1,7 +1,8 @@
-import { Hash, ByteArray, Bytes } from "as-scale-codec";
+import { Hash, ByteArray, Bytes, CompactInt } from "as-scale-codec";
 import { Header, Extrinsic, Option } from ".";
 import { DecodedData } from "../codec/decoded-data";
 import { Utils } from "../utils";
+import { Constants } from "../constants";
 
 /**
  * Class representing a Block into the Substrate Runtime
@@ -44,9 +45,22 @@ export class Block {
         this.justification = new Option<ByteArray>(null);
     }
 
+    /**
+    * SCALE Encodes the Block into u8[]
+    */
     toU8a(): u8[] {
-        // TODO fix in another PR
-        return [];
+        let encoded = this.header.toU8a();
+        if (this.body.length != 0) {
+            const extrinsicsLength = new CompactInt(this.body.length);
+            encoded = encoded.concat(extrinsicsLength.toU8a());
+            for (let i = 0; i < this.body.length; i++) {
+                encoded = encoded.concat(this.body[i].toU8a());
+            }
+        } else {
+            encoded = encoded.concat(Constants.EMPTY_BYTE_ARRAY);
+        }
+
+        return encoded;
     }
 
     /**

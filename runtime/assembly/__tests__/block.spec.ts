@@ -1,12 +1,13 @@
 import { Block } from "../models";
 import { MockBuilder } from "./mock-builder";
+import { Utils } from "../utils";
 
 describe("Block", () => {
 
   it("should instanciate empty block from SCALE encoded Byte array", () => {
     const mock = MockBuilder.getEmptyBlockMock();
     const block = Block.fromU8Array(mock.bytes);
-    assert(block.result == mock.expectedObject, "empty block was not instanciated properly");
+    assert(block.result == mock.instance, "empty block was not instanciated properly");
 
     __retain(changetype<usize>(mock));
     __retain(changetype<usize>(block))
@@ -16,10 +17,10 @@ describe("Block", () => {
     const mock = MockBuilder.getBlockWithExtrinsics();
     const block = Block.fromU8Array(mock.bytes);
     assert(block.result.body.length == 2, "Extrinciscs were not instanciated properly");
-    assert(block.result == mock.expectedObject, "block with extrinsic was not instanciated properly");
-    assert(block.result.header == mock.expectedObject.header, "header part of the block object was not instanciated properly");
-    assert(block.result.body[0] == mock.expectedObject.body[0], "Extrinsic was not instanciated properly");
-    assert(block.result.body[1] == mock.expectedObject.body[1], "Extrinsic was not instanciated properly");
+    assert(block.result == mock.instance, "block with extrinsic was not instanciated properly");
+    assert(block.result.header == mock.instance.header, "header part of the block object was not instanciated properly");
+    assert(block.result.body[0] == mock.instance.body[0], "Extrinsic was not instanciated properly");
+    assert(block.result.body[1] == mock.instance.body[1], "Extrinsic was not instanciated properly");
 
     __retain(changetype<usize>(mock));
     __retain(changetype<usize>(block))
@@ -29,16 +30,23 @@ describe("Block", () => {
     const mock = MockBuilder.getBlockWithExtrinsicsAndDigests();
     const block = Block.fromU8Array(mock.bytes);
 
-    assert(block.result == mock.expectedObject, "block with extrinsic and digests was not instanciated properly");
+    assert(block.result == mock.instance, "block with extrinsic and digests was not instanciated properly");
 
     __retain(changetype<usize>(mock));
     __retain(changetype<usize>(block))
   });
 
-  // TODO will fix in another PR
-  // it("should encode block without digests correctly", () => {
-  // });
+  it("should encode block without digests correctly", () => {
+    const block = MockBuilder.getBlockWithExtrinsics();
+    assert(Utils.areArraysEqual(block.instance.toU8a(), block.bytes), "Block without digests was not encoded successfully");
 
-  // TODO Should encode block with digests correctly
-  // TODO will fix in another PR
+    __retain(changetype<usize>(block));
+  });
+
+  it("should encode block with digests correctly", () => {
+    const block = MockBuilder.getBlockWithExtrinsicsAndDigests();
+    assert(Utils.areArraysEqual(block.instance.toU8a(), block.bytes), "Block with digests was not encoded successfully");
+
+    __retain(changetype<usize>(block));
+  });
 });
