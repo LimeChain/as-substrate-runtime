@@ -9,6 +9,7 @@
 Account-Based Substrate PoC Runtime written in AssemblyScript.
 
 The project is funded by [Web3 Foundation](https://web3.foundation/) via their [General Grants Program](https://github.com/w3f/General-Grants-Program) 🙏
+![WEB3 Badge](./web3_badge_black.png)
 
 Currently the most matured way of developing Runtimes is using the Substrate framework (in Rust). The goal of this project is to deliver an Account-Based Substrate Runtime written in AssemblyScript as PoC.
 
