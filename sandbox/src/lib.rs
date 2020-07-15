@@ -58,6 +58,7 @@ impl Transfer {
 		}
 	}
 }
+
 /// Extrinsic for test-runtime.
 #[derive(Clone, PartialEq, Eq, Encode, Decode, RuntimeDebug)]
 pub enum Extrinsic {

@@ -1,6 +1,7 @@
-import { Hash, ByteArray, Bytes } from "as-scale-codec";
+import { Hash, ByteArray, Bytes, CompactInt } from "as-scale-codec";
 import { Header, Extrinsic, Option } from ".";
 import { DecodedData } from "../codec/decoded-data";
+import { Utils } from "../utils";
 import { Constants } from "../constants";
 
 /**
@@ -9,13 +10,15 @@ import { Constants } from "../constants";
 export class Block {
 
     /**
-     * Block header hash
-     */
-    public headerHash: Option<Hash>
-    /**
      * Block Header
      */
     public header: Header
+
+    /**
+     * Block header hash
+     */
+    public headerHash: Option<Hash>
+    
     /**
      * Array of Extrinsics
      */
@@ -33,26 +36,28 @@ export class Block {
      */
     public justification: Option<ByteArray>
 
-    constructor(header: Header) {
-        this.headerHash = new Option<Hash>(null);
+    constructor(header: Header, body: Extrinsic[]) {
         this.header = header;
-        this.body = [];
+        this.headerHash = new Option<Hash>(null);
+        this.body = body;
         this.receipt = new Option<ByteArray>(null);
         this.messageQueue = new Option<ByteArray>(null);
         this.justification = new Option<ByteArray>(null);
     }
 
     /**
-     * SCALE Encodes the Block into u8[]
-     */
+    * SCALE Encodes the Block into u8[]
+    */
     toU8a(): u8[] {
-        // Encode headerHash and header
         let encoded = this.header.toU8a();
-        if (this.body.length == 0) {
-            encoded = encoded.concat(Constants.EMPTY_BYTE_ARRAY);
+        if (this.body.length != 0) {
+            const extrinsicsLength = new CompactInt(this.body.length);
+            encoded = encoded.concat(extrinsicsLength.toU8a());
+            for (let i = 0; i < this.body.length; i++) {
+                encoded = encoded.concat(this.body[i].toU8a());
+            }
         } else {
-            //TODO - support for extrinsics
-            throw new Error('not supported yet');
+            encoded = encoded.concat(Constants.EMPTY_BYTE_ARRAY);
         }
 
         return encoded;
@@ -62,25 +67,26 @@ export class Block {
      * Instanciates new Block object from SCALE encoded byte array
      * @param input - SCALE encoded Block
      */
-    static fromU8Array(input: u8[]): Block {
+    static fromU8Array(input: u8[]): DecodedData<Block> {
         const decodedHeader: DecodedData<Header> = Header.fromU8Array(input);
-        
-        // const extrinsicsLength = Bytes.decodeCompactInt(input);
-        // input = input.slice(extrinsicsLength.decBytes);
-        // let extrinsics: Extrinsic[] = [];
-        // for (let i = 0; i < <i32>extrinsicsLength.value; i++) {
-        //     const decodedExtrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(input);
-        //     extrinsics.push(decodedExtrinsic.result);
-        //     input = decodedExtrinsic.input;
-        // }
+        input = decodedHeader.input;
 
-        return new Block(decodedHeader.result);
+        const extrinsicsLength = Bytes.decodeCompactInt(input);
+        input = input.slice(extrinsicsLength.decBytes);
+        let extrinsics: Extrinsic[] = [];
+        for (let i = 0; i < <i32>extrinsicsLength.value; i++) {
+            const decodedExtrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(input);
+            extrinsics.push(decodedExtrinsic.result);
+            input = decodedExtrinsic.input;
+        }
+        
+        const block = new Block(decodedHeader.result, extrinsics);
+        return new DecodedData(block, input);
     }
 
     @inline @operator('==')
     static eq(a: Block, b: Block): bool {
-        // TODO
-        return a.header == b.header;
+        return a.header == b.header && Utils.areArraysEqual(a.body, b.body);
     }
 
 }

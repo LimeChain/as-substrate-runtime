@@ -3,11 +3,11 @@
  */
 export class MockResult<T> {
 
-    public expectedObject: T;
+    public instance: T;
     public bytes: u8[];
 
     constructor(expectedObject: T, bytes: u8[]) {
-        this.expectedObject = expectedObject;
+        this.instance = expectedObject;
         this.bytes = bytes;
     }
 

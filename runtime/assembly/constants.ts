@@ -9,4 +9,9 @@ export namespace Constants {
      * Length of the bytes of a signature
      */
     export const SIGNATURE_LENGTH = 64; 
+
+    /**
+     * Number of bytes for the Consensus Engine IDs
+     */
+    export const CONSENSUS_ENGINE_ID_LENGTH = 4;
 }

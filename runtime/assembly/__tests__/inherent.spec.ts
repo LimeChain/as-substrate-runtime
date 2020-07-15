@@ -7,7 +7,7 @@ describe("Inherent", () => {
         const mock: MockResult<Inherent> = MockBuilder.getInherentMock();
         const decodedData = Inherent.fromU8Array(mock.bytes);
 
-        expect(decodedData == mock.expectedObject).toBeTruthy();
+        expect(decodedData == mock.instance).toBeTruthy();
         __retain(changetype<usize>(mock));
         __retain(changetype<usize>(decodedData));
     })
