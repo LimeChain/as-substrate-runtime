@@ -13,7 +13,7 @@ This PoC can be considered the first step towards a general framework for develo
 
 ## Roadmap
 
-#### :white_check_mark: Milestone 1 - WASM API Mock
+#### :white_check_mark:    Milestone 1 - WASM API Mock
 
 In this milestone, the communication mechanism between the Host and Runtime will be established. The runtime will be able to access input passed from the Host and will be able to return data back to the Host as response. The Polkadot WASM API entries are mocked in this milestone.
 
@@ -23,7 +23,7 @@ In this milestone the basic functionality for setting and getting storage from t
 #### Milestone 3 - Support for Aura consensus
 In this milestone the Aura Module functionality will be implemented into the AS Runtime.
 
-### Milestone 4 - State Transition function
+#### Milestone 4 - State Transition function
 In this milestone the State transition function will be implemented into the AS Runtime. As part of the State transition function the previously mocked WASM API functions will be implemented as-well. At this point the runtime must be able to:
 1.  Define genesis state and account balances
 2.  Run its Aura consensus.
