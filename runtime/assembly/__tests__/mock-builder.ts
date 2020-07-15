@@ -1,9 +1,9 @@
 import { MockResult } from "./mock-result";
+import { Block, Option, Header, Extrinsic, InherentData } from "../models";
+import { Hash, CompactInt, UInt64, Bool, ByteArray } from "as-scale-codec";
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
-import { Block, Option, Header, Extrinsic, InherentData } from "../models";
-import { Hash, CompactInt, UInt64, ByteArray, ScaleString, Bool } from "as-scale-codec";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -141,47 +141,24 @@ export namespace MockBuilder {
 /**
  * Namesapce containing helper functions for the Mock Builder. Should be used only internally
  */
-namespace MockHelper {
+export namespace MockHelper {
     /**
      * Returns a Header instance with a populated parent hash, block number, stateRoot and extrinsics root.
      * Used Internally in the mock builder
      */
-    export function getHeaderInstanceWithoutDigest(): Header {
+    export function _getHeaderInstanceWithoutDigest(): Header {
         const hash69 = MockHelper.getPopulatedHash(69);
         const hash255 = MockHelper.getPopulatedHash(255);
         const blockNumber = new CompactInt(1);
         const digest = new Option<DigestItem[]>(null);
         return new Header(hash69, blockNumber, hash255, hash255, digest);
     }
-    /**
-     * Returns an InherentData instance 
-     * Used internally in the mock builder
-     */
-    export function _getEmptyInherentInstance(): InherentData {
-        const timestamp: UInt64 = new UInt64(1);
-        const babeslot: UInt64 = new UInt64(2);
-        const finalnum: CompactInt = new CompactInt(1);
-
-        const header1 = _getHeaderInstanceWithoutDigest();
-        let headerU8: u8[] = [];
-        headerU8 = headerU8.concat((new CompactInt(1)).toU8a());
-        headerU8 = headerU8.concat(header1.toU8a());
-
-        __retain(changetype<usize>(header1));
-
-        const data: Map<ScaleString, ByteArray> = new Map<ScaleString, ByteArray>();
-        data.set(new ScaleString('babeslot'), new ByteArray(babeslot.toU8a()));
-        data.set(new ScaleString('finalnum'),  new ByteArray(finalnum.toU8a()));
-        data.set((new ScaleString('timstmp0')),  new ByteArray(timestamp.toU8a()));
-        data.set((new ScaleString('uncles00')), new ByteArray(headerU8));
-        
-        return new InherentData(data);
 
     /**
      * Returns a Header instance with a populated parent hash, block number, stateRoot, extrinsics root and digests.
      * Used Internally in the mock builder
      */
-    export function getHeaderInstanceWithDigests(): Header {
+    export function _getHeaderInstanceWithDigests(): Header {
         const hash69 = MockHelper.getPopulatedHash(69);
         const hash255 = MockHelper.getPopulatedHash(255);
         const blockNumber = new CompactInt(1);

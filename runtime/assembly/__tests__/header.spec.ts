@@ -1,9 +1,6 @@
 import { Header } from '../models/header';
-import { MockBuilder, MockHelper } from './mock-builder';
-import { CompactInt } from 'as-scale-codec';
-import { Option, DigestItem } from '../models';
+import { MockBuilder } from './mock-builder';
 import { Utils } from '../utils';
-import { MockConstants } from './mock-constants';
 
 describe("Header", () => {
 
@@ -28,13 +25,9 @@ describe("Header", () => {
   });
 
   it("should encode header without digests correctly", () => {
-    const hash69 = MockHelper.getPopulatedHash(69);
-    const hash255 = MockHelper.getPopulatedHash(255);
-    const blockNumber = new CompactInt(1);
-    const digest = new Option<DigestItem[]>(null);
-    const header = new Header(hash69, blockNumber, hash255, hash255, digest);
+    const header = MockBuilder.getHeaderWithoutDigestMock();
 
-    assert(Utils.areArraysEqual(header.toU8a(), MockConstants.HEADER_WITHOUT_DIGEST), "Header without digests was not encoded successfully");
+    assert(Utils.areArraysEqual(header.instance.toU8a(), header.bytes), "Header without digests was not encoded successfully");
     __retain(changetype<usize>(header));
   });
 

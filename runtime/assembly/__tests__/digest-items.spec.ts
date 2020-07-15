@@ -1,6 +1,6 @@
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models";
 import { MockBuilder, MockHelper } from "./mock-builder";
-import { ByteArray, Hash } from "as-scale-codec";
+import { ByteArray } from "as-scale-codec";
 import { Utils } from "../utils";
 import { MockConstants } from "./mock-constants";
 
