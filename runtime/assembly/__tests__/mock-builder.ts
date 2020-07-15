@@ -107,7 +107,7 @@ export namespace MockBuilder {
      * Returns SCALE Encoded ChangeTrieRoot and Instance of that Digest Item
      */
     export function getChangeTrieRootDigestItemMock(): MockResult<DigestItem> {
-        const changeTrieRoot = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
+        const changeTrieRoot = MockHelper.getPopulatedHash(255);
         return new MockResult(new ChangeTrieRoot(changeTrieRoot), MockConstants.CHANGE_TRIE_ROOT_DIGEST);
     }
 
@@ -147,9 +147,9 @@ namespace MockHelper {
      * Returns a Header instance with a populated parent hash, block number, stateRoot and extrinsics root.
      * Used Internally in the mock builder
      */
-    export function _getHeaderInstanceWithoutDigest(): Header {
-        const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
-        const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
+    export function getHeaderInstanceWithoutDigest(): Header {
+        const hash69 = MockHelper.getPopulatedHash(69);
+        const hash255 = MockHelper.getPopulatedHash(255);
         const blockNumber = new CompactInt(1);
         const digest = new Option<DigestItem[]>(null);
         return new Header(hash69, blockNumber, hash255, hash255, digest);
@@ -182,9 +182,9 @@ namespace MockHelper {
      * Returns a Header instance with a populated parent hash, block number, stateRoot, extrinsics root and digests.
      * Used Internally in the mock builder
      */
-    export function _getHeaderInstanceWithDigests(): Header {
-        const hash69 = Hash.fromU8a([69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69]);
-        const hash255 = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
+    export function getHeaderInstanceWithDigests(): Header {
+        const hash69 = MockHelper.getPopulatedHash(69);
+        const hash255 = MockHelper.getPopulatedHash(255);
         const blockNumber = new CompactInt(1);
 
         const digest = new Option<DigestItem[]>(MockHelper._getDigests());
@@ -223,11 +223,17 @@ namespace MockHelper {
     export function _getDigests(): DigestItem[] {
         const digestsArr = new Array<DigestItem>();
         digestsArr.push(new Other(ByteArray.fromU8a([12, 1, 1, 1])));
-        const trieRootValue = Hash.fromU8a([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]);
+        const trieRootValue = MockHelper.getPopulatedHash(255);
         digestsArr.push(new ChangeTrieRoot(trieRootValue));
         digestsArr.push(new Consensus([97, 117, 114, 97], ByteArray.fromU8a([12, 1, 1, 1])));
         digestsArr.push(new Seal([1, 1, 1, 1], ByteArray.fromU8a([12, 2, 2, 2])));
         digestsArr.push(new PreRuntime([1, 1, 1, 1], ByteArray.fromU8a([12, 2, 2, 2])));
         return digestsArr;
+    }
+
+    export function getPopulatedHash(byte: u8): Hash {
+        const hashBytes: u8[] = new Array<u8>(32);
+        hashBytes.fill(byte);
+        return Hash.fromU8a(hashBytes);
     }
  }
