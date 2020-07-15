@@ -1,6 +1,6 @@
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models";
 import { MockBuilder, MockHelper } from "./mock-builder";
-import { ByteArray, Hash } from "as-scale-codec";
+import { ByteArray } from "as-scale-codec";
 import { Utils } from "../utils";
 import { MockConstants } from "./mock-constants";
 
@@ -9,7 +9,7 @@ describe("Digest Item", () => {
     it("should instanciate Other Digest Item", () => {
         const mock = MockBuilder.getOtherDigestItemMock();
         const digestItem = DigestItem.fromU8Array(mock.bytes);
-        assert(digestItem.result == mock.expectedObject, "Other Digest Item was not instanciated properly");
+        assert(digestItem.result == mock.instance, "Other Digest Item was not instanciated properly");
 
         __retain(changetype<usize>(mock));
         __retain(changetype<usize>(digestItem));
@@ -25,7 +25,7 @@ describe("Digest Item", () => {
     it("should instanciate ChangeTrieRoot Digest Item", () => {
         const mock = MockBuilder.getChangeTrieRootDigestItemMock();
         const digestItem = DigestItem.fromU8Array(mock.bytes);
-        assert(digestItem.result == mock.expectedObject, "ChangeTrieRoot Digest Item was not instanciated properly");
+        assert(digestItem.result == mock.instance, "ChangeTrieRoot Digest Item was not instanciated properly");
 
         __retain(changetype<usize>(mock));
         __retain(changetype<usize>(digestItem));
@@ -41,7 +41,7 @@ describe("Digest Item", () => {
     it("Should instanciate Consensus Digest Item", () => {
         const mock = MockBuilder.getConsensusDigestItemMock();
         const digestItem = DigestItem.fromU8Array(mock.bytes);
-        assert(digestItem.result == mock.expectedObject, "Consensus Digest Item was not instanciated properly");
+        assert(digestItem.result == mock.instance, "Consensus Digest Item was not instanciated properly");
 
         __retain(changetype<usize>(mock));
         __retain(changetype<usize>(digestItem));
@@ -64,7 +64,7 @@ describe("Digest Item", () => {
     it("Should instanciate Seal Digest Item", () => {
         const mock = MockBuilder.getSealDigestItemMock();
         const digestItem = DigestItem.fromU8Array(mock.bytes);
-        assert(digestItem.result == mock.expectedObject, "Seal Digest Item was not instanciated properly");
+        assert(digestItem.result == mock.instance, "Seal Digest Item was not instanciated properly");
 
         __retain(changetype<usize>(mock));
         __retain(changetype<usize>(digestItem));
@@ -87,7 +87,7 @@ describe("Digest Item", () => {
     it("Should instanciate PreRuntime Digest Item", () => {
         const mock = MockBuilder.getPreRuntimeDigestItemMock();
         const digestItem = DigestItem.fromU8Array(mock.bytes);
-        assert(digestItem.result == mock.expectedObject, "PreRuntime Digest Item was not instanciated properly");
+        assert(digestItem.result == mock.instance, "PreRuntime Digest Item was not instanciated properly");
 
         __retain(changetype<usize>(mock));
         __retain(changetype<usize>(digestItem));
