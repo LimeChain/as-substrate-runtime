@@ -42,8 +42,9 @@ as-substrate-runtime
 │   └───assembly
 │       └─── __tests__     <--- Runtime unit tests
 │       └─── api           <--- WASM API (Core, BlockBuilder, etc..)
-│       └─── models        <--- Runtime model classes (block, header, extrinsic, etc...)
-│  
+│       └─── models        <--- Runtime model classes (block, header, extrinsic, etc...)       |
+│       ....
+|
 └───sandbox                <--- Rust environment for testing the Runtime
 ```
 
