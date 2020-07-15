@@ -1,8 +1,9 @@
-import { Hash, CompactInt, Bytes, ByteArray } from "as-scale-codec";
+import { Hash, CompactInt, Bytes } from "as-scale-codec";
 import { Utils } from "../utils";
 import { Option } from "./";
 import { Constants } from "./../constants";
 import { DecodedData } from "../codec/decoded-data";
+import { DigestItem } from "./digest-items/digest-item";
 
 /**
  * Class representing a Block Header into the Substrate Runtime
@@ -30,21 +31,34 @@ export class Header {
      * Field used to store any chain-specific auxiliary data, which could help the light clients interact with the block 
      * without the need of accessing the full storage as well as consensus-related data including the block signature. 
      */
-    public digest: Option<Hash> // TODO not ready..
+    public digests: Option<DigestItem[]>
 
-    constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digest: Option<Hash>) {
+    constructor(parentHash: Hash, number: CompactInt, stateRoot: Hash, extrinsicsRoot: Hash, digests: Option<DigestItem[]>) {
         this.parentHash = parentHash;
         this.number = number;
         this.stateRoot = stateRoot;
         this.extrinsicsRoot = extrinsicsRoot;
-        this.digest = digest;
+        this.digests = digests;
     }
 
     /**
     * SCALE Encodes the Header into u8[]
     */
+    // TODO fix in another PR
     toU8a(): u8[] {
-        let digest = this.digest.isSome() ? (<Hash>this.digest.unwrap()).toU8a() : Constants.EMPTY_BYTE_ARRAY;
+        let digest:u8[] = [];
+        if (this.digests.isSome()) {
+            let digestItemArray = <DigestItem[]>this.digests.unwrap();
+            const length = new CompactInt(digestItemArray.length);
+            digest.concat(length.toU8a());
+            digestItemArray = digestItemArray.splice(length.encodedLength());
+            
+            for (let i = 0; i < length.value; i++){
+                digest = digest.concat(digestItemArray[i].toU8a());
+            }
+        } else {
+            digest = Constants.EMPTY_BYTE_ARRAY;
+        }
 
         return this.parentHash.toU8a()
             .concat(this.number.toU8a())
@@ -61,7 +75,7 @@ export class Header {
     static fromU8Array(input: u8[]): DecodedData<Header> {
         const parentHash = Hash.fromU8a(input);
         input = input.slice(parentHash.encodedLength());
-
+        
         const data = Bytes.decodeCompactInt(input);
         const number = new CompactInt(data.value);
         input = input.slice(data.decBytes);
@@ -71,11 +85,10 @@ export class Header {
 
         const extrinsicsRoot = Hash.fromU8a(input);
         input = input.slice(extrinsicsRoot.encodedLength());
-
-        const digest = this.decodeOptionalHash(input);
+        const digest = this.decodeOptionalDigest(input);
         
-        const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest);
-        return new DecodedData(result, input);
+        const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest.result);
+        return new DecodedData(result, digest.input);
     }
 
     /**
@@ -83,15 +96,22 @@ export class Header {
      * TODO - move this function to a proper place
      * @param input - SCALE Encded byte array
      */
-    private static decodeOptionalHash(input: u8[]): Option<Hash> {
-        let valueOption = new Option<Hash>(null);
+    private static decodeOptionalDigest(input: u8[]): DecodedData<Option<DigestItem[]>> {
+        let digestOption = new Option<DigestItem[]>(null);
         if (Utils.isSet(input)) {
-            valueOption.value = Hash.fromU8a(input);
-            input = input.slice((<Hash>valueOption.unwrap()).encodedLength())
+            let itemsLength = CompactInt.fromU8a(input);
+            input = input.slice(itemsLength.encodedLength());
+            digestOption = new Option<DigestItem[]>(new Array<DigestItem>());
+            
+            for (let i = 0; i < itemsLength.value; i++) {
+                let decodedItem = DigestItem.fromU8Array(input);
+                (<DigestItem[]>digestOption.unwrap()).push(decodedItem.result);
+                input = decodedItem.input;
+            }
         } else {
-            input.slice(1);
+            input = input.slice(1);
         }
-        return valueOption;
+        return new DecodedData<Option<DigestItem[]>>(digestOption, input);
     }
 
     @inline @operator('==')
@@ -99,14 +119,19 @@ export class Header {
         let areEqual = a.parentHash == b.parentHash
             && a.number == b.number
             && a.stateRoot == b.stateRoot
-            && a.extrinsicsRoot == b.extrinsicsRoot
-        
-        if (a.digest.isSome() && b.digest.isSome()) {
-            return areEqual && (<Hash>a.digest.unwrap()) == (<Hash>b.digest.unwrap());;
-        } else if (!a.digest.isSome() && !b.digest.isSome()) {
+            && a.extrinsicsRoot == b.extrinsicsRoot;
+
+        if (a.digests.isSome() && b.digests.isSome()) {
+            return areEqual && Utils.areArraysEqual(<DigestItem[]>a.digests.unwrap(), <DigestItem[]>b.digests.unwrap());
+        } else if (!a.digests.isSome() && !b.digests.isSome()) {
             return areEqual;
         }else {
             return false;
         }
+    }
+
+    @inline @operator('!=')
+    static notEq(a: Header, b: Header): bool {
+        return !Header.eq(a, b);
     }
 }

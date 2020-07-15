@@ -1,6 +1,9 @@
 import { Header } from '../models/header';
-import { MockBuilder } from './mock-builder';
-
+import { MockBuilder, MockHelper } from './mock-builder';
+import { CompactInt } from 'as-scale-codec';
+import { Option, DigestItem } from '../models';
+import { Utils } from '../utils';
+import { MockConstants } from './mock-constants';
 
 describe("Header", () => {
 
@@ -14,10 +17,39 @@ describe("Header", () => {
     __retain(changetype<usize>(decodedData))
   });
 
-  it("should instanciate header with digest from SCALE encoded Byte array", () => {
+  it("should instanciate header with digests from SCALE encoded Byte array", () => {
+    const mock = MockBuilder.getHeaderWithDigestsMock();
+    const decodedData = Header.fromU8Array(mock.bytes);
 
-    // TODO
-    
+    assert(decodedData.result == mock.expectedObject, "header with digests was not instanciated properly");
+
+    __retain(changetype<usize>(mock));
+    __retain(changetype<usize>(decodedData))
   });
+
+  it("should encode header without digests correctly", () => {
+    const hash69 = MockHelper.getPopulatedHash(69);
+    const hash255 = MockHelper.getPopulatedHash(255);
+    const blockNumber = new CompactInt(1);
+    const digest = new Option<DigestItem[]>(null);
+    const header = new Header(hash69, blockNumber, hash255, hash255, digest);
+
+    assert(Utils.areArraysEqual(header.toU8a(), MockConstants.HEADER_WITHOUT_DIGEST), "Header without digests was not encoded successfully");
+    __retain(changetype<usize>(header));
+  });
+
+  it("should encode header without digests correctly", () => {
+    const header = MockHelper.getHeaderInstanceWithoutDigest();
+    assert(Utils.areArraysEqual(header.toU8a(), MockConstants.HEADER_WITHOUT_DIGEST), "Header without digests was not encoded successfully");
+    __retain(changetype<usize>(header));
+  });
+
+  // TODO fix in another PR
+  // it("should encode header with digests correctly", () => {
+  //   const header = MockHelper.getHeaderInstanceWithDigests();
+    
+  //   assert(Utils.areArraysEqual(header.toU8a(), MockConstants.HEADER_WITH_DIGEST), "Header without digests was not encoded successfully");
+  //   __retain(changetype<usize>(header));
+  // });
 
 });
