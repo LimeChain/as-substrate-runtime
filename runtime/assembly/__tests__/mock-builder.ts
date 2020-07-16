@@ -1,6 +1,6 @@
 import { MockResult } from "./mock-result";
 import { Block, Option, Header, Extrinsic, InherentData } from "../models";
-import { Hash, CompactInt, UInt64, Bool, ByteArray, ScaleString } from "as-scale-codec";
+import { Hash, CompactInt, UInt64, Bool, ByteArray } from "as-scale-codec";
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
@@ -56,26 +56,19 @@ export namespace MockBuilder {
     /**
      * Returns SCALE encoded Inherent Mock and Instance of that Mock
      */
-     export function getInherentMock(): MockResult<InherentData> {
-        const DEFAULT_INHERENT: u8[] = [
-            16, 
-            98, 97, 98, 101, 115, 108, 111, 116, 
-            32, 2, 0, 0, 0, 0, 0, 0, 0, 
-            102, 105, 110, 97, 108, 110, 117, 109, 
-            4, 4, 
-            116, 105, 109, 115, 116, 109, 112, 48, 
-            32, 1, 0, 0, 0, 0, 0, 0, 0, 
-            117, 110, 99, 108, 101, 115, 48, 48, 
-            141, 1, 4, 
-            69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 
-            4, 
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
-            0
-        ];
-
-        return new MockResult(MockHelper._getEmptyInherentInstance(), DEFAULT_INHERENT);
+    export function getInherentDataMock(): MockResult<InherentData> {
+        return new MockResult(MockHelper._getInherentDataInstance(), MockConstants.DEFAULT_INHERENT);
      }
+    /**
+     * Returns a map with keys with invalid length
+     */
+    export function getInvalidDataMap(): Map<string, ByteArray> {
+        const data: Map<string, ByteArray> = new Map<string, ByteArray>();
+        data.set('isnoteight', new ByteArray([2, 0, 0, 0, 0, 0, 0, 0]));
+        data.set('eight', new ByteArray([3, 0, 0, 0, 0, 0, 0, 0]));
+        data.set('aiseight', new ByteArray([4, 1, 0, 0, 0, 0, 0, 0]));
+        return data;
+    }
 
     /**
      * Returns SCALE encoded extrinsic mock and Instance of that mock
@@ -170,7 +163,7 @@ export namespace MockHelper {
      * Returns an InherentData instance 
      * Used internally in the mock builder
      */
-    export function _getEmptyInherentInstance(): InherentData {
+    export function _getInherentDataInstance(): InherentData {
         const timestamp: UInt64 = new UInt64(1);
         const babeslot: UInt64 = new UInt64(2);
         const finalnum: CompactInt = new CompactInt(1);
@@ -182,11 +175,11 @@ export namespace MockHelper {
 
         __retain(changetype<usize>(header1));
 
-        const data: Map<ScaleString, ByteArray> = new Map<ScaleString, ByteArray>();
-        data.set(new ScaleString('babeslot'), new ByteArray(babeslot.toU8a()));
-        data.set(new ScaleString('finalnum'),  new ByteArray(finalnum.toU8a()));
-        data.set((new ScaleString('timstmp0')),  new ByteArray(timestamp.toU8a()));
-        data.set((new ScaleString('uncles00')), new ByteArray(headerU8));
+        const data: Map<string, ByteArray> = new Map<string, ByteArray>();
+        data.set('babeslot', new ByteArray(babeslot.toU8a()));
+        data.set('finalnum', new ByteArray(finalnum.toU8a()));
+        data.set('timstmp0', new ByteArray(timestamp.toU8a()));
+        data.set('uncles00', new ByteArray(headerU8));
         
         return new InherentData(data);
     }
