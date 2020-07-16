@@ -1,8 +1,27 @@
 extern crate sandbox_execution_environment;
-use sandbox_execution_environment::{ Transfer, Inherent, Setup };
+use sandbox_execution_environment::{ Transfer, Setup };
 use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
-use parity_scale_codec::{Encode, Decode};
+use parity_scale_codec::{Encode, Compact};
+pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
 use sp_keyring::AccountKeyring;
+
+fn get_inherent_data_instance() -> InherentData {
+    let mut inh = InherentData::new();
+    
+    const TM_KEY: InherentIdentifier = *b"timstmp0";
+    let tm_value: u64 = 1;
+    
+    const BS_KEY: InherentIdentifier = *b"babeslot";
+    let bs_value: u64 = 2;
+    
+    const FN_KEY: InherentIdentifier = *b"finalnum";
+    let fn_value: Compact<u64> = Compact(1);
+    
+    inh.put_data(TM_KEY, &tm_value).unwrap();
+    inh.put_data(BS_KEY, &bs_value).unwrap();
+    inh.put_data(FN_KEY, &fn_value).unwrap();
+    return inh;
+}
 
 #[test]
 fn test_block_builder_apply_extrinsics() {
@@ -28,7 +47,9 @@ fn test_block_builder_apply_extrinsics() {
 #[test]
 fn test_block_builder_inherent_extrinsics() {
     let mut setup = Setup::new();
-    let inh = Inherent::new();
+
+    let inh = get_inherent_data_instance();
+
     let result = setup.executor.call_in_wasm(
         &setup.wasm_code_array,
         None,
@@ -36,9 +57,9 @@ fn test_block_builder_inherent_extrinsics() {
         &inh.encode(),
         &mut setup.ext.ext(),
         MissingHostFunctions::Allow).unwrap();
-    let res = <Inherent>::decode(&mut result.as_ref());
-    println!("{:?}", Some(&inh));
-    assert_eq!(Some(&inh), res.iter().next());
+
+    println!("{:?}", &inh.encode());
+    assert_eq!(result, [0u8; 0]);
 }
 
 #[test]

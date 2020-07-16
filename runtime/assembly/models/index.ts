@@ -4,6 +4,6 @@ export * from './header';
 export * from './runtime-version';
 export * from './supported-apis';
 export * from './option';
-export * from './inherent';
+export * from './inherent-data';
 export * from './signature';
 export * from './digest-items';

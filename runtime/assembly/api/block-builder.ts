@@ -1,7 +1,6 @@
-import {Block} from '../models/block';
 import {Extrinsic} from '../models/extrinsic';
 import {Serialiser} from './serialiser';
-import { Inherent } from '../models';
+import { InherentData } from '../models';
 import { Bool } from 'as-scale-codec';
 
 /**
@@ -16,20 +15,22 @@ export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
 }
 
 /**
- * 
+ * On success, returns an empty array
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */
 
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
     const input = Serialiser.deserialise_input(data, len);
-    const inherent = Inherent.fromU8Array(input);
-    return Serialiser.serialise_result(inherent.toU8a());
+    const inherent = InherentData.fromU8Array(input);
+    return Serialiser.serialise_result([]);
 }
 
 /**
  * Upon succesfull validation of Block's fields, appends the block to the chain
  * Mocked to return true in this iteration
+ * @param data i32 pointer to the start of the argument passed
+ * @param len i32 length (in bytes) of the arguments passed
  */
 
 export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
@@ -37,7 +38,7 @@ export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
 }
 
 /**
- * Validates fields of the InherentData and sends back okay or error message with failed Inherents
+ * Validates fields of the InherentData and sends back okay or error message with failed InherentDatas
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */
