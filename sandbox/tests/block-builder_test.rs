@@ -4,7 +4,7 @@ use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
 use parity_scale_codec::{Encode, Compact};
 pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
 use sp_keyring::AccountKeyring;
-extern crate hex;
+
 use hex_literal::hex;
 
 fn get_inherent_data_instance() -> InherentData {
@@ -19,15 +19,15 @@ fn get_inherent_data_instance() -> InherentData {
     const FN_KEY: InherentIdentifier = *b"finalnum";
     let fn_value: Compact<u64> = Compact(1);
     
-    const header1: Header = Header {
-            parent_hash: [69u8; 32].into(),
-            number: 1,
-            state_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
-            extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
-            digest: Default::default()
+    let header_1: Header = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 1,
+        state_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        digest: Default::default(),
     };
 
-    const UN_KEY: [Header; 1] = [header1];
+    const UN_KEY: [Header; 1] = [header_1];
 
     inh.put_data(TM_KEY, &tm_value).unwrap();
     inh.put_data(BS_KEY, &bs_value).unwrap();
