@@ -19,6 +19,8 @@ fn get_inherent_data_instance() -> InherentData {
     const FN_KEY: InherentIdentifier = *b"finalnum";
     let fn_value: Compact<u64> = Compact(1);
     
+    const UN_KEY: InherentIdentifier = *b"uncles00";
+
     let header_1: Header = Header {
         parent_hash: [69u8; 32].into(),
         number: 1,
@@ -27,11 +29,13 @@ fn get_inherent_data_instance() -> InherentData {
         digest: Default::default(),
     };
 
-    const UN_KEY: [Header; 1] = [header_1];
+    let un_value: [Header; 1] = [header_1];
 
     inh.put_data(TM_KEY, &tm_value).unwrap();
     inh.put_data(BS_KEY, &bs_value).unwrap();
     inh.put_data(FN_KEY, &fn_value).unwrap();
+    inh.put_data(UN_KEY, &un_value).unwrap();
+
     return inh;
 }
 

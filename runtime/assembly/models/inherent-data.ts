@@ -48,15 +48,21 @@ import { Utils } from '../utils';
         const lenComp = Bytes.decodeCompactInt(input);
         input = input.slice(lenComp.decBytes);
 
-        for (let i: u64 = 0; i<lenComp.value; i++){
-            const buff = new Uint8Array(Constants.INHERENT_IDENTIFIER_LENGTH);
-            Bytes.copyToTyped(input.slice(0, Constants.INHERENT_IDENTIFIER_LENGTH), buff);
-            let key: string =  String.UTF8.decode(buff.buffer);
-            input = input.slice(Constants.INHERENT_IDENTIFIER_LENGTH);
-            let value: ByteArray = ByteArray.fromU8a(input);
-            input = input.slice(value.encodedLength());
-            data.set(key, value);
-        }
+        // for (let i: u64 = 0; i<lenComp.value; i++){
+        //     const buff = new Uint8Array(Constants.INHERENT_IDENTIFIER_LENGTH);
+        //     Bytes.copyToTyped(input.slice(0, Constants.INHERENT_IDENTIFIER_LENGTH), buff);
+        //     let key: string =  String.UTF8.decode(buff.buffer);
+        //     input = input.slice(Constants.INHERENT_IDENTIFIER_LENGTH);
+        //     let value: ByteArray = ByteArray.fromU8a(input);
+        //     input = input.slice(value.encodedLength());
+        //     data.set(key, value);
+        // }
+        let t1: u8[] = [137, 1, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 4, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0];
+        // for (let i = 0; i < 1; i++) {
+            const v1 = ByteArray.fromU8a(t1);
+        // }
+        
+
         const inherentData = new InherentData(data);
         return new DecodedData<InherentData>(inherentData, input);
     }
