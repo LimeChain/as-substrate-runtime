@@ -51,7 +51,7 @@ as-substrate-runtime
 
 ## Playing with the Runtime
 The runtime has 2 types of tests so far -> Integration and Unit tests
-The Unit tests are written in AssemblyScript and are testing f.e the instanciation or encoding of a `Block` from a SCALE encoded Byte Array.
+The Unit tests are written in AssemblyScript and are testing f.e the instantiation or encoding of a `Block` from a SCALE encoded Byte Array.
 
 The Integration tests are written in Rust. They are calling into the WASM code and are validating:
 1. Whether the WASM code exposes the required API functions.
@@ -79,7 +79,7 @@ New `wasm-code` binary file will be generated in the `../sandbox` folder.
 1. Go to `./sandbox`
 2. Execute `cargo test`
 
-*To see the results of the called methods, execute the commant with `cargo test -- --nocapture`
+*To see the results of the called methods, execute the command with `cargo test -- --nocapture`
 
 # **License**
 This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)
