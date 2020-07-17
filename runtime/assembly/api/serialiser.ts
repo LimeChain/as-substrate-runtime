@@ -13,6 +13,15 @@ export class Serialiser {
         memory.copy(changetype<usize>(input), ptr, len);
         return Utils.toU8Array(Uint8Array.wrap(input)); // Copying the TypedArray to Array is a temporary solution
     }
+    /**
+     * Returns pointer to and size of the buffer, respectively
+     * @param ptr_size runtime pointer size as specified by Polkadot Host API
+     */
+    static separate_pointer_size(ptr_size: u64): i32[] {
+        let value_ptr: i32 = i32(ptr_size);
+        let value_size: i32 = i32((ptr_size >> 32));
+        return [value_ptr, value_size];
+    }
 
     /**
      * Serialises the arguments into u64 number containing the pointer and the length of the bytes

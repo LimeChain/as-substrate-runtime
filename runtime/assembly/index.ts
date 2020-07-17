@@ -13,3 +13,8 @@ export * from "./api/block-builder";
 export * from "./api/parachain-host";
 export * from "./api/grandpa-api";
 export * from "./api/others";
+
+/**
+ * Export the HOST API functions
+ */
+export * from './storage';

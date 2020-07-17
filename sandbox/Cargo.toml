@@ -23,6 +23,7 @@ sp-consensus-babe = "0.8.0-rc4"
 sp-keyring = "2.0.0-rc4"
 sp-inherents = "2.0.0-rc4"
 sp-std = "2.0.0-rc4"
+test-case = "1.0.0"
 
 serde = { version = "1.0.101", optional = true, features = ["derive"] }
 hex-literal = "0.2.1"
