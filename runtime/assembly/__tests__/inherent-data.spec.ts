@@ -9,13 +9,10 @@ describe("Inherent", () => {
         const mock: MockResult<InherentData> = MockBuilder.getInherentDataMock();
         const decodedData = InherentData.fromU8Array(mock.bytes);
         assert(decodedData.result == mock.instance, "Expected object is not equal to the newly instanciated object");
-        __retain(changetype<usize>(mock));
-        __retain(changetype<usize>(decodedData));
     })
     it("Should encode InherentData correctly", () => {
         const mock: MockResult<InherentData> = MockBuilder.getInherentDataMock();
         assert(Utils.areArraysEqual(mock.instance.toU8a(), mock.bytes), "Encoded InherentData instance is not equal to the expected bytes");
-        __retain(changetype<usize>(mock));
     })
 
     throws("InherentData: Key length should be equal to 8!", () => {

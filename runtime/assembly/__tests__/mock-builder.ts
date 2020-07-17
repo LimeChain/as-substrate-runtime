@@ -173,8 +173,6 @@ export namespace MockHelper {
         headerU8 = headerU8.concat((new CompactInt(1)).toU8a());
         headerU8 = headerU8.concat(header1.toU8a());
 
-        __retain(changetype<usize>(header1));
-
         const data: Map<string, ByteArray> = new Map<string, ByteArray>();
         data.set('babeslot', new ByteArray(babeslot.toU8a()));
         data.set('finalnum', new ByteArray(finalnum.toU8a()));
