@@ -57,7 +57,6 @@ import { Utils } from '../utils';
             input = input.slice(value.encodedLength());
             data.set(key, value);
         }
-
         const inherentData = new InherentData(data);
         return new DecodedData<InherentData>(inherentData, input);
     }
