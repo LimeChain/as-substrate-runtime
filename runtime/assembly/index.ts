@@ -13,4 +13,4 @@ export * from "./api/block-builder";
 export * from "./api/parachain-host";
 export * from "./api/grandpa-api";
 export * from "./api/others";
-export * from "./api/tests"; // <- Temporary exported function for testing.
+export * from "./api/tests"; // <- Temporary exported functions for Integration Testing
