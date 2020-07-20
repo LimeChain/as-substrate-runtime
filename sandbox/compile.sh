@@ -1,1 +1,1 @@
-cd ../runtime && npm run asbuild && cd ../sandbox && cargo run && cd ..
+cd ../runtime && npm run asbuild && cd ../sandbox && cargo test && cd ..
