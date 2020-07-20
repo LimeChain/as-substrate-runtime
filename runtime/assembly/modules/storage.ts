@@ -1,6 +1,6 @@
-import {Utils} from './utils';
-import { Serialiser } from './api/serialiser';
-import { ext_storage_set_version_1, ext_storage_get_version_1 } from './env';
+import {Utils} from '../utils';
+import { Serialiser } from '../api/serialiser';
+import { ext_storage_set_version_1, ext_storage_get_version_1 } from '../env';
 
 /**
  * Namespace exporting Storage related functions
