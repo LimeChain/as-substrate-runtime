@@ -40,11 +40,12 @@ fn call_in_wasm<E: Externalities> (
 fn test_ext_storage_get(wasm_method: WasmExecutionMethod){
     let mut ext = TestExternalities::default();
     let mut ext = ext.ext();
-
-    // let result = call_in_wasm(
-    //     "storage_test", 
-    //     &b"rust".to_vec().encode(), 
-    //     wasm_method, 
-    //     &mut ext).unwrap();
-    println!("{:?}", );
+    ext.set_storage(b"aaa".to_vec(), b"1".to_vec());
+    
+    let result = call_in_wasm(
+        "storage_test", 
+        &b"rust".to_vec().encode(), 
+        wasm_method, 
+        &mut ext).unwrap();
+    println!("{:?}", result);
 }

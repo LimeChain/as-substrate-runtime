@@ -5,7 +5,7 @@
             "name": "(OSX) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceRoot}/sandbox/target/debug/hello-rust",
+            "program": "${workspaceRoot}/sandbox/target/debug/sandbox-execution-environment",
             "args": [],
             "cwd": "${workspaceRoot}/sandbox",
         }
