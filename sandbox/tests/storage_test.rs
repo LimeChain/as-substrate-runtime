@@ -35,17 +35,19 @@ fn call_in_wasm<E: Externalities> (
     )
 }
 
+// TODO Storage IT Tests
+
 #[test_case(WasmExecutionMethod::Interpreted)]
 #[cfg_attr(feature = "wasmtime", test_case(WasmExecutionMethod::Compiled))]
 fn test_ext_storage_get(wasm_method: WasmExecutionMethod){
-    let mut ext = TestExternalities::default();
-    let mut ext = ext.ext();
-    ext.set_storage(b"aaa".to_vec(), b"1".to_vec());
+    // let mut ext = TestExternalities::default();
+    // let mut ext = ext.ext();
+    // ext.set_storage(b"aaa".to_vec(), b"1".to_vec());
     
-    let result = call_in_wasm(
-        "storage_test", 
-        &b"rust".to_vec().encode(), 
-        wasm_method, 
-        &mut ext).unwrap();
-    println!("{:?}", result);
+    // let result = call_in_wasm(
+    //     "storage_test", 
+    //     &b"rust".to_vec().encode(), 
+    //     wasm_method, 
+    //     &mut ext).unwrap();
+    // println!("{:?}", result);
 }
