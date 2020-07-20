@@ -8,9 +8,6 @@ describe("Block", () => {
     const mock = MockBuilder.getEmptyBlockMock();
     const block = Block.fromU8Array(mock.bytes);
     assert(block.result == mock.instance, "empty block was not instanciated properly");
-
-    __retain(changetype<usize>(mock));
-    __retain(changetype<usize>(block))
   });
 
   it("should instanciate block with extrinsic from SCALE encoded Byte array", () => {
@@ -21,9 +18,6 @@ describe("Block", () => {
     assert(block.result.header == mock.instance.header, "header part of the block object was not instanciated properly");
     assert(block.result.body[0] == mock.instance.body[0], "Extrinsic was not instanciated properly");
     assert(block.result.body[1] == mock.instance.body[1], "Extrinsic was not instanciated properly");
-
-    __retain(changetype<usize>(mock));
-    __retain(changetype<usize>(block))
   });
 
   it("should instanciate block with extrinsics and header digests from  SCALE Encoded Byte Array", () => {
@@ -31,22 +25,15 @@ describe("Block", () => {
     const block = Block.fromU8Array(mock.bytes);
 
     assert(block.result == mock.instance, "block with extrinsic and digests was not instanciated properly");
-
-    __retain(changetype<usize>(mock));
-    __retain(changetype<usize>(block))
   });
 
   it("should encode block without digests correctly", () => {
     const block = MockBuilder.getBlockWithExtrinsics();
     assert(Utils.areArraysEqual(block.instance.toU8a(), block.bytes), "Block without digests was not encoded successfully");
-
-    __retain(changetype<usize>(block));
   });
 
   it("should encode block with digests correctly", () => {
     const block = MockBuilder.getBlockWithExtrinsicsAndDigests();
     assert(Utils.areArraysEqual(block.instance.toU8a(), block.bytes), "Block with digests was not encoded successfully");
-
-    __retain(changetype<usize>(block));
   });
 });

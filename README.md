@@ -21,7 +21,7 @@ This PoC can be considered the first step towards a general framework for develo
 
 In this milestone, the communication mechanism between the Host and Runtime will be established. The runtime will be able to access input passed from the Host and will be able to return data back to the Host as response. The Polkadot WASM API entries are mocked in this milestone.
 
-#### Milestone 2 - Storage Module
+#### Milestone 2 - Storage Module :construction:
 In this milestone the basic functionality for setting and getting storage from the AS Runtime using the Polkadot HOST API will be implemented.
 
 #### Milestone 3 - Support for Aura consensus

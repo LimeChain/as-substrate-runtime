@@ -13,10 +13,10 @@
   "author": "Daniel Ivanov <daniel-k-ivanov>",
   "license": "Apache-2.0",
   "dependencies": {
-    "as-scale-codec": "0.0.10"
+    "as-scale-codec": "0.1.0"
   },
   "devDependencies": {
     "@as-pect/cli": "^4.0.0",
-    "assemblyscript": "^0.13.3"
+    "assemblyscript": "^0.13.8"
   }
 }
