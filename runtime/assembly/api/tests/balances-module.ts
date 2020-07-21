@@ -4,13 +4,13 @@
  */
 import { Serialiser } from "../serialiser";
 import { BalancesModule, AccountId } from "../../modules/balances";
+import { UInt128 } from "as-scale-codec";
 
 /**
  * Test get account data using the Balances Module
  * @param data - i32 pointer to the start of the arguments passed
  * @param len - i32 length (in bytes) of the arguments passed
  */
-
 export function test_balances_get_account_data(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
 
@@ -18,4 +18,23 @@ export function test_balances_get_account_data(data: i32, len: i32): u64 {
     const accountData = BalancesModule.getAccountData(decodedAccountId.result);
 
     return Serialiser.serialiseResult(accountData.toU8a());
+}
+
+/**
+ * Test set account data using the Balances Module
+ * @param data - i32 pointer to the start of the arguments passed
+ * @param len - i32 length (in bytes) of the arguments passed
+ */
+export function test_balances_set_account_data(data: i32, len: i32): u64 {
+    let input = Serialiser.deserialiseInput(data, len);
+    const decodedAccountId = AccountId.fromU8Array(input);
+
+    const freeBalance = UInt128.fromU8a(input);
+    input = input.slice(freeBalance.encodedLength());
+    
+    const reservedBalance = UInt128.fromU8a(input);
+    input = input.slice(reservedBalance.encodedLength());
+    
+    const accDaat = BalancesModule.setBalance(decodedAccountId.result, freeBalance, reservedBalance);
+    return Serialiser.serialiseResult(accDaat.toU8a());
 }
