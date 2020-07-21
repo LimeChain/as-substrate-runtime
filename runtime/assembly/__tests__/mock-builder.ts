@@ -1,9 +1,10 @@
 import { MockResult } from "./mock-result";
 import { Block, Option, Header, Extrinsic, InherentData } from "../models";
-import { Hash, CompactInt, UInt64, Bool, ByteArray } from "as-scale-codec";
+import { Hash, CompactInt, UInt64, Bool, ByteArray, UInt128 } from "as-scale-codec";
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
+import { AccountData } from "../modules/balances/account-data";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -128,6 +129,24 @@ export namespace MockBuilder {
         const consensusEngineId: u8[] = [1, 1, 1, 1];
         const consensusValue = ByteArray.fromU8a([12, 2, 2, 2]);
         return new MockResult(new PreRuntime(consensusEngineId, consensusValue), MockConstants.PRERUNTIME_DIGEST);
+    }
+
+    /**
+     * Returns SCALE Encoded AccountData and Instance of that AccountData
+     */
+    export function getAccountDataMock(): MockResult <AccountData> {
+        const accountDataBytes: u8[] = [ 0x04, 0x04 ];
+        const accountData = new AccountData(UInt128.One, UInt128.One);
+        return new MockResult(accountData, accountDataBytes);
+    }
+
+    /**
+     * Returns SCALE Encoded AccountData and Instance of that AccountData
+     */
+    export function getDefaultAccountDataMock(): MockResult<AccountData> {
+        const accountDataBytes: u8[] = [0, 0];
+        const accountData = new AccountData(UInt128.Zero, UInt128.Zero);
+        return new MockResult(accountData, accountDataBytes);
     }
 }
 

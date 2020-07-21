@@ -9,7 +9,7 @@ export class AccountId {
     /**
      * Bytes 32 representing the public address of the Account
      */
-    public address: u8[];
+    private address: u8[];
 
     constructor(bytes: u8[]) {
         assert(bytes.length == Constants.ADDRESS_LENGTH, "AccountId: invalid bytes length provided.");

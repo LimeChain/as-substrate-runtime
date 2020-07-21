@@ -21,12 +21,12 @@ export class BalancesModule {
      * Returns AccountData. If the account does not exist, Default AccountData is returned.
      */
     static getAccountData(accountId: AccountId): AccountData {
-        // const accDataBytes = Storage.get(accountId.getAddress()); //TODO use new version of Storage
-        // if (accDataBytes.length != 0) {
-        //     return AccountData.fromU8Array(accDataBytes).result;            
-        // } else {
-        //     return AccountData.getDefault();
-        // }
+        const accDataBytes = Storage.get(accountId.getAddress());
+        if (accDataBytes.isSome()) {
+            return AccountData.fromU8Array((<u8[]>accDataBytes.unwrap()).slice(1)).result;
+        } else {
+            return AccountData.getDefault();
+        }
     }
 
     /**
