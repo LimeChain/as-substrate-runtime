@@ -73,3 +73,25 @@ fn test_ext_storage_set(){
     assert_eq!(result, [0u8; 0]);
     assert_eq!(exp_value, Some(value.encode()));
 }
+
+#[test]
+fn test_ext_storage_read(){
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+    let key = b"great".to_vec();
+    let value: [u8; 99] = [1u8; 99];
+    ext.set_storage(key.encode(), value.to_vec());
+    let offset: i32 = 40;
+    let mut arg = vec![];
+    arg.extend(key.encode());
+    arg.extend(offset.encode());
+    let result = call_in_wasm(
+        "test_storage_read", 
+        &arg,
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+    println!("{:?}", arg);
+    println!("{:?}", result);
+}

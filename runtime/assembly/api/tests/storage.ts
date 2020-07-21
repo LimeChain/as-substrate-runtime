@@ -3,7 +3,8 @@
  */
 import { Storage } from '../../modules/storage';
 import { Serialiser } from '../serialiser';
-import { ByteArray } from 'as-scale-codec';
+import { ByteArray, Int32 } from 'as-scale-codec';
+import { Utils } from '../../utils';
 
 /**
  * Test get method of storage
@@ -29,4 +30,16 @@ export function test_storage_get(data: i32, len: i32): i64 {
     let input = Serialiser.deserialiseInput(data, len);
     const value = Storage.get(input);
     return value.isSome() ? Serialiser.serialiseResult(<u8[]>value.unwrap()) : Serialiser.serialiseResult([]);
+}
+
+export function test_storage_read(data: i32, len: i32): i64 {
+    let input = Serialiser.deserialiseInput(data, len);
+    const key = ByteArray.fromU8a(input);
+    input = input.slice(key.encodedLength());
+    const offset = Int32.fromU8a(input);
+    input = input.slice(offset.encodedLength());
+
+    const result = Storage.read(key.toU8a(), offset.value);
+    // return result;
+    return Serialiser.serialiseResult(result);
 }
