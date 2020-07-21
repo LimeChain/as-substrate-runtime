@@ -33,8 +33,7 @@ export class BalancesModule {
      * @param params 
      */
     static setBalance(origin: Extrinsic): void {
-        
-
+        // TODO
     }
 
 
