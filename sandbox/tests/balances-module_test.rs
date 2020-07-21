@@ -41,9 +41,9 @@ fn test_get_account_data(){
     let mut ext = setup.ext;
     let mut ext = ext.ext();
 
-    let key = AccountKeyring::Alice.to_account_id();
+    let key = AccountKeyring::Alice.to_account_id().encode();
     let value = vec![ 0x13, 0x8e, 0x17, 0x2c, 0x21, 0x6a, 0xe7, 0xe7, 0x2a, 0x13, 0x8e, 0x17, 0x2c, 0x21, 0x6a, 0xe7, 0xe7, 0x2a ];
-    ext.set_storage(key.encode(), value.encode());
+    ext.set_storage(key.clone(), value.clone());
 
     let result = call_in_wasm(
         "test_balances_get_account_data", 
@@ -52,12 +52,28 @@ fn test_get_account_data(){
         &mut ext
     ).unwrap();
 
-    // let exp_value = ext.storage(&b"rust".to_vec());
-    // println!("{:?}", exp_value);
+    println!("{:?}", value.clone());
     println!("{:?}", result);
-    // assert_eq!(exp_value, Some(result));
+    assert_eq!(value.clone(), Some(result).unwrap());
 }
 
-// Test Getting Account Balances
+#[test]
+fn test_get_non_existing_account_data() {
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
+    let key = AccountKeyring::Alice.to_account_id().encode();
+
+    let result = call_in_wasm(
+        "test_balances_get_account_data", 
+        &key.clone(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    println!("{:?}", result);
+    assert_eq!(vec![0, 0], Some(result).unwrap());
+}
 
 // Test Setting Account Balances
