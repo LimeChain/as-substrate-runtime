@@ -16,6 +16,7 @@ export class AccountData {
      */
     public readonly reserved: UInt128;
 
+    // TODO add the rest of the functionality later
     // /**
     //  * The amount that `free` may not drop below when withdrawing for *anything except transaction fee payment.
     //  */
@@ -43,9 +44,7 @@ export class AccountData {
     */
     toU8a(): u8[] {
         return this.free.toU8a()
-            .concat(this.reserved.toU8a())
-            // .concat(this.miscFrozen.toU8a())
-            // .concat(this.freeFrozen.toU8a())
+            .concat(this.reserved.toU8a());
     }
 
     /**
@@ -66,12 +65,6 @@ export class AccountData {
 
         const reserved = UInt128.fromU8a(input);
         input = input.slice(reserved.encodedLength());
-
-        // const miscFrozen = UInt128.fromU8a(input);
-        // input = input.slice(miscFrozen.encodedLength());
-
-        // const freeFrozen = UInt128.fromU8a(input);
-        // input = input.slice(freeFrozen.encodedLength());
 
         const result = new AccountData(free, reserved);
         return new DecodedData<AccountData>(result, input);
