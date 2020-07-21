@@ -13,14 +13,6 @@ export namespace Utils {
     }
 
     /**
-     * Returns true/false depending on the Option whether it is Some or None
-     * @param bytes - SCALE Encoded bytes
-     */
-    export function isSet(bytes: u8[]): bool {
-        return bytes[0] != 0;
-    }
-
-    /**
      * By given 2 arrays, checks whether their values are equal (strict equal by index)
      */
     export function areArraysEqual<T>(a: Array<T>, b: Array<T>): bool {

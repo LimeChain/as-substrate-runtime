@@ -27,7 +27,6 @@ export function test_storage_set(data: i32, len: i32): i64 {
  */
 export function test_storage_get(data: i32, len: i32): i64 {
     let input = Serialiser.deserialiseInput(data, len);
-    const key = ByteArray.fromU8a(input);
-    const value = Storage.get(key.toU8a());
-    return value.isSome() ? Serialiser.serialiseResult(<u8[]>value.value) : Serialiser.serialiseResult([]);
+    const value = Storage.get(input);
+    return value.isSome() ? Serialiser.serialiseResult(<u8[]>value.unwrap()) : Serialiser.serialiseResult([]);
 }

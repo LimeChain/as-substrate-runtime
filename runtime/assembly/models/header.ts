@@ -96,7 +96,7 @@ export class Header {
      */
     private static decodeOptionalDigest(input: u8[]): DecodedData<Option<DigestItem[]>> {
         let digestOption = new Option<DigestItem[]>(null);
-        if (Utils.isSet(input)) {
+        if (Option.isArraySomething(input)) {
             let itemsLength = CompactInt.fromU8a(input);
             input = input.slice(itemsLength.encodedLength());
             digestOption = new Option<DigestItem[]>(new Array<DigestItem>());
