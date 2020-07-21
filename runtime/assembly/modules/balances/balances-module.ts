@@ -1,6 +1,7 @@
 import { Extrinsic } from "../../models";
 import { AccountData, AccountId } from ".";
 import { Storage } from "../storage";
+import { ByteArray } from "as-scale-codec";
 
 /**
  * The Balances Module.
@@ -22,7 +23,7 @@ export class BalancesModule {
     static getAccountData(accountId: AccountId): AccountData {
         const accDataBytes = Storage.get(accountId.getAddress());
         if (accDataBytes.isSome()) {
-            return AccountData.fromU8Array((<u8[]>accDataBytes.unwrap()).slice(1)).result;
+            return AccountData.fromU8Array((<ByteArray>accDataBytes.unwrap()).values).result;
         } else {
             return AccountData.getDefault();
         }

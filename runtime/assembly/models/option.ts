@@ -15,7 +15,7 @@ export class Option<T> {
      * @returns True if the `Option` has some value.
      */
     isSome(): bool {
-        return this.value != null;
+        return this.value ? true : false;
     }
 
     /**
