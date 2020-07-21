@@ -12,7 +12,7 @@ import { Serialiser } from './serialiser';
  * @param len i32 length (in bytes) of the arguments passed
 */
 export function ParachainHost_validators(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -21,7 +21,7 @@ export function ParachainHost_validators(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function ParachainHost_duty_roster(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -31,7 +31,7 @@ export function ParachainHost_duty_roster(data: i32, len: i32): u64 {
 */
 
 export function ParachainHost_active_parachains(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -40,7 +40,7 @@ export function ParachainHost_active_parachains(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
 */
 export function ParachainHost_parachain_status(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -50,8 +50,8 @@ export function ParachainHost_parachain_status(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function ParachainHost_parachain_code(data: i32, len: i32): u64 {
-    let input = Serialiser.deserialise_input(data, len);
-    return Serialiser.serialise_result([]);
+    let input = Serialiser.deserialiseInput(data, len);
+    return Serialiser.serialiseResult([]);
 }
 
 /** 
@@ -60,6 +60,6 @@ export function ParachainHost_parachain_code(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
 */
 export function ParachainHost_ingress(data: i32, len: i32): u64 {
-    let input = Serialiser.deserialise_input(data, len);
-    return Serialiser.serialise_result([]);
+    let input = Serialiser.deserialiseInput(data, len);
+    return Serialiser.serialiseResult([]);
 }
