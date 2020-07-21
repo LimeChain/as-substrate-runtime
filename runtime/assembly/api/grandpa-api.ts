@@ -7,7 +7,7 @@ import { UInt8 } from 'as-scale-codec';
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function GrandpaApi_grandpa_pending_change(data: i32, len: i32): u64{
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -16,7 +16,7 @@ export function GrandpaApi_grandpa_pending_change(data: i32, len: i32): u64{
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function GrandpaApi_grandpa_forced_change(data: i32, len: i32): u64{
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -25,5 +25,5 @@ export function GrandpaApi_grandpa_forced_change(data: i32, len: i32): u64{
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function GrandpaApi_grandpa_authorities(data: i32, len: i32): u64{
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }

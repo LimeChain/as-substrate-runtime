@@ -8,7 +8,7 @@ export class Serialiser {
      * @param ptr 
      * @param len 
      */
-    static deserialise_input(ptr: i32, len: i32): u8[] {
+    static deserialiseInput(ptr: i32, len: i32): u8[] {
         var input = new ArrayBuffer(len);
         memory.copy(changetype<usize>(input), ptr, len);
         return Utils.toU8Array(Uint8Array.wrap(input)); // Copying the TypedArray to Array is a temporary solution
@@ -17,22 +17,29 @@ export class Serialiser {
      * Returns pointer to and size of the buffer, respectively
      * @param ptr_size runtime pointer size as specified by Polkadot Host API
      */
-    static separate_pointer_size(ptr_size: u64): i32[] {
-        let value_ptr: i32 = i32(ptr_size);
-        let value_size: i32 = i32((ptr_size >> 32));
-        return [value_ptr, value_size];
+    static separatePointerSize(ptr_size: u64): i32[] {
+        let valuePtr: i32 = i32(ptr_size);
+        let valueSize: i32 = i32((ptr_size >> 32));
+        return [valuePtr, valueSize];
     }
 
     /**
      * Serialises the arguments into u64 number containing the pointer and the length of the bytes
-     * @param value_ptr 
-     * @param value_len 
+     * @param result u8 array to be serialised 
      */
-    static serialise_result(result: u8[]): u64 {
-        let value_ptr = result.dataStart;
-        let value_size = result.length;
+    static serialiseResult(result: u8[]): u64 {
+        let valuePtr = result.dataStart;
+        let valueSize = result.length;
 
-        __retain(value_ptr); // adds ref to the pointer, so it's not GCed
-        return ((value_size as u64) << 32) | value_ptr;
+        __retain(valuePtr); // adds ref to the pointer, so it's not GCed
+        return ((valueSize as u64) << 32) | valuePtr;
+    }
+    /**
+     * Does the same thing as the above function, but without retaining the pointer
+     */
+    static serialiseResultwOutRetain(result: u8[]): u64 {
+        let valuePtr = result.dataStart;
+        let valueSize = result.length;
+        return ((valueSize as u64) << 32) | valuePtr;
     }
 }

@@ -55,7 +55,7 @@ export declare function ext_storage_next_key_version_1(key: i64): i64;
 export declare function ext_storage_read_version_1(key: i64, value_out: i64, offset: i32): i64;
 export declare function ext_storage_root_version_1(): i64;
 export declare function ext_storage_set_version_1(key: i64, value: i64): void;
-
+export declare function ext_storage_exists_version_1(key: i64): i32;
 /**
  * Trie: Interface that provides trie related functionality
  */
