@@ -1,4 +1,3 @@
-
 /**
  * Class representing an optional value (T or null)
  */
@@ -28,4 +27,11 @@ export class Option<T> {
         return this.value;
     }
     
+    /**
+     * Returns true/false depending on the Option whether it is Some or None
+     * @param bytes - SCALE Encoded bytes
+     */
+    static isArraySomething(bytes: u8[]): bool {
+        return bytes[0] != 0;
+    }
 }

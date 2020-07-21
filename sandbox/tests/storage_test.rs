@@ -40,17 +40,17 @@ fn test_ext_storage_get(){
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
-    ext.set_storage(b"rust".to_vec(), b"ugliest".to_vec()); 
+    ext.set_storage(b"python".to_vec().encode(), b"greatest".to_vec()); 
     let result = call_in_wasm(
         "test_storage_get", 
-        &b"rust".to_vec().encode(),
+        &b"python".to_vec().encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    let exp_value = ext.storage(&b"rust".to_vec());
+    let exp_value = ext.storage(&b"python".to_vec().encode());
     println!("{:?}", exp_value);
     println!("{:?}", result);
-    assert_eq!(exp_value, Some(result));
+    assert_eq!(&exp_value.encode(), &result);
 }
 
 #[test]
@@ -58,16 +58,17 @@ fn test_ext_storage_set(){
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
-    let pair = [b"rust".to_vec(), b"worst".to_vec()];
+    let pair = [b"rust".to_vec(), b"goodest".to_vec()];
     let result = call_in_wasm(
         "test_storage_set", 
         &pair.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    let exp_value = ext.storage(&b"rust".to_vec());
+    let exp_value = ext.storage(&b"rust".to_vec().encode());
     println!("{:?}", exp_value);
     println!("{:?}", result);
+    println!("{:?}", &pair.encode());
     assert_eq!(result, [0u8; 0]);
-    assert_eq!(exp_value, Some(b"worst".to_vec()));
+    assert_eq!(exp_value, Some(b"goodest".to_vec().encode()));
 }

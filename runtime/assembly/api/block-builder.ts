@@ -9,9 +9,9 @@ import { Bool } from 'as-scale-codec';
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialise_input(data, len);
+    const input = Serialiser.deserialiseInput(data, len);
     const extrinsic = Extrinsic.fromU8Array(input);
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -21,9 +21,9 @@ export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialise_input(data, len);
+    const input = Serialiser.deserialiseInput(data, len);
     const inherent = InherentData.fromU8Array(input);
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**
@@ -34,7 +34,7 @@ export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result((new Bool(true)).toU8a());
+    return Serialiser.serialiseResult((new Bool(true)).toU8a());
 }
 
 /**
@@ -43,7 +43,7 @@ export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function BlockBuilder_check_inherents(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result((new Bool(true)).toU8a());
+    return Serialiser.serialiseResult((new Bool(true)).toU8a());
 }
 
 /**
@@ -53,7 +53,7 @@ export function BlockBuilder_check_inherents(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_random_seed(data: i32, len: i32): u64 {
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 

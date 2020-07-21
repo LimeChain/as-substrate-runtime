@@ -9,7 +9,7 @@ import { Bool } from "as-scale-codec";
  */
 export function Core_version(data: i32, len: i32): u64 {
     const version = getRuntimeVersionConfig();
-    return Serialiser.serialise_result(version.toU8a());
+    return Serialiser.serialiseResult(version.toU8a());
 }
 
 /**
@@ -18,10 +18,10 @@ export function Core_version(data: i32, len: i32): u64 {
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function Core_execute_block(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialise_input(data, len);
+    const input = Serialiser.deserialiseInput(data, len);
     const block = Block.fromU8Array(input);
 
-    return Serialiser.serialise_result((new Bool(true)).toU8a()); // Return mocked `true`
+    return Serialiser.serialiseResult((new Bool(true)).toU8a()); // Return mocked `true`
 }
 
 /**
@@ -31,9 +31,9 @@ export function Core_execute_block(data: i32, len: i32): u64 {
  */
 
 export function Core_initialize_block(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialise_input(data, len);
+    const input = Serialiser.deserialiseInput(data, len);
     const header = Header.fromU8Array(input);
-    return Serialiser.serialise_result([]);
+    return Serialiser.serialiseResult([]);
 }
 
 /**

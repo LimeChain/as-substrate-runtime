@@ -17,5 +17,4 @@ export class DecodedData<T> {
         this.result = result;
         this.input = input;
     }
- 
 }
