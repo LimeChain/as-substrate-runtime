@@ -4,7 +4,7 @@ import { Hash, CompactInt, UInt64, Bool, ByteArray, UInt128 } from "as-scale-cod
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
-import { AccountData } from "../modules/balances/account-data";
+import { AccountData } from "../modules/balances";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object

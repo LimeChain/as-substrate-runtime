@@ -1,6 +1,5 @@
 import { Serialiser } from "../serialiser";
-import { BalancesModule } from "../../modules/balances/balances-module";
-import { AccountId } from "../../models/account-id";
+import { BalancesModule, AccountId } from "../../modules/balances";
 
 export function test_balances_get_account_data(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);

@@ -1,5 +1,5 @@
 import { MockBuilder } from "./mock-builder";
-import { AccountData } from "../modules/balances/account-data";
+import { AccountData } from "../modules/balances";
 import { Utils } from "../utils";
 
 describe("AccountData", () => {

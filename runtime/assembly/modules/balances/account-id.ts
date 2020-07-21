@@ -1,5 +1,5 @@
-import { DecodedData } from "../codec/decoded-data";
-import { Constants } from "../constants";
+import { DecodedData } from "../../codec/decoded-data"
+import { Constants } from "../../constants";
 
 /**
  * Thin wrapper of SCALE Hash that represents Account ID (SS58)

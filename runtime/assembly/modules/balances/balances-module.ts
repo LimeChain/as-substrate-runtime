@@ -1,6 +1,5 @@
-import { Extrinsic, Option } from "../../models";
-import { AccountId } from "../../models/account-id";
-import { AccountData } from "./account-data";
+import { Extrinsic } from "../../models";
+import { AccountData, AccountId } from ".";
 import { Storage } from "../storage";
 
 /**
