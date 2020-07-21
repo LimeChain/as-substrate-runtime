@@ -1,5 +1,6 @@
 import { DecodedData } from "../../codec/decoded-data"
 import { Constants } from "../../constants";
+import { Utils } from "../../utils";
 
 /**
  * Thin wrapper of SCALE Hash that represents Account ID (SS58)
@@ -32,6 +33,16 @@ export class AccountId {
         assert(input.length >= Constants.ADDRESS_LENGTH, "AccountId: Invalid bytes length provided. EOF");
         const accId = new AccountId(input.slice(0, Constants.ADDRESS_LENGTH));
         return new DecodedData<AccountId>(accId, input.slice(Constants.ADDRESS_LENGTH));
+    }
+
+    @inline @operator('==')
+    static eq(a: AccountId, b: AccountId): bool {
+        return Utils.areArraysEqual(a.getAddress(), b.getAddress());
+    }
+
+    @inline @operator('!=')
+    static notEq(a: AccountId, b: AccountId): bool {
+        return !Utils.areArraysEqual(a.getAddress(), b.getAddress());
     }
 
 }
