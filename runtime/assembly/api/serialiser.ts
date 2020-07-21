@@ -25,14 +25,21 @@ export class Serialiser {
 
     /**
      * Serialises the arguments into u64 number containing the pointer and the length of the bytes
-     * @param valuePtr 
-     * @param value_len 
+     * @param result u8 array to be serialised 
      */
     static serialiseResult(result: u8[]): u64 {
         let valuePtr = result.dataStart;
         let valueSize = result.length;
 
         __retain(valuePtr); // adds ref to the pointer, so it's not GCed
+        return ((valueSize as u64) << 32) | valuePtr;
+    }
+    /**
+     * Does the same thing as the above function, but without retaining the pointer
+     */
+    static serialiseResultwOutRetain(result: u8[]): u64 {
+        let valuePtr = result.dataStart;
+        let valueSize = result.length;
         return ((valueSize as u64) << 32) | valuePtr;
     }
 }
