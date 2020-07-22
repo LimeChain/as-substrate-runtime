@@ -1,7 +1,6 @@
-import { Extrinsic } from "../../models";
 import { AccountData, AccountId } from ".";
 import { Storage } from "../storage";
-import { ByteArray } from "as-scale-codec";
+import { ByteArray, UInt128 } from "as-scale-codec";
 
 /**
  * The Balances Module.
@@ -18,7 +17,7 @@ export class BalancesModule {
 
     /**
      * Returns AccountData for a given AccountId
-     * Returns AccountData. If the account does not exist, Default AccountData is returned.
+     * If the account does not exist, Default AccountData is returned.
      */
     static getAccountData(accountId: AccountId): AccountData {
         const accDataBytes = Storage.get(accountId.getAddress());
@@ -30,12 +29,20 @@ export class BalancesModule {
     }
 
     /**
-     * 
-     * @param params 
+     * Sets the balances of a given AccountId
+     * Alters the Free balance and Reserved balances in Storage.
      */
-    static setBalance(origin: Extrinsic): void {
-        // TODO
-    }
+    static setBalance(accountId: AccountId, freeBalance: UInt128, reservedBalance: UInt128): AccountData {
+        const currentAccountData = BalancesModule.getAccountData(accountId);
+
+        // TODO Any meaningful checks
+
+        currentAccountData.setFree(freeBalance);
+        currentAccountData.setReserved(reservedBalance);
+        Storage.set(accountId.getAddress(), currentAccountData.toU8a());
+
+        return currentAccountData;
+    } 
 
 
 

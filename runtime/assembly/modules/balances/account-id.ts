@@ -26,6 +26,13 @@ export class AccountId {
     }
 
     /**
+     * Returns the number of bytes used for encoding AccountId
+     */
+    encodedLength(): i32 {
+        return this.address.length;
+    }
+
+    /**
      * Instanciates new Account ID from Bytes Array
      * @param input 
      */

@@ -9,30 +9,12 @@ export class AccountData {
     /**
      * Non-reserved part of the balance. It is the total pool what may in principle be transferred and reserved.
      */
-    public readonly free: UInt128;
+    private free: UInt128;
 
     /**
      * Balance which is reserved and may not be used at all.
      */
-    public readonly reserved: UInt128;
-
-    // TODO add the rest of the functionality later
-    // /**
-    //  * The amount that `free` may not drop below when withdrawing for *anything except transaction fee payment.
-    //  */
-    // public miscFrozen: UInt128;
-
-    // /**
-    //  * The amount that `free` may not drop below when withdrawing specifically for transaction fee payment.
-    //  */
-    // public freeFrozen: UInt128;
-
-    // constructor(free: UInt128, reserved: UInt128, miscFrozen: UInt128, feeFrozen: UInt128) {
-    //     this.free = free;
-    //     this.reserved = reserved;
-    //     this.miscFrozen = miscFrozen;
-    //     this.freeFrozen = feeFrozen;
-    // }
+    private reserved: UInt128;
 
     constructor(free: UInt128, reserved: UInt128) {
         this.free = free;
@@ -45,6 +27,36 @@ export class AccountData {
     toU8a(): u8[] {
         return this.free.toU8a()
             .concat(this.reserved.toU8a());
+    }
+
+    /**
+     * Sets new free value
+     * @param newFree 
+     */
+    setFree(newFree: UInt128): void {
+        this.free = newFree;
+    }
+
+    /**
+     * Sets new reserved value
+     * @param newReserved
+     */
+    setReserved(newReserved: UInt128): void {
+        this.reserved = newReserved;
+    }
+
+    /**
+     * Returns the free value
+     */
+    getFree(): UInt128 {
+        return this.free;
+    }
+
+    /**
+     * Returns the reserved value
+     */
+    getReserved(): UInt128 {
+        return this.reserved;
     }
 
     /**
