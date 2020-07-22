@@ -1,7 +1,8 @@
 import { Serialiser } from '../api/serialiser';
-import { ext_storage_set_version_1, ext_storage_get_version_1, ext_storage_read_version_1 } from '../env';
+import { ext_storage_set_version_1, ext_storage_get_version_1, ext_storage_read_version_1, ext_storage_clear_version_1, ext_storage_exists_version_1 } from '../env';
 import { Option } from '../models';
 import { Utils } from '../utils';
+import { Int32 } from 'as-scale-codec';
 
 /**
  * Namespace exporting Storage related functions
@@ -54,5 +55,24 @@ export namespace Storage {
         let res = Utils.toU8Array(buff);
         
         return Option.isArraySomething(valueu8) ? new Option<u8[]>(valueu8.slice(1).concat(res)): new Option<u8[]>(null);
+    }
+    /**
+     * Clears the storage of the given key and its value.
+     * @param key key of the data to clear
+     */
+    export function clear(key: u8[]): void {
+        const key64: u64 = Serialiser.serialiseResultwOutRetain(key);
+        ext_storage_clear_version_1(key64);
+    }
+
+    /**
+     * Checks whether the given key exists in storage.
+     * @param key key of the data to check
+     */
+    export function exists(key: u8[]): u8[] {
+        const key64: u64 = Serialiser.serialiseResult(key);
+        const itExists: i32 = ext_storage_exists_version_1(key64);
+        const res: Int32 = new Int32(itExists);
+        return res.toU8a();
     }
 }

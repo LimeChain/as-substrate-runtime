@@ -3,15 +3,14 @@
  */
 import { Storage } from '../../modules/storage';
 import { Serialiser } from '../serialiser';
-import { ByteArray, Int32 } from 'as-scale-codec';
-import { Utils } from '../../utils';
+import { ByteArray, Int32, Byte } from 'as-scale-codec';
 
 /**
  * Test get method of storage
  * @param data - i32 pointer to the start of the arguments passed
  * @param len - i32 length (in bytes) of the arguments passed
  */
-export function test_storage_set(data: i32, len: i32): i64 {
+export function test_storage_set(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
     const key = ByteArray.fromU8a(input);
     input = input.slice(key.encodedLength());
@@ -26,13 +25,18 @@ export function test_storage_set(data: i32, len: i32): i64 {
  * @param data - i32 pointer to the start of the arguments passed
  * @param len - i32 length (in bytes) of the arguments passed
  */
-export function test_storage_get(data: i32, len: i32): i64 {
+export function test_storage_get(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
     const value = Storage.get(input);
     return value.isSome() ? Serialiser.serialiseResult(<u8[]>value.unwrap()) : Serialiser.serialiseResult([]);
 }
 
-export function test_storage_read(data: i32, len: i32): i64 {
+/**
+ * Test read method of storage
+ * @param data - i32 pointer to the start of the arguments passed
+ * @param len - i32 length (in bytes) of the arguments passed
+ */
+export function test_storage_read(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
     const key = ByteArray.fromU8a(input);
     input = input.slice(key.encodedLength());
@@ -41,4 +45,29 @@ export function test_storage_read(data: i32, len: i32): i64 {
 
     const result = Storage.read(key.toU8a(), offset.value);
     return result.isSome() ? Serialiser.serialiseResult(<u8[]>result.unwrap()): Serialiser.serialiseResult([]);
+}
+
+/**
+ * Test read method of storage
+ * @param data - i32 pointer to the start of the arguments passed
+ * @param len - i32 length (in bytes) of the arguments passed
+ */
+
+export function test_storage_clear(data: i32, len: i32): u64 {
+    let input = Serialiser.deserialiseInput(data, len);
+    const key = ByteArray.fromU8a(input);
+    Storage.clear(key.toU8a());
+    return Serialiser.serialiseResult([]);
+}
+
+/**
+ * Test exists method of storage
+ * @param data i32 pointer to the start of the arguments passed
+ * @param len - i32 length (in bytes) of the arguments passed
+ */
+export function test_storage_exists(data: i32, len: i32): u64 {
+    let input = Serialiser.deserialiseInput(data, len);
+    const key = ByteArray.fromU8a(input);
+    const itExists = Storage.exists(key.toU8a());
+    return Serialiser.serialiseResult(itExists);
 }

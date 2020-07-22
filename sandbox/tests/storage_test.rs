@@ -100,3 +100,64 @@ fn test_ext_storage_read(){
     assert!(res >= offset);
     assert_eq!(&result[4..result.len()], &[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0]);
 }
+#[test]
+#[should_panic]
+fn test_ext_storage_clear(){
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
+    let key = b"clearthis".to_vec();
+    let value = b"nonsense".to_vec();
+
+    ext.set_storage(key.encode(), value);
+
+    let result = call_in_wasm(
+        "test_storage_clear", 
+        &key.encode(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    let check = call_in_wasm(
+        "test_storage_get", 
+        &key.encode(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+    assert_eq!(result, [0u8; 0]);
+    assert_eq!(check, [0u8; 0]);
+    let _res = ext.storage(&key).unwrap();
+}
+
+#[test]
+fn test_storage_exists(){
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
+    let key = b"itexists".to_vec();
+    let value = b"check if".to_vec();
+
+    let invalid_key = b"notexists".to_vec();
+    ext.set_storage(key.encode(), value);
+
+    let result1 = call_in_wasm(
+        "test_storage_exists", 
+        &key.encode(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    let result2 = call_in_wasm(
+        "test_storage_exists", 
+        &invalid_key.encode(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+    
+    let check1 = <u32>::decode(&mut result1.as_ref()).unwrap();
+    let check2 = <u32>::decode(&mut result2.as_ref()).unwrap();
+    assert_eq!(check1, ext.exists_storage(&key.encode()) as u32);
+    assert_eq!(check2, ext.exists_storage(&invalid_key.encode()) as u32);
+}
