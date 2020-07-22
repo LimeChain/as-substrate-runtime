@@ -131,7 +131,7 @@ fn test_ext_storage_clear(){
 }
 
 #[test]
-fn test_storage_exists(){
+fn test_ext_storage_exists(){
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();

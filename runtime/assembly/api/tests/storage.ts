@@ -3,7 +3,7 @@
  */
 import { Storage } from '../../modules/storage';
 import { Serialiser } from '../serialiser';
-import { ByteArray, Int32, Byte } from 'as-scale-codec';
+import { ByteArray, Int32 } from 'as-scale-codec';
 
 /**
  * Test get method of storage
@@ -28,7 +28,7 @@ export function test_storage_set(data: i32, len: i32): u64 {
 export function test_storage_get(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
     const value = Storage.get(input);
-    return value.isSome() ? Serialiser.serialiseResult(<u8[]>value.unwrap()) : Serialiser.serialiseResult([]);
+    return value.isSome() ? Serialiser.serialiseResult((<ByteArray>value.unwrap()).values) : Serialiser.serialiseResult([]);
 }
 
 /**
@@ -55,8 +55,7 @@ export function test_storage_read(data: i32, len: i32): u64 {
 
 export function test_storage_clear(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
-    const key = ByteArray.fromU8a(input);
-    Storage.clear(key.toU8a());
+    Storage.clear(input);
     return Serialiser.serialiseResult([]);
 }
 
@@ -67,7 +66,6 @@ export function test_storage_clear(data: i32, len: i32): u64 {
  */
 export function test_storage_exists(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
-    const key = ByteArray.fromU8a(input);
-    const itExists = Storage.exists(key.toU8a());
+    const itExists = Storage.exists(input);
     return Serialiser.serialiseResult(itExists);
 }
