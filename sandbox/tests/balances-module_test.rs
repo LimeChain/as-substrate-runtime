@@ -4,7 +4,7 @@ use sandbox_execution_environment::{Setup};
 use sp_core::{ traits::{ CallInWasm, Externalities, MissingHostFunctions}};
 use sp_runtime::{ traits::{BlakeTwo256 }};
 use sp_state_machine::TestExternalities as CoreTestExternalities;
-use parity_scale_codec::{Encode};
+use parity_scale_codec::{Encode, Compact};
 use sp_keyring::AccountKeyring;
 use sp_wasm_interface::HostFunctions as _;
 pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
@@ -76,4 +76,34 @@ fn test_get_non_existing_account_data() {
     assert_eq!(vec![0, 0], Some(result).unwrap());
 }
 
-// TODO Test Setting Account Balances
+
+#[test]
+fn test_balances_set_account_data() {
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
+    let key = AccountKeyring::Alice.to_account_id().encode();
+    let free_balance:Compact<u128> = Compact(1000000000000000000);
+    let reserved_balance:Compact<u128> = Compact(2000000000000000000);
+
+    let mut args = vec![];
+    args.extend(key.clone());
+    args.extend(free_balance.encode());
+    args.extend(reserved_balance.encode());
+ 
+    let _result = call_in_wasm(
+        "test_balances_set_account_data", 
+        &args,
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    let storage_value = ext.storage(&key.clone()).unwrap();
+    println!("{:?}", storage_value);
+
+    let mut expected_result = vec![];
+    expected_result.extend(free_balance.encode());
+    expected_result.extend(reserved_balance.encode());
+    assert_eq!(expected_result, storage_value);
+}
