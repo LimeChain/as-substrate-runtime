@@ -1,10 +1,10 @@
 extern crate sandbox_execution_environment;
 use sc_executor::{WasmExecutor, WasmExecutionMethod};
 use sandbox_execution_environment::{Setup};
-use sp_core::{ traits::{ CallInWasm, Externalities, MissingHostFunctions}};
+use sp_core::{traits::{ CallInWasm, Externalities, MissingHostFunctions}};
 use sp_runtime::{ traits::{BlakeTwo256 }};
 use sp_state_machine::TestExternalities as CoreTestExternalities;
-use parity_scale_codec::{Encode};
+use parity_scale_codec::{Encode, Decode};
 use sp_wasm_interface::HostFunctions as _;
 pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
 
@@ -79,10 +79,12 @@ fn test_ext_storage_read(){
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
+
     let key = b"great".to_vec();
-    let value: [u8; 99] = [1u8; 99];
+    let value: [u8; 25] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
+    let offset: u32 = 10;
     ext.set_storage(key.encode(), value.to_vec());
-    let offset: i32 = 40;
+
     let mut arg = vec![];
     arg.extend(key.encode());
     arg.extend(offset.encode());
@@ -92,6 +94,9 @@ fn test_ext_storage_read(){
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
+    let res: u32 = <u32>::decode(&mut result.as_ref()).unwrap();
     println!("{:?}", arg);
     println!("{:?}", result);
+    assert!(res >= offset);
+    assert_eq!(&result[4..result.len()], &[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0]);
 }

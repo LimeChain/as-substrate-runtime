@@ -40,6 +40,5 @@ export function test_storage_read(data: i32, len: i32): i64 {
     input = input.slice(offset.encodedLength());
 
     const result = Storage.read(key.toU8a(), offset.value);
-    // return result;
-    return Serialiser.serialiseResult(result);
+    return result.isSome() ? Serialiser.serialiseResult(<u8[]>result.unwrap()): Serialiser.serialiseResult([]);
 }
