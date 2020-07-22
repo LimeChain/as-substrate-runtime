@@ -14,7 +14,7 @@ describe("AccountId", () => {
     })
 
     throws("should throw when trying to instanciate AccountId from SCALE Ecndoed bytes with length < 32", () => {
-        const accId = new AccountId([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        new AccountId([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     })
 
 });

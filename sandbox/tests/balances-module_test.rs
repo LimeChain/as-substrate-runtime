@@ -47,7 +47,7 @@ fn test_get_account_data(){
 
     let result = call_in_wasm(
         "test_balances_get_account_data", 
-        &key.clone(),
+        &key,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
@@ -67,7 +67,7 @@ fn test_get_non_existing_account_data() {
 
     let result = call_in_wasm(
         "test_balances_get_account_data", 
-        &key.clone(),
+        &key,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
