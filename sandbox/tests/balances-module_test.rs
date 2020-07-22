@@ -84,22 +84,26 @@ fn test_balances_set_account_data() {
     let mut ext = ext.ext();
 
     let key = AccountKeyring::Alice.to_account_id().encode();
-    println!("{:?}", key);
-    let free_balance:Compact<u128> = Compact(1);
-    let reserved_balance:Compact<u128> = Compact(2);
+    let free_balance:Compact<u128> = Compact(1000000000000000000);
+    let reserved_balance:Compact<u128> = Compact(2000000000000000000);
+
     let mut args = vec![];
     args.extend(key.clone());
     args.extend(free_balance.encode());
     args.extend(reserved_balance.encode());
  
-    let result = call_in_wasm(
+    let _result = call_in_wasm(
         "test_balances_set_account_data", 
         &args,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
 
-    println!("{:?}", result);
-    let storage_value = ext.storage(&key.clone());
-    println!("{:?}", storage_value.unwrap());
+    let storage_value = ext.storage(&key.clone()).unwrap();
+    println!("{:?}", storage_value);
+
+    let mut expected_result = vec![];
+    expected_result.extend(free_balance.encode());
+    expected_result.extend(reserved_balance.encode());
+    assert_eq!(expected_result, storage_value);
 }
