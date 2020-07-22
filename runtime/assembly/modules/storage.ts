@@ -1,8 +1,7 @@
 import { Serialiser } from '../api/serialiser';
 import { ext_storage_set_version_1, ext_storage_get_version_1, ext_storage_read_version_1, ext_storage_clear_version_1, ext_storage_exists_version_1 } from '../env';
 import { Option } from '../models';
-import { Utils } from '../utils';
-import { Int32 } from 'as-scale-codec';
+import { Int32, Bool } from 'as-scale-codec';
 import { ByteArray } from 'as-scale-codec';
 
 /**
@@ -40,28 +39,24 @@ export namespace Storage {
     }
     /**
      * Gets the given key from storage, placing the value into a buffer and returning the number of bytes that the
-     * entry in storage has beyond the offset. 
-     * ArrayBuffer has fixed length of 20.
-     * Returns Option instance with populated ArrayBuffer concatenated to the result from storage_read
+     * entry in storage has beyond the offset.
      * @param key key of the data to get
      * @param offset offset beyond which the value is copied
      */
-    export function read(key: u8[], offset: i32): Option<u8[]> {
+    export function read(key: u8[], valueOut: ArrayBuffer, offset: i32): Option<Int32> {
         const key64: u64 = Serialiser.serialiseResultwOutRetain(key);
-        const valueOut = new ArrayBuffer(20);
-        let valuePtr = changetype<usize>(valueOut);
-        let valueSize = valueOut.byteLength;
-        const valueOut64 = ((valueSize as u64) << 32) | valuePtr;
+        const valueOut64 :u64 = Serialiser.serialiseBufferwOutRetain(valueOut);
 
         const result = ext_storage_read_version_1(key64, valueOut64, offset);
-        
-        const ptrSize: i32[] = Serialiser.separatePointerSize(result);
-        let valueu8: u8[] = Serialiser.deserialiseInput(ptrSize[0], ptrSize[1]);
 
-        let buff = Uint8Array.wrap(valueOut);
-        let res = Utils.toU8Array(buff);
-        
-        return Option.isArraySomething(valueu8) ? new Option<u8[]>(valueu8.slice(1).concat(res)): new Option<u8[]>(null);
+        const ptrSize: i32[] = Serialiser.separatePointerSize(result);
+        let valueU8: u8[] = Serialiser.deserialiseInput(ptrSize[0], ptrSize[1]);
+
+        if(Option.isArraySomething(valueU8)){
+            return new Option<Int32>(Int32.fromU8a(valueU8.slice(1)));
+        }else{
+            return new Option<Int32>(null);
+        }
     }
     /**
      * Clears the storage of the given key and its value.
@@ -76,10 +71,9 @@ export namespace Storage {
      * Checks whether the given key exists in storage.
      * @param key key of the data to check
      */
-    export function exists(key: u8[]): u8[] {
+    export function exists(key: u8[]): Bool {
         const key64: u64 = Serialiser.serialiseResult(key);
         const itExists: i32 = ext_storage_exists_version_1(key64);
-        const res: Int32 = new Int32(itExists);
-        return res.toU8a();
+        return new Bool(itExists as bool);
     }
 }

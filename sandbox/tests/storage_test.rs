@@ -82,26 +82,58 @@ fn test_ext_storage_read(){
 
     let key = b"great".to_vec();
     let value: [u8; 25] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
-    let offset: u32 = 10;
     ext.set_storage(key.encode(), value.to_vec());
 
-    let mut arg = vec![];
-    arg.extend(key.encode());
-    arg.extend(offset.encode());
-    let result = call_in_wasm(
+    let mut args1 = vec![];
+    let mut args2 = vec![];
+    let mut args3 = vec![];
+
+    args1.extend(key.encode());
+    args2.extend(key.encode());
+    args3.extend(key.encode());
+
+    args1.extend((25 as u32).encode());
+    args2.extend((25 as u32).encode());
+    args3.extend((15 as u32).encode());
+
+    args1.extend((0 as u32).encode());
+    args2.extend((10 as u32).encode());
+    args3.extend((0 as u32).encode());
+
+    let result1 = call_in_wasm(
         "test_storage_read", 
-        &arg,
+        &args1,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    let res: u32 = <u32>::decode(&mut result.as_ref()).unwrap();
-    println!("{:?}", arg);
-    println!("{:?}", result);
-    assert!(res >= offset);
-    assert_eq!(&result[4..result.len()], &[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0]);
+
+    let result2 = call_in_wasm(
+        "test_storage_read", 
+        &args2,
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    let result3 = call_in_wasm(
+        "test_storage_read", 
+        &args3,
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    let res1 = <u32>::decode(&mut result1.as_ref()).unwrap();
+    let res2 = <u32>::decode(&mut result2.as_ref()).unwrap();
+    let res3 = <u32>::decode(&mut result3.as_ref()).unwrap();
+
+    assert!(res1 >= 25);
+    assert!(res2 >= 5);
+    assert!(res3 >= 10);
+
+    assert_eq!(&result1[4..result1.len()], &value);
+    assert_eq!(&result2[4..result2.len()], &[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(&result3[4..result3.len()], &value[0..15]);
 }
 #[test]
-#[should_panic]
 fn test_ext_storage_clear(){
     let setup = Setup::new();
     let mut ext = setup.ext;
@@ -119,15 +151,9 @@ fn test_ext_storage_clear(){
         &mut ext
     ).unwrap();
 
-    let check = call_in_wasm(
-        "test_storage_get", 
-        &key.encode(),
-        WasmExecutionMethod::Interpreted,
-        &mut ext
-    ).unwrap();
+    let res = ext.storage(&key);
     assert_eq!(result, [0u8; 0]);
-    assert_eq!(check, [0u8; 0]);
-    let _res = ext.storage(&key).unwrap();
+    assert_eq!(res.iter().next(), std::option::Option::None);
 }
 
 #[test]
@@ -156,8 +182,8 @@ fn test_ext_storage_exists(){
         &mut ext
     ).unwrap();
     
-    let check1 = <u32>::decode(&mut result1.as_ref()).unwrap();
-    let check2 = <u32>::decode(&mut result2.as_ref()).unwrap();
-    assert_eq!(check1, ext.exists_storage(&key.encode()) as u32);
-    assert_eq!(check2, ext.exists_storage(&invalid_key.encode()) as u32);
+    let check1 = <u8>::decode(&mut result1.as_ref()).unwrap();
+    let check2 = <u8>::decode(&mut result2.as_ref()).unwrap();
+    assert_eq!(check1 as u32, ext.exists_storage(&key.encode()) as u32);
+    assert_eq!(check2 as u32, ext.exists_storage(&invalid_key.encode()) as u32);
 }

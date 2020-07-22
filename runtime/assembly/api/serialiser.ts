@@ -42,4 +42,11 @@ export class Serialiser {
         let valueSize = result.length;
         return ((valueSize as u64) << 32) | valuePtr;
     }
+
+    static serialiseBufferwOutRetain(buffer: ArrayBuffer): u64 {
+        let valuePtr = changetype<usize>(buffer);
+        let valueSize = buffer.byteLength;
+        const buffer64 = ((valueSize as u64) << 32) | valuePtr;
+        return buffer64;
+    }
 }
