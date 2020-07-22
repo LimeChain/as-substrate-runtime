@@ -1,9 +1,10 @@
 import { MockResult } from "./mock-result";
 import { Block, Option, Header, Extrinsic, InherentData } from "../models";
-import { Hash, CompactInt, UInt64, Bool, ByteArray } from "as-scale-codec";
+import { Hash, CompactInt, UInt64, Bool, ByteArray, UInt128 } from "as-scale-codec";
 import { Signature } from "../models";
 import { MockConstants } from "./mock-constants";
 import { DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "../models/digest-items";
+import { AccountData } from "../modules/balances";
 
 /**
  * Namespace used to return SCALE encoded byte inputs and the appropriate native instance of the object
@@ -129,6 +130,24 @@ export namespace MockBuilder {
         const consensusValue = ByteArray.fromU8a([12, 2, 2, 2]);
         return new MockResult(new PreRuntime(consensusEngineId, consensusValue), MockConstants.PRERUNTIME_DIGEST);
     }
+
+    /**
+     * Returns SCALE Encoded AccountData and Instance of that AccountData
+     */
+    export function getAccountDataMock(): MockResult <AccountData> {
+        const accountDataBytes: u8[] = [ 0x04, 0x04 ];
+        const accountData = new AccountData(UInt128.One, UInt128.One);
+        return new MockResult(accountData, accountDataBytes);
+    }
+
+    /**
+     * Returns SCALE Encoded AccountData and Instance of that AccountData
+     */
+    export function getDefaultAccountDataMock(): MockResult<AccountData> {
+        const accountDataBytes: u8[] = [0, 0];
+        const accountData = new AccountData(UInt128.Zero, UInt128.Zero);
+        return new MockResult(accountData, accountDataBytes);
+    }
 }
 
 /**
@@ -184,7 +203,7 @@ export namespace MockHelper {
     
     export function _getExtrinsicInstance1(): Extrinsic {
         const from = Hash.fromU8a(MockConstants.ALICE_ADDRESS);
-        const to  = Hash.fromU8a(MockConstants.BOB_ADDRESS);
+        const to = Hash.fromU8a(MockConstants.BOB_ADDRESS);
         const amount: UInt64 = new UInt64(69);
         const nonce: UInt64 = new UInt64(5);
         const signature = new Signature([72, 43, 234, 45, 159, 200, 43, 162, 117, 34, 73, 0, 41, 24, 219, 106, 202, 41, 220, 128, 114, 102, 33, 40, 235, 200, 34, 98, 249, 135, 134, 116, 39, 94, 159, 122, 148, 102, 158, 5, 178, 195, 144, 165, 149, 149, 118, 250, 97, 192, 228, 0, 216, 37, 219, 207, 7, 240, 82, 75, 243, 191, 237, 138]);

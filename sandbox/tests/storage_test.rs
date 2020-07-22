@@ -50,7 +50,7 @@ fn test_ext_storage_get(){
         &mut ext
     ).unwrap();
     println!("{:?}", result);
-    assert_eq!(&value.encode(), &result);
+    assert_eq!(&value, &result);
 }
 
 #[test]

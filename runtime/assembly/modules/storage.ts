@@ -3,6 +3,7 @@ import { ext_storage_set_version_1, ext_storage_get_version_1, ext_storage_read_
 import { Option } from '../models';
 import { Utils } from '../utils';
 import { Int32 } from 'as-scale-codec';
+import { ByteArray } from 'as-scale-codec';
 
 /**
  * Namespace exporting Storage related functions
@@ -13,14 +14,20 @@ export namespace Storage {
      * Returns the value of the passed key
      * @param key key to access the storage
      */
-    export function get(key: u8[]): Option<u8[]> {
+    export function get(key: u8[]): Option<ByteArray> {
         const key64: u64 = Serialiser.serialiseResultwOutRetain(key);
         const result: u64 = ext_storage_get_version_1(key64);
         const ptrSize: i32[] = Serialiser.separatePointerSize(result);
-        let valueu8: u8[] = Serialiser.deserialiseInput(ptrSize[0], ptrSize[1]);
-        return Option.isArraySomething(valueu8) ? new Option<u8[]>(valueu8.slice(1)): new Option<u8[]>(null);
+        let valueU8: u8[] = Serialiser.deserialiseInput(ptrSize[0], ptrSize[1]);
+        
+        if (Option.isArraySomething(valueU8)) {
+            const byteArray = ByteArray.fromU8a(valueU8.slice(1));
+            return new Option<ByteArray>(byteArray);
+        } else {
+            return new Option<ByteArray>(null);
+        }
     }
-
+    
     /**
      * Sets the value in storage for a given key
      * @param key key pair

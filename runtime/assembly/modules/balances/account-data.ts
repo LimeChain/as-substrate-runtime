@@ -1,0 +1,82 @@
+import { UInt128 } from "as-scale-codec";
+import { DecodedData } from "../../codec/decoded-data";
+
+/**
+ * Class representing balance information for a given account 
+ */
+export class AccountData {
+
+    /**
+     * Non-reserved part of the balance. It is the total pool what may in principle be transferred and reserved.
+     */
+    public readonly free: UInt128;
+
+    /**
+     * Balance which is reserved and may not be used at all.
+     */
+    public readonly reserved: UInt128;
+
+    // TODO add the rest of the functionality later
+    // /**
+    //  * The amount that `free` may not drop below when withdrawing for *anything except transaction fee payment.
+    //  */
+    // public miscFrozen: UInt128;
+
+    // /**
+    //  * The amount that `free` may not drop below when withdrawing specifically for transaction fee payment.
+    //  */
+    // public freeFrozen: UInt128;
+
+    // constructor(free: UInt128, reserved: UInt128, miscFrozen: UInt128, feeFrozen: UInt128) {
+    //     this.free = free;
+    //     this.reserved = reserved;
+    //     this.miscFrozen = miscFrozen;
+    //     this.freeFrozen = feeFrozen;
+    // }
+
+    constructor(free: UInt128, reserved: UInt128) {
+        this.free = free;
+        this.reserved = reserved;
+    }
+
+    /**
+    * SCALE Encodes the AccountData into u8[]
+    */
+    toU8a(): u8[] {
+        return this.free.toU8a()
+            .concat(this.reserved.toU8a());
+    }
+
+    /**
+     * Instanciates new Default AccountData object
+     */
+    static getDefault(): AccountData {
+        return new AccountData(UInt128.Zero, UInt128.Zero);
+    }
+
+    /**
+     * Instanciates new AccountData object from SCALE encoded byte array
+     * @param input - SCALE encoded AccountData
+     * TODO - avoid slicing the aray for better performance
+     */
+    static fromU8Array(input: u8[]): DecodedData<AccountData> {
+        const free = UInt128.fromU8a(input);
+        input = input.slice(free.encodedLength());
+
+        const reserved = UInt128.fromU8a(input);
+        input = input.slice(reserved.encodedLength());
+
+        const result = new AccountData(free, reserved);
+        return new DecodedData<AccountData>(result, input);
+    }
+
+    @inline @operator('==')
+    static eq(a: AccountData, b: AccountData): bool {
+        return a.free == b.free && a.reserved == b.reserved;
+    }
+
+    @inline @operator('!=')
+    static notEq(a: AccountData, b: AccountData): bool {
+        return !AccountData.eq(a, b);
+    }
+}
