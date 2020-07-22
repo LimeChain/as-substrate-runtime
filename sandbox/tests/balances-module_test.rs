@@ -5,9 +5,9 @@ use sp_core::{ traits::{ CallInWasm, Externalities, MissingHostFunctions}};
 use sp_runtime::{ traits::{BlakeTwo256 }};
 use sp_state_machine::TestExternalities as CoreTestExternalities;
 use parity_scale_codec::{Encode};
+use sp_keyring::AccountKeyring;
 use sp_wasm_interface::HostFunctions as _;
 pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
-
 type HostFunctions = sp_io::SubstrateHostFunctions;
 
 pub type TestExternalities = CoreTestExternalities<BlakeTwo256, u64>;
@@ -36,40 +36,44 @@ fn call_in_wasm<E: Externalities> (
 }
 
 #[test]
-fn test_ext_storage_get(){
+fn test_get_account_data(){
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
-    let key = b"python".to_vec().encode();
-    let value = b"greatest".to_vec();
-    ext.set_storage(key.clone(), value.clone()); 
+
+    let key = AccountKeyring::Alice.to_account_id().encode();
+    let value = vec![ 0x13, 0x8e, 0x17, 0x2c, 0x21, 0x6a, 0xe7, 0xe7, 0x2a, 0x13, 0x8e, 0x17, 0x2c, 0x21, 0x6a, 0xe7, 0xe7, 0x2a ];
+    ext.set_storage(key.clone(), value.clone());
+
     let result = call_in_wasm(
-        "test_storage_get", 
+        "test_balances_get_account_data", 
         &key,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
+
+    println!("{:?}", value.clone());
     println!("{:?}", result);
-    assert_eq!(&value, &result);
+    assert_eq!(value.clone(), Some(result).unwrap());
 }
 
 #[test]
-fn test_ext_storage_set(){
+fn test_get_non_existing_account_data() {
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
-    let key = b"rust".to_vec();
-    let value = b"goodest".to_vec();
-    let pair = [key.clone(), value.clone()];
+
+    let key = AccountKeyring::Alice.to_account_id().encode();
+
     let result = call_in_wasm(
-        "test_storage_set", 
-        &pair.encode(),
+        "test_balances_get_account_data", 
+        &key,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    let exp_value = ext.storage(&key.encode());
-    println!("{:?}", exp_value);
+
     println!("{:?}", result);
-    assert_eq!(result, [0u8; 0]);
-    assert_eq!(exp_value, Some(value.encode()));
+    assert_eq!(vec![0, 0], Some(result).unwrap());
 }
+
+// TODO Test Setting Account Balances
