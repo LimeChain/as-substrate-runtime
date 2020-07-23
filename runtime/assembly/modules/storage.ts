@@ -1,8 +1,7 @@
 import { Serialiser } from '../api/serialiser';
 import { ext_storage_set_version_1, ext_storage_get_version_1, ext_storage_read_version_1, ext_storage_clear_version_1, ext_storage_exists_version_1 } from '../env';
 import { Option } from '../models';
-import { Int32, Bool } from 'as-scale-codec';
-import { ByteArray } from 'as-scale-codec';
+import { Int32, Bool, ByteArray } from 'as-scale-codec';
 
 /**
  * Namespace exporting Storage related functions
