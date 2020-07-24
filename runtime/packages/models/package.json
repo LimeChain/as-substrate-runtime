@@ -9,7 +9,7 @@
     "asbuild:optimized": "asc assembly/index.ts --optimize -b build/models-optimized.wasm -t build/models-optimized.wat",
     "build": "exit 0"
   },
-  "author": "Daniel Ivanov <daniel-k-ivanov>",
+  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "@assemblyscript/loader": "^0.14.3"

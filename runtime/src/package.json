@@ -10,7 +10,7 @@
     "asbuild:optimized": "asc assembly/index.ts -b build/runtime-optimized.wasm -t build/runtime-optimized.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --optimize --use abort=",
     "build": "npm run asbuild:optimized && node build.js"
   },
-  "author": "Daniel Ivanov <daniel-k-ivanov>",
+  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "as-scale-codec": "^0.1.1",
