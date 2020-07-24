@@ -1,0 +1,17 @@
+{
+  "name": "@as-substrate/core-utils",
+  "version": "1.0.0",
+  "description": "Core Utilities used in AS-based Substrate Runtimes",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf node_modules"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.14.3"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.3"
+  }
+}

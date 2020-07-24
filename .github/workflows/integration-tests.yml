@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install AssemblyScript Dependencies
-      run: cd runtime && npm install
+      run: cd runtime && yarn install
     - name: Build AssemblyScript Runtime
-      run: cd runtime && npm run asbuild
+      run: cd runtime && yarn run build
     - name: Build Rust Sandbox
       run: cd sandbox && cargo build --verbose
     - name: Run tests

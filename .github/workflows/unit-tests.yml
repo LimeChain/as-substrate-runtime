@@ -7,6 +7,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install AssemblyScript Dependencies
-      run: cd runtime && npm install
+      run: cd runtime && yarn install
     - name: Run tests
-      run: cd runtime && npm run test:ci
+      run: cd runtime && yarn run test:ci

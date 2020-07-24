@@ -1,0 +1,19 @@
+{
+  "name": "@as-substrate/balances-module",
+  "version": "1.0.0",
+  "description": "Modules used in AS-Based Substrate Runtimes",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf node_modules"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.14.3",
+    "@as-substrate/models": "1.0.0",
+    "@as-substrate/core-utils": "1.0.0"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.3"
+  }
+}

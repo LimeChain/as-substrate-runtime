@@ -62,24 +62,29 @@ The Integration tests are written in Rust. They are calling into the WASM code a
 
 ### 1. Building the Runtime
 1. Go to `./runtime`
-2. Execute `npm install`
-3. Execute `npm run asbuild`
-New `wasm-code` binary file will be generated in the `../sandbox` folder.
+2. Execute `yarn install`
+3. Execute `yarn run build`
+New `wasm-code` binary file will be generated in the `runtime` folder.
 
 ### 2. Running the Unit Tests
 1. Go to `./runtime`
-2. Execute `npm run test`
+2. Execute `yarn run test`
 
 ### 3. Compile the Rust Environment (Sandbox)
 1. Go to `./sandbox`
 2. Execute `cargo build`
 * The build might take a couple of minutes. 
 
-### 4. Run the Integration Tests
+### 4. Run the Integration Tests (Option 1)
+0. Build the AS Runtime using the instructions above
 1. Go to `./sandbox`
 2. Execute `cargo test`
 
 *To see the results of the called methods, execute the command with `cargo test -- --nocapture`
+
+### 4. Run the Integration Tests (Option 2)
+1. Go to `./sandbox`
+2. Execute `bash run-it.sh`
 
 # **License**
 This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)
