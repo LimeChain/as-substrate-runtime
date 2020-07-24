@@ -4,6 +4,9 @@ import { Utils } from "@as-substrate/core-utils";
 
 export abstract class BaseConsensusItem extends DigestItem {
 
+    /**
+     * Number of bytes for the Consensus Engine IDs
+     */
     public static readonly CONSENSUS_ENGINE_ID_LENGTH: i32 = 4;
 
     /**
