@@ -11,7 +11,8 @@
   "scripts": {
     "clean": "yarn workspaces run clean && rm -rf node_modules",
     "build": "cd ./src && yarn run build",
-    "test": "cd ./src && yarn run test"
+    "test": "cd ./src && yarn run test",
+    "test:ci": "cd ./src && yarn run test:ci"
   },
   "repository": {
     "type": "git",
