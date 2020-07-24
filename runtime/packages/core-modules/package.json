@@ -1,0 +1,22 @@
+{
+  "name": "@as-substrate/core-modules",
+  "version": "1.0.0",
+  "description": "Core Modules used in AS-Based Substrate Runtimes",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0",
+    "asbuild:untouched": "asc assembly/index.ts -b build/core-modules-untouched.wasm -t build/core-modules-untouched.wat",
+    "asbuild:optimized": "asc assembly/index.ts --optimize -b build/core-modules-optimized.wasm -t build/core-modules-optimized.wat",
+    "build": "exit 0"
+  },
+  "author": "Daniel Ivanov <daniel-k-ivanov>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.14.3",
+    "@as-substrate/core-utils": "1.0.0",
+    "@as-substrate/models": "1.0.0"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.3"
+  }
+}

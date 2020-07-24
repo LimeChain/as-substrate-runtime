@@ -1,0 +1,20 @@
+{
+  "name": "@as-substrate/models",
+  "version": "1.0.0",
+  "description": "Models used in AS-Based Substrate Runtimes",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0",
+    "asbuild:untouched": "asc assembly/index.ts -b build/models-untouched.wasm -t build/models-untouched.wat",
+    "asbuild:optimized": "asc assembly/index.ts --optimize -b build/models-optimized.wasm -t build/models-optimized.wat",
+    "build": "exit 0"
+  },
+  "author": "Daniel Ivanov <daniel-k-ivanov>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.14.3"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.3"
+  }
+}

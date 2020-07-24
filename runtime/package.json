@@ -1,22 +1,31 @@
 {
-  "name": "poc-as-runtime",
+  "name": "as-substrate",
   "version": "1.0.0",
-  "description": "AssemblyScript PoC Account-based Substrate Runtime",
-  "main": "index.js",
+  "description": "AssemblyScript PoC Account-Based Runtime for Substrate Nodes",
+  "private": true,
+  "workspaces": [ 
+    "packages/*",
+    "packages/modules/*",
+    "src"
+  ],
   "scripts": {
-    "test": "asp --verbose",
-    "test:ci": "asp --summary",
-    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --use abort=",
-    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --optimize --use abort=",
-    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized && node build.js"
+    "install": "yarn workspaces run install",
+    "build": "yarn workspaces run build",
+    "test": "yarn workspaces run test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LimeChain/as-substrate-runtime.git"
+  },
+  "keywords": [
+    "substrate",
+    "wasm",
+    "assemblyscript"
+  ],
   "author": "Daniel Ivanov <daniel-k-ivanov>",
   "license": "Apache-2.0",
-  "dependencies": {
-    "as-scale-codec": "^0.1.1"
+  "bugs": {
+    "url": "https://github.com/LimeChain/as-substrate-runtime/issues"
   },
-  "devDependencies": {
-    "@as-pect/cli": "^4.0.0",
-    "assemblyscript": "^0.13.8"
-  }
+  "homepage": "https://github.com/LimeChain/as-substrate-runtime#readme"
 }

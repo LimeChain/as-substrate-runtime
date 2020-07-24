@@ -1,6 +1,7 @@
-runtime/build/
-runtime/node_modules/
-sandbox/target/
 sandbox/wasm-code
 .DS_Store
 .vscode/
+build/
+node_modules/
+target/
+*.log

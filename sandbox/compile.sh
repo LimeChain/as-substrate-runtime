@@ -1,1 +1,1 @@
-cd ../runtime && npm run asbuild && cd ../sandbox && cargo test && cd ..
+cd ../runtime && yarn workspaces run build && cd ../sandbox && cargo test && cd ..

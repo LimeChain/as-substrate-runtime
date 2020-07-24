@@ -1,0 +1,20 @@
+{
+  "name": "@as-substrate/core-utils",
+  "version": "1.0.0",
+  "description": "Core Utilities used in AS-based Substrate Runtimes",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0",
+    "asbuild:untouched": "asc assembly/index.ts -b build/core-utils-untouched.wasm -t build/core-utils-untouched.wat",
+    "asbuild:optimized": "asc assembly/index.ts --optimize -b build/core-utils-optimized.wasm -t build/core-utils-optimized.wat",
+    "build": "exit 0"
+  },
+  "author": "Daniel Ivanov <daniel-k-ivanov>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.14.3"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.3"
+  }
+}
