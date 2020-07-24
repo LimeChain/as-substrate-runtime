@@ -1,0 +1,1 @@
+cd ../runtime && yarn install && yarn run build && cd ../sandbox && cargo test && cd ..

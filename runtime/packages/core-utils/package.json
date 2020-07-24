@@ -4,10 +4,7 @@
   "description": "Core Utilities used in AS-based Substrate Runtimes",
   "main": "index.js",
   "scripts": {
-    "test": "exit 0",
-    "asbuild:untouched": "asc assembly/index.ts -b build/core-utils-untouched.wasm -t build/core-utils-untouched.wat",
-    "asbuild:optimized": "asc assembly/index.ts --optimize -b build/core-utils-optimized.wasm -t build/core-utils-optimized.wat",
-    "build": "exit 0"
+    "clean": "rm -rf node_modules"
   },
   "author": "",
   "license": "Apache-2.0",

@@ -4,10 +4,7 @@
   "description": "Core Modules used in AS-Based Substrate Runtimes",
   "main": "index.js",
   "scripts": {
-    "test": "exit 0",
-    "asbuild:untouched": "asc assembly/index.ts -b build/core-modules-untouched.wasm -t build/core-modules-untouched.wat",
-    "asbuild:optimized": "asc assembly/index.ts --optimize -b build/core-modules-optimized.wasm -t build/core-modules-optimized.wat",
-    "build": "exit 0"
+    "clean": "rm -rf node_modules"
   },
   "author": "",
   "license": "Apache-2.0",

@@ -99,7 +99,7 @@ impl Setup{
 }
 
 pub fn get_wasm_code_arr () -> Vec<u8> {
-    let wasm_code:String = fs::read_to_string("wasm-code")
+    let wasm_code:String = fs::read_to_string("../runtime/wasm-code")
         .expect("file cannot be found")
         .parse()
         .expect("unable to parse file content to string");

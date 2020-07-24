@@ -4,6 +4,7 @@
   "description": "AssemblyScript PoC Account-based Substrate Runtime",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -rf node_modules && rm -rf build",
     "test": "asp --verbose",
     "test:ci": "asp --summary",
     "asbuild:untouched": "asc assembly/index.ts -b build/runtime-untouched.wasm -t build/runtime-untouched.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --use abort=",

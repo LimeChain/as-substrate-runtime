@@ -3,7 +3,7 @@ const WASM_FILE = fs.readFileSync(__dirname + "/build/runtime-optimized.wasm");
 const byteArray = new Uint8Array(WASM_FILE);
 
 const result = toHexString(byteArray);
-fs.writeFile('../../sandbox/wasm-code', result, 'utf8', () => {
+fs.writeFile('./../wasm-code', result, 'utf8', () => {
     console.info("Successfully created WASM Code file");
 });
 

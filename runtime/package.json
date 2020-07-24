@@ -9,9 +9,9 @@
     "src"
   ],
   "scripts": {
-    "install": "yarn workspaces run install",
-    "build": "yarn workspaces run build",
-    "test": "yarn workspaces run test"
+    "clean": "yarn workspaces run clean && rm -rf node_modules",
+    "build": "cd ./src && yarn run build",
+    "test": "cd ./src && yarn run test"
   },
   "repository": {
     "type": "git",

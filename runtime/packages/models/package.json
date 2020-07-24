@@ -4,10 +4,7 @@
   "description": "Models used in AS-Based Substrate Runtimes",
   "main": "index.js",
   "scripts": {
-    "test": "exit 0",
-    "asbuild:untouched": "asc assembly/index.ts -b build/models-untouched.wasm -t build/models-untouched.wat",
-    "asbuild:optimized": "asc assembly/index.ts --optimize -b build/models-optimized.wasm -t build/models-optimized.wat",
-    "build": "exit 0"
+    "clean": "rm -rf node_modules"
   },
   "author": "",
   "license": "Apache-2.0",
