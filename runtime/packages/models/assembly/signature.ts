@@ -3,6 +3,9 @@
  */
 export class Signature {
 
+    /**
+     * Length of the bytes of a signature
+     */
     public static readonly SIGNATURE_LENGTH:i32 = 64;
 
     /**
