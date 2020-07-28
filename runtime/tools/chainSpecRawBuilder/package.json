@@ -1,0 +1,30 @@
+{
+  "name": "@as-substrate/chainspecbuilder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "asbuild:untouched": "asc assembly/index.ts -b build/chain-untouched.wasm -t build/chain-untouched.wat --runtime full",
+    "asbuild:optimized": "asc assembly/index.ts -b build/chain-optimized.wasm -t build/chain-optimized.wat --runtime full --optimize",
+    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
+    "build-spec": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@as-substrate/balances-module": "1.0.0",
+    "@as-substrate/core-modules": "1.0.0",
+    "@as-substrate/core-utils": "1.0.0",
+    "@as-substrate/models": "1.0.0",
+    "@assemblyscript/loader": "^0.14.3",
+    "@polkadot/types": "^1.26.1",
+    "@polkadot/util": "^3.0.1",
+    "as-bignum": "^0.2.2",
+    "as-scale-codec": "^0.1.1",
+    "bn.js": "^5.1.2"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.3"
+  }
+}
