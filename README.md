@@ -55,7 +55,7 @@ Runtime
 │   └───core-modules       
 │   └───core-utils         
 │   └───models              
-│   └───modules        <--- Modules package. Contains the top-level "pallets" used in the Runtime
+│   └───modules        <--- Modules packages. Contains the top-level "pallets" used in the Runtime
 │       └───balances       
 │       ....
 │
