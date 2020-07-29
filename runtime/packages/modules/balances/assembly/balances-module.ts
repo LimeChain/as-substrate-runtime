@@ -5,13 +5,7 @@ import { ByteArray, UInt128 } from "as-scale-codec";
 /**
  * The Balances Module.
  * Used for account balance manipulation such as:
- *  - Getting and setting free/reserved balances (TODO)
- *  - Retrieving total, reserved and unreserved balances (TODO)
- *  - Transferring a balance between accounts (when not reserved) (TODO)
- *  - Slashing an account balance (TODO)
- *  - Account creation and removal (TODO)
- *  - Managing total issuance (TODO)
- *  - Setting and managing locks (TODO)
+ *  - Getting and setting free/reserved balances
  */
 export class BalancesModule {
 
