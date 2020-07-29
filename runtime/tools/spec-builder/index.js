@@ -1,9 +1,6 @@
-const { GenesisBuilder } = require('./src/genesisBuilder');
 const fs = require('fs');
-
-const cS = JSON.parse(fs.readFileSync("./customSpec.json"));
-
-const customSpec = GenesisBuilder.fromJson(cS);
+const GenesisBuilder = require('./src/genesis-builder');
+const customSpec = require('./customSpec.json');
 
 const rawJson = GenesisBuilder.toRaw(customSpec);
 fs.writeFileSync('./customSpecRaw.json', JSON.stringify(rawJson, null, 2));

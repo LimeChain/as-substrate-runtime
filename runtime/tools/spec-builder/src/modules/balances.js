@@ -1,24 +1,21 @@
 const { } = require('../wasm-loader');
-const { __retain, __getUint8Array, __allocArray, __release, getAccountDataBytes, UInt8Array_ID  } = require('../wasm-loader');
+const { __retain, __getUint8Array, __allocArray, __release, getAccountDataBytes, UInt8Array_ID } = require('../wasm-loader');
 const { Compact } = require('@polkadot/types');
 const { u8aToHex, stringToHex } = require('@polkadot/util');
 
-class Balances{
-    balances = [];
-    constructor(balances){
-        this.balances = balances;
-    }
+class Balances {
 
     /**
      * 
      * @param balances array with accountId and balances
      */
-    static toRaw(balancesObj){
-        const rawBalances = balancesObj.balances.map(data => {
-            const key = stringToHex(data[0]);
-            const value = accDataToHex(data[1].toString());
-            return [key, value]
-        })
+    static toRaw(balancesArray) {
+        const rawBalances = {};
+        balancesArray.forEach(balanceArray => {
+            const key = stringToHex(balanceArray[0]);
+            const value = accDataToHex(balanceArray[1].toString());
+            rawBalances[key] = value;
+        });
         return rawBalances;
     }
 }
@@ -29,7 +26,7 @@ class Balances{
  */
 const accDataToHex = (value) => {
     const val = Compact.encodeU8a(value);
-    let sPtr = __retain(__allocArray(UInt8Array_ID ,val));
+    let sPtr = __retain(__allocArray(UInt8Array_ID, val));
     const accData = getAccountDataBytes(sPtr);
     const res = __getUint8Array(accData);
     __release(sPtr);
@@ -37,6 +34,4 @@ const accDataToHex = (value) => {
     return u8aToHex(res);
 }
 
-module.exports = {
-    Balances
-}
+module.exports = Balances
