@@ -1,4 +1,4 @@
-runtime/wasm-code
+sandbox/wasm-code
 .DS_Store
 .vscode/
 build/
