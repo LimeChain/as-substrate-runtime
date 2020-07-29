@@ -11,6 +11,10 @@ class GenesisBuilder {
      * @param genesis instance of class 
      */
     static toRaw(genesisConfig) {
+        if (!(genesisConfig && genesisConfig.genesis && genesisConfig.genesis.runtime && genesisConfig.genesis.runtime.system)) {
+            throw new Error('Invalid Genesis config provided');
+        }
+
         const rawGenesis = {
             raw: {
                 top: {
@@ -20,13 +24,15 @@ class GenesisBuilder {
 
         // Checking the provided structure - .genesis.runtime.balances exits f.e or .system
         const system = genesisConfig.genesis.runtime.system;
-        const balances = genesisConfig.genesis.runtime.balances;
-
         const rawSystem = System.toRaw(system);
-        const rawBalances = Balances.toRaw(balances.balances);
-
         Object.assign(rawGenesis.raw.top, rawSystem);
-        Object.assign(rawGenesis.raw.top, rawBalances);
+
+        // Add any Balances related raw data
+        if (genesisConfig.genesis.runtime.balances) {
+            const balances = genesisConfig.genesis.runtime.balances;
+            const rawBalances = Balances.toRaw(balances.balances);
+            Object.assign(rawGenesis.raw.top, rawBalances);
+        }
 
         return rawGenesis;
     }

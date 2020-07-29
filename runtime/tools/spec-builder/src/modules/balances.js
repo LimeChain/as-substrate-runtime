@@ -10,6 +10,9 @@ class Balances {
      * @param balances array with accountId and balances
      */
     static toRaw(balancesArray) {
+        if (!balancesArray) {
+            throw new Error("Balances: No balances array provided")
+        }
         const rawBalances = {};
         balancesArray.forEach(balanceArray => {
             const key = stringToHex(balanceArray[0]);
