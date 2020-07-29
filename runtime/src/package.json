@@ -18,7 +18,8 @@
     "@as-substrate/core-utils": "1.0.0",
     "@as-substrate/core-modules": "1.0.0",
     "@as-substrate/models": "1.0.0",
-    "@as-substrate/balances-module": "1.0.0"
+    "@as-substrate/balances-module": "1.0.0",
+    "@as-substrate/spec-builder": "1.0.0"
   },
   "devDependencies": {
     "@as-pect/cli": "^4.0.0",

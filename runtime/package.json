@@ -13,7 +13,8 @@
     "clean": "yarn workspaces run clean && rm -rf node_modules",
     "build": "cd ./src && yarn run build",
     "test": "cd ./src && yarn run test",
-    "test:ci": "cd ./src && yarn run test:ci"
+    "test:ci": "cd ./src && yarn run test:ci",
+    "build-spec": "node ./node_modules/@as-substrate/spec-builder"
   },
   "repository": {
     "type": "git",
