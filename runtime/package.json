@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "AssemblyScript PoC Account-Based Runtime for Substrate Nodes",
   "private": true,
-  "workspaces": [ 
+  "workspaces": [
     "packages/*",
     "packages/modules/*",
+    "tools/*",
     "src"
   ],
   "scripts": {
