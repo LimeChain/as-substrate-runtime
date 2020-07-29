@@ -17,9 +17,7 @@
     "@assemblyscript/loader": "^0.14.3",
     "@polkadot/types": "^1.26.1",
     "@polkadot/util": "^3.0.1",
-    "as-bignum": "^0.2.2",
     "as-scale-codec": "^0.1.1",
-    "bn.js": "^5.1.2"
   },
   "devDependencies": {
     "assemblyscript": "^0.14.3"
