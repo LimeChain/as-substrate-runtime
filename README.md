@@ -39,15 +39,40 @@ The most important components of this project are the following:
 ```
 as-substrate-runtime
 │
-└───runtime
-│   └───assembly
-│       └─── __tests__     <--- Runtime unit tests
-│       └─── api           <--- WASM API (Core, BlockBuilder, etc..)
-│       └─── models        <--- Runtime model classes (block, header, extrinsic, etc...)       │
+└───runtime    <--- Runtime packages & source code
+│
+└───sandbox    <--- Rust environment for testing the Runtime
+```
+
+### Packaging
+
+The runtime is divided into `packages` and `src`. The packages are different components that we find useful to reuse and the `src` is the top-level code that compiles the whole project into a `runtime`.
+The hierarchy has the following structure:
+```
+Runtime
+│
+└───packages
+│   └───core-modules       
+│   └───core-utils         
+│   └───models              
+│   └───modules        <--- Modules packages. Contains the top-level "pallets" used in the Runtime
+│       └───balances       
 │       ....
 │
-└───sandbox                <--- Rust environment for testing the Runtime
-```
+└───src
+``` 
+
+All of the packagings are done using `yarn` workspaces. Thus so far we have the following `workspaces`:
+- [`@core-modules`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/core-modules) - The core-modules that are used by most of the modules (f.e Storage, Crypto etc.)
+- [`@core-utils`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/core-utils) - Package containing utility functions
+- [`@models`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/models) - Package containing model classes (block, header, extrinsic, etc...)
+- [`@balances`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/modules/balances) - Balances modules package. Responsible for the Balances functionality (setting/getting/changing balances of the accounts) 
+- [`@runtime`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/src) - Top-level code that complies into the Runtime
+
+## Tools
+
+### Spec-builder
+In the `runtime/tools` folder, there is a `spec-builder` (TODO Link) tool that assists developers in generating `raw` versions of their genesis json files.
 
 ## Playing with the Runtime
 The runtime has 2 types of tests so far -> Integration and Unit tests
