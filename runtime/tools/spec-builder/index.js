@@ -23,7 +23,8 @@ let argv = require('yargs')
 
 
 if(!fs.existsSync(`${curPath}/${argv.file}`)){
-    console.log(`file doesn't exist in ${curPath}`);
+    console.log(`Error: ${argv.file} doesn't exist at the provided path: ${curPath}/${argv.file}`);
+    return;
 }
 
 let customSpec = require(`${curPath}/${argv.file}`);
