@@ -9,7 +9,8 @@
     "test:ci": "asp --summary",
     "asbuild:untouched": "asc assembly/index.ts -b build/runtime-untouched.wasm -t build/runtime-untouched.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --use abort=",
     "asbuild:optimized": "asc assembly/index.ts -b build/runtime-optimized.wasm -t build/runtime-optimized.wat --runtime half --memoryBase=16777216 --importMemory --noAssert --optimize --use abort=",
-    "build": "npm run asbuild:optimized && node build.js"
+    "build": "npm run asbuild:optimized && node build.js",
+    "build-spec": "node ../node_modules/@as-substrate/spec-builder/index.js"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -18,7 +19,8 @@
     "@as-substrate/core-utils": "1.0.0",
     "@as-substrate/core-modules": "1.0.0",
     "@as-substrate/models": "1.0.0",
-    "@as-substrate/balances-module": "1.0.0"
+    "@as-substrate/balances-module": "1.0.0",
+    "@as-substrate/spec-builder": "1.0.0"
   },
   "devDependencies": {
     "@as-pect/cli": "^4.0.0",
