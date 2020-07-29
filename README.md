@@ -69,6 +69,11 @@ All of the packagings are done using `yarn` workspaces. Thus so far we have the 
 - [`@balances`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/modules/balances) - Balances modules package. Responsible for the Balances functionality (setting/getting/changing balances of the accounts) 
 - [`@runtime`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/src) - Top-level code that complies into the Runtime
 
+## Tools
+
+### Spec-builder
+In the `runtime/tools` folder, there is a `spec-builder` (TODO Link) tool that assists developers in generating `raw` versions of their genesis json files.
+
 ## Playing with the Runtime
 The runtime has 2 types of tests so far -> Integration and Unit tests
 The Unit tests are written in AssemblyScript and are testing f.e the instantiation or encoding of a `Block` from a SCALE encoded Byte Array.
