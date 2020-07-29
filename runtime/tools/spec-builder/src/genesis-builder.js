@@ -22,7 +22,6 @@ class GenesisBuilder {
             }
         };
 
-        // Checking the provided structure - .genesis.runtime.balances exits f.e or .system
         const system = genesisConfig.genesis.runtime.system;
         const rawSystem = System.toRaw(system);
         Object.assign(rawGenesis.raw.top, rawSystem);
