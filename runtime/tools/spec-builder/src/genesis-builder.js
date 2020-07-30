@@ -15,7 +15,7 @@ class GenesisBuilder {
             throw new Error('Invalid Genesis config provided');
         }
         if (genesisConfig.genesis.runtime.balances){
-            if(!genesisConfig.genesis.runtime.balances.balance || !genesisConfig.genesis.runtime.balances.balances.length){
+            if(!genesisConfig.genesis.runtime.balances.balances.length){
                 throw new Error('Invalid or empty array provided to balances property')
             }
         }
