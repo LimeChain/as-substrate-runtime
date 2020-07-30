@@ -1,6 +1,15 @@
 const { spawn } = require('child_process');
 
+/**
+ * Utils class with methods that help to run cli program 
+ * */ 
+
 class Utils{
+    /**
+     * Runs build-spec command as a child process
+     * @param file to read
+     * @param output file to write raw json 
+     */
     static buildSpec(file, output) {
         return new Promise(function(resolve, reject) {
             const defaults = {
@@ -8,12 +17,13 @@ class Utils{
                 env: process.env
             }
             const command = spawn('node', ['index.js', '-f', file, '-o', output], defaults);
-        
-            command.stdout.on('data', (data) => {
+
+            command.stderr.setEncoding('utf-8');
+            
+            command.stderr.on('data', function(data) {
                 resolve(data);
             })
-        
-            command.stderr.on('error', (error) => {
+            command.on('error', function(error){
                 reject(error);
             })
             command.on('close', function(code){
@@ -22,6 +32,9 @@ class Utils{
         })
     }
 
+    /**
+     * Removes generated raw files
+     */
     static emptyActualRawFiles() {
         return new Promise(function(resolve, reject) {
 
@@ -32,10 +45,12 @@ class Utils{
 
             const command = spawn('rm', args);
 
-            command.stdout.on('data', (data) => {
+            command.stderr.setEncoding('utf-8');
+            
+            command.stderr.on('data', function(data){
                 resolve(data);
             })
-            command.stdout.on('error', (error) => {
+            command.on('error', function(error) {
                 reject(error);
             })
             command.on('close', function(code){

@@ -2,7 +2,7 @@ name: Unit Tests
 
 on: [push]
 jobs:
-  unit-tests:
+  runtime:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -10,7 +10,7 @@ jobs:
       run: cd runtime && yarn install
     - name: Run tests
       run: cd runtime && yarn run test:ci
-  unit-tests-spec-builder:
+  spec-builder:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
