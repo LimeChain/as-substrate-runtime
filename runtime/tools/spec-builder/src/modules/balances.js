@@ -1,7 +1,8 @@
 const { } = require('../wasm-loader');
 const { __retain, __getUint8Array, __allocArray, __release, getAccountDataBytes, UInt8Array_ID } = require('../wasm-loader');
+const { Keyring } = require('@polkadot/api');
 const { Compact } = require('@polkadot/types');
-const { u8aToHex, stringToHex } = require('@polkadot/util');
+const { u8aToHex } = require('@polkadot/util');
 
 class Balances {
 
@@ -14,8 +15,10 @@ class Balances {
             throw new Error("Balances: No balances array provided")
         }
         const rawBalances = {};
+        const keyring = new Keyring({ type: 'sr25519' });
         balancesArray.forEach(balanceArray => {
-            const key = stringToHex(balanceArray[0]);
+            const keyringInstance = keyring.addFromAddress(balanceArray[0]);
+            const key = u8aToHex(keyringInstance.publicKey);
             const value = accDataToHex(balanceArray[1].toString());
             rawBalances[key] = value;
         });
