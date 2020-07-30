@@ -5,3 +5,4 @@ build/
 node_modules/
 target/
 *.log
+runtime/tools/spec-builder/test/actual-raw-files/

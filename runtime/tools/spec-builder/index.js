@@ -16,6 +16,10 @@ let argv = require('yargs')
         alias: 'output',
         describe: 'output file'
     })
+    .fail(function (msg, err, yargs){
+        if(err) throw err
+        process.exit(1)
+    })
     .help('h')
     .alias('h', 'help')
     .epilog('copyright 2020 Limehchain LTD. \n')

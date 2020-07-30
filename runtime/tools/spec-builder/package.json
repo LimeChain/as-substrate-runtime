@@ -18,11 +18,11 @@
     "@polkadot/types": "^1.26.1",
     "@polkadot/util": "^3.0.1",
     "as-scale-codec": "^0.1.1",
-    "lodash": "^4.17.19",
     "mocha": "^8.0.1",
     "yargs": "^15.4.1"
   },
   "devDependencies": {
+    "mocha": "^8.0.1",
     "assemblyscript": "^0.14.3"
   }
 }

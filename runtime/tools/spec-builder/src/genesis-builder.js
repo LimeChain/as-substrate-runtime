@@ -14,6 +14,11 @@ class GenesisBuilder {
         if (!(genesisConfig && genesisConfig.genesis && genesisConfig.genesis.runtime && genesisConfig.genesis.runtime.system)) {
             throw new Error('Invalid Genesis config provided');
         }
+        if (genesisConfig.genesis.runtime.balances){
+            if(!genesisConfig.genesis.runtime.balances.balance || !genesisConfig.genesis.runtime.balances.balances.length){
+                throw new Error('Invalid or empty array provided to balances property')
+            }
+        }
 
         const rawGenesis = {
             raw: {
