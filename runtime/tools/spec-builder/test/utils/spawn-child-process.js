@@ -27,7 +27,7 @@ function emptyActualRawFiles() {
     return new Promise(function(resolve, reject) {
         console.log('deleting all raw json files...');
 
-        const command = spawn('rm', ['-rf', './actual-raw-files/*'])
+        const command = spawn('rm', ['-rf', './test/actual-raw-files/*'])
         
         command.stdout.on('data', (data) => {
             resolve(data);

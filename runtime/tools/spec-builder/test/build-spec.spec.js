@@ -35,3 +35,7 @@ describe('Build spec generates correct raw outputs', function() {
         assert(isEqual(actualRaw, expectedRaw), 'given objects are not equal');
     })
 })
+
+after(async function() {
+    await emptyActualRawFiles();
+})
