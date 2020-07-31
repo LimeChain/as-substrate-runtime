@@ -11,12 +11,13 @@ class Balances {
      * @param balances array with accountId and balances
      */
     static toRaw(balancesArray) {
-        if (!balancesArray) {
-            throw new Error("Balances: No balances array provided");
-        }
+        validateIsArray(balancesArray);
+
         const rawBalances = {};
         const keyring = new Keyring({ type: 'sr25519' });
         balancesArray.forEach(balanceArray => {
+            validateIsArray(balanceArray);
+            
             const keyringInstance = keyring.addFromAddress(balanceArray[0]);
             const key = u8aToHex(keyringInstance.publicKey);
             const value = accDataToHex(balanceArray[1].toString());
@@ -26,6 +27,16 @@ class Balances {
     }
 }
 
+/**
+ * Validates whether the provided parameter is array. Throws otherwise
+ * @param {*} arr 
+ */
+function validateIsArray (arr) {
+    if (!Array.isArray(arr)) {
+        throw new Error("Balances: Invalid or no balances array provided");
+    }
+}
+ 
 /**
  * 
  * @param value encodes AccountData instance to hex
