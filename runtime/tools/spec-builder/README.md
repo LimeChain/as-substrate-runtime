@@ -7,7 +7,7 @@ The tool is intended to assist AssemblyScript Runtime developers into generating
 ```
 yarn install
 ```
-2. Build the tool by executing the following command:
+1. Build the WASM module (part of the tool):
 ```
 yarn run asbuild
 ```
@@ -16,7 +16,7 @@ At this point you can use the tool to convert chain spec files into their raw fo
 More information on chain spec configuration can be found in the Substrate's Knowledge Base -> https://substrate.dev/docs/en/knowledgebase/integrate/chain-spec
 
 #### Build Spec files
-In order to build spec files you should execute the following command:
+The format of the command to build a spec file is the following:
 ```
 yarn run build-spec -f chain-spec.json -o output-file.json
 ```
@@ -32,7 +32,7 @@ Options:
 
 **Supported properties**:
 
-So far, the only supported properties are the `code` and `balances` module. In time, once the AssemblyScript Runtime adds support for new modules (f.e Aura, GRANDPA etc) this spec-builder will extend its support for the other modules.
+So far, the only supported properties are the `system` and `balances` module. In time, once the AssemblyScript Runtime adds support for new modules (f.e Aura, GRANDPA etc) this spec-builder will extend its support for the other modules.
 
 #### Example
 
