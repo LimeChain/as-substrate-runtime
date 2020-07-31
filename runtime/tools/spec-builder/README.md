@@ -24,8 +24,7 @@ yarn run build-spec -f chain-spec.json -o output-file.json
 The following options are available:
 
 ```
-Options:
-  --version     Show version number                                    
+Options:                               
   -f, --file    input file                   [required]
   -o, --output  output file
   -h, --help    Show help                                            
