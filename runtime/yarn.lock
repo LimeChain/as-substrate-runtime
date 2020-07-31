@@ -320,6 +320,14 @@ assemblyscript@^0.13.8:
     binaryen "93.0.0-nightly.20200609"
     long "^4.0.0"
 
+assemblyscript@^0.14.0:
+  version "0.14.7"
+  resolved "https://registry.yarnpkg.com/assemblyscript/-/assemblyscript-0.14.7.tgz#fe033f35c9f341874229e122a8ed8b3e9959e01c"
+  integrity sha512-QTCGBmZHvLAvZZ/sezo/2xMNXg0sgoICGTS5PSg1KPCp8QEYwNuh795Zzad/kxZTlhG6u7EHaX5Bh+Upytvbnw==
+  dependencies:
+    binaryen "95.0.0-nightly.20200723"
+    long "^4.0.0"
+
 assemblyscript@^0.14.3:
   version "0.14.6"
   resolved "https://registry.yarnpkg.com/assemblyscript/-/assemblyscript-0.14.6.tgz#fcc395728919202b7915f4a7d1497ec3f929a8bd"
