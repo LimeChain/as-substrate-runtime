@@ -72,7 +72,7 @@ Let's convert the following chain spec JSON to raw version:
 ```
 
 To the Runtime, the only important properties are the data under `.genesis.runtime`
-In this example we have the `code` (WASM blob containing the Runtime) and definition of the account balances for 3 accounts at genesis.
+In this example we have the `code` (WASM blob containing the Runtime) and definition of balances for 3 accounts at genesis.
 
 Using the `yarn run build-spec -f spec.json` we are getting the following output raw file:
 
