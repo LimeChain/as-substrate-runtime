@@ -2,7 +2,7 @@ name: Unit Tests
 
 on: [push]
 jobs:
-  unit-tests:
+  runtime:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -10,3 +10,13 @@ jobs:
       run: cd runtime && yarn install
     - name: Run tests
       run: cd runtime && yarn run test:ci
+  spec-builder:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Assemblyscript and other dependencies
+      run: cd runtime/tools/spec-builder && yarn install
+    - name: Build AssemblyScript module
+      run: cd runtime/tools/spec-builder && yarn run asbuild
+    - name: Run tests
+      run: cd runtime/tools/spec-builder && yarn test

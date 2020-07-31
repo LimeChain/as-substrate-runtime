@@ -12,7 +12,7 @@ class Balances {
      */
     static toRaw(balancesArray) {
         if (!balancesArray) {
-            throw new Error("Balances: No balances array provided")
+            throw new Error("Balances: No balances array provided");
         }
         const rawBalances = {};
         const keyring = new Keyring({ type: 'sr25519' });
