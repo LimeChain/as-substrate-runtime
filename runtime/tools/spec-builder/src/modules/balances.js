@@ -11,7 +11,7 @@ class Balances {
      */
     static toRaw(balancesArray) {
         if (!balancesArray) {
-            throw new Error("Balances: No balances array provided")
+            throw new Error("Balances: No balances array provided");
         }
         const rawBalances = {};
         balancesArray.forEach(balanceArray => {

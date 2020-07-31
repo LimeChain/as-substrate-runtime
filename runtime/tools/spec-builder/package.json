@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "asbuild:optimized": "asc assembly/index.ts -b build/build-spec.wasm -t build/build-spec.wat --runtime full --optimize",
     "asbuild": "npm run asbuild:optimized",
     "build-spec": "node index.js"
@@ -21,6 +21,7 @@
     "yargs": "^15.4.1"
   },
   "devDependencies": {
+    "mocha": "^8.0.1",
     "assemblyscript": "^0.14.3"
   }
 }
