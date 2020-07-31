@@ -1,6 +1,6 @@
 # Runtime Spec-Builder Tool
 
-The tool is intended to assist AssemblyScript Runtime developers into generating their Genesis specs. It is not published as a npm library, thus you will need to install and build it locally when you are using it.
+The tool is intended to assist AssemblyScript Runtime developers into generating their Genesis Chain spec files. It is not published as a npm library, thus you will need to install and build it locally when you are using it.
 
 ### Usage
 1. Install the tool by executing the following command:
