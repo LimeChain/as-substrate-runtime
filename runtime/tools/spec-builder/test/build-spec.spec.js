@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
-const Utils= require('./utils/spawn-child-process');
+const Utils = require('./utils/spawn-child-process');
+const MockedConstants = require('./utils/mocked-constants.json');
 
 describe('Build spec tests', () => {
     before(async function() {
@@ -13,9 +14,7 @@ describe('Build spec tests', () => {
         assert(fs.existsSync('./test/actual-raw-files/customSpecRaw.json'), 'file does not exist');
         
         const actualRaw = require('./actual-raw-files/customSpecRaw.json');
-        const expectedRaw = require('./expected-raw-files/customSpecRaw.json');
-
-        assert.deepEqual(actualRaw, expectedRaw);
+        assert.deepStrictEqual(actualRaw, MockedConstants.CUSTOM_SPEC_RAW_FULL);
     })
 
     it('correctly converts customSpec with system property only', async function() {
@@ -24,9 +23,7 @@ describe('Build spec tests', () => {
         assert(fs.existsSync('./test/actual-raw-files/customSpecRaw-code.json'), 'file does not exist');
         
         const actualRaw = require('./actual-raw-files/customSpecRaw-code.json');
-        const expectedRaw = require('./expected-raw-files/customSpecRaw-code.json');
-        
-        assert.deepEqual(actualRaw, expectedRaw);
+        assert.deepStrictEqual(actualRaw, MockedConstants.CUSTOM_SPEC_RAW_CODE);
     })
 
     it('should fail to convert customSpec without system property', async function() {
@@ -39,10 +36,9 @@ describe('Build spec tests', () => {
         assert.match(result, /Error: Invalid Genesis config provided/);
     })
 
-
     it('should fail if balances property is not given', async function(){
         const result = await Utils.buildSpec('./test/json-files/customSpec-noBalances.json', './test/actual-raw-files/customSpecRaw-noBalances.json');
-        assert.match(result, /Error: Balances: No balances array provided/);
+        assert.match(result, /Error: Balances: Invalid or no balances array provided/);
     })
 
     it('should fail if there is no runtime property', async function(){
