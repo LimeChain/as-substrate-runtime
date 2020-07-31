@@ -30,6 +30,10 @@ Options:
   -h, --help    Show help                                            
 ```
 
+**Supported properties**:
+
+So far, the only supported properties are the `code` and `balances` module. In time, once the AssemblyScript Runtime adds support for new modules (f.e Aura, GRANDPA etc) this spec-builder will extend its support for the other modules.
+
 #### Example
 
 Let's convert the following chain spec JSON to raw version:
@@ -99,3 +103,5 @@ Using the `yarn run build-spec -f spec.json` we are getting the following output
 ```
 
 Notice that the `code` property is encoded into the well known key `:code` and the balances are encoded as `raw` key-values of the storage. The format in which they are encoded is matching the format that the AS Runtime is working with.
+
+
