@@ -64,7 +64,7 @@ fn timestamp_set_works() {
 }
 
 #[test]
-fn timestamp_works() {
+fn timestamp_get_works() {
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
@@ -76,22 +76,17 @@ fn timestamp_works() {
     did_update.extend(b"timestamp".to_vec().encode());
     now.extend(b"now".to_vec().encode());
     did_update.extend(b"didupdate".to_vec().encode());
-    
-    let value: u64 = 69;
-    let _result = call_in_wasm(
-        "test_timestamp_set", 
-        &value.encode(),
-        WasmExecutionMethod::Interpreted,
-        &mut ext
-    );
 
-    let result1 = call_in_wasm(
+    let init_value: u64 = 69;
+    ext.set_storage(now.clone(), init_value.encode());
+
+    let result = call_in_wasm(
         "test_timestamp_get", 
         &now,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    assert_eq!(ext.storage(&now).unwrap(), result1);
+    assert_eq!(ext.storage(&now).unwrap(), result);
 }
 
 #[test]
