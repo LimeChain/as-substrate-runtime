@@ -1,12 +1,8 @@
 import { Storage } from '@as-substrate/core-modules';
 import { UInt64, Bool, ByteArray, ScaleString } from 'as-scale-codec';
 
-// const timestamp = new ScaleString('timestamp');
-// const now = new ScaleString('now');
-// const didupdate = new ScaleString('didupdate');
-
 export class Timestamp{
-    
+
     /**
      * Necessary constants for timestamp
      */
