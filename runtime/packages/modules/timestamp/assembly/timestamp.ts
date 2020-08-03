@@ -6,7 +6,7 @@ import { UInt64, Bool, ByteArray } from 'as-scale-codec';
 export class Timestamp{
 
     /**
-     * Minimum period of a constant
+     * Minimum period between timestamps
      */
     public static readonly MINIMUM_PERIOD: u64 = 5;
     /**
