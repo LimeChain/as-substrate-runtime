@@ -1,0 +1,16 @@
+{
+  "name": "@as-substrate/timestamp-module",
+  "version": "1.0.0",
+  "description": "Modules used in AS-Based Substrate Runtimes",
+  "author": "",
+  "license": "Apache-2.0",
+  "scripts": {},
+  "dependencies": {
+    "@as-substrate/core-modules": "1.0.0",
+    "@assemblyscript/loader": "^0.13.8",
+    "@as-substrate/models": "1.0.0"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.14.0"
+  }
+}
