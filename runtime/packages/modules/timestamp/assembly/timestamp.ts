@@ -6,12 +6,17 @@ import { UInt64, Bool, ByteArray } from 'as-scale-codec';
 export class Timestamp{
 
     /**
-     * Necessary constants for timestamp
+     * Minimum period of a constant
      */
     public static readonly MINIMUM_PERIOD: u64 = 5;
+    /**
+     * Scale encoded key {scale("timestamp")}{scale("now")} 
+     * Scale encoded key {scale("timestamp")}{scale("didupdate")} 
+     */
     public static readonly SCALE_TIMESTAMP_NOW: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 12, 110, 111, 119];
     public static readonly SCALE_TIMESTAMP_DID_UPDATE: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 36, 100, 105, 100, 117, 112, 100, 97, 116, 101];
     public static readonly INHERENT_IDENTIFIER: string = "timstmp0";
+
     /**
      * Sets the current time. When setting the new time, 
      * it must be greater than the last one (set into storage) with at least a MinimumPeriod
@@ -22,7 +27,7 @@ export class Timestamp{
         if(didUpdate.isSome()){
             throw new Error('Timestamp must be updated only once in the block');
         }
-        const prev: u64 = this.get();
+        const prev: u64 = Timestamp.get();
         
         if(now < prev + Timestamp.MINIMUM_PERIOD){
             throw new Error('Timestamp must increment by at least <MinimumPeriod> between sequential blocks');

@@ -6,7 +6,6 @@
   "license": "Apache-2.0",
   "scripts": {},
   "dependencies": {
-    "@as-substrate/balances-module": "1.0.0",
     "@as-substrate/core-modules": "1.0.0",
     "@assemblyscript/loader": "^0.13.8",
     "@as-substrate/models": "1.0.0"
