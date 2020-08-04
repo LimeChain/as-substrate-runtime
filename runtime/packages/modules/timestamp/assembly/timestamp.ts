@@ -80,7 +80,7 @@ export class Timestamp{
         }
     }
 }
-
+ 
 /**
  * Gets timestamp inherent data
  * @param inhData inherentData instance provided 

@@ -9,7 +9,7 @@ import { Utils } from '@as-substrate/core-utils';
  */
 export function getAccountDataBytes(freeBalance: Uint8Array): u8[] {
   const free = UInt128.fromU8a(Utils.toU8Array(freeBalance));
-  const accData = new AccountData(free, UInt128.Zero)
+  const accData = new AccountData(free, UInt128.Zero);
   return accData.toU8a();
 }
 
