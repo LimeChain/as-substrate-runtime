@@ -14,6 +14,7 @@
   "dependencies": {
     "@as-substrate/balances-module": "1.0.0",
     "@as-substrate/core-utils": "1.0.0",
+    "@as-substrate/aura-module": "1.0.0",
     "@assemblyscript/loader": "^0.14.3",
     "@polkadot/api": "^1.26.1",
     "@polkadot/types": "^1.26.1",

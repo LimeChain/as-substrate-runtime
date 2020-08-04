@@ -44,7 +44,7 @@ fn aura_get_slot_duration_works() {
 
     let expected_value: u64 = 5;
     let result = call_in_wasm(
-        "test_aura_get_slot_duration", 
+        "AuraApi_slot_duration", 
         &[],
         WasmExecutionMethod::Interpreted,
         &mut ext
@@ -70,7 +70,7 @@ fn timestamp_get_authorities() {
     ext.set_storage(auth_id.clone(), value.encode());
 
     let result = call_in_wasm(
-        "test_aura_get_authorities", 
+        "AuraApi_authorities", 
         &[],
         WasmExecutionMethod::Interpreted,
         &mut ext

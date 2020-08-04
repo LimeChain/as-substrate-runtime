@@ -11,7 +11,7 @@ export class AuraModule {
      * Scale encoded key {scale("aura")}{scale("authorities"}
      * Key for the AuraInherentData
      */
-    public static readonly ACCOUNT_ID_KEY: u8[] = [16, 97, 117, 114, 97, 44, 97, 117, 116, 104, 111, 114, 105, 116, 105, 101, 115];
+    public static readonly AURA_AUTHORITIES: u8[] = [16, 97, 117, 114, 97, 44, 97, 117, 116, 104, 111, 114, 105, 116, 105, 101, 115];
     public static readonly INHERENT_IDENTIFIER: string = "auraslot";
     /**
      * The function must call the TimeStamp module and access the MINIMUM_PERIOD and return it.
@@ -25,14 +25,14 @@ export class AuraModule {
      * were set on genesis, create a vector of AccountIds and return it
      */
     static getAuthorities(): Option<ByteArray> {
-        const value = Storage.get(AuraModule.ACCOUNT_ID_KEY);
+        const value = Storage.get(AuraModule.AURA_AUTHORITIES);
         return value;
     }
     /**
      * The function must set the list of AccountIds to the storage
      */ 
     static setAuthorities(auths: u8[]): void {
-        Storage.set(AuraModule.ACCOUNT_ID_KEY, auths);
+        Storage.set(AuraModule.AURA_AUTHORITIES, auths);
     }
     /**
      * Verify the validity of the inherent using the timestamp.
