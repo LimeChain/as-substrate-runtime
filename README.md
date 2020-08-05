@@ -85,13 +85,13 @@ The Integration tests are written in Rust. They are calling into the WASM code a
 ### 0. Prerequisite
 - Have `rust` installed so that you can build and run the Integration tests
 
-### 1. Building the Runtime
+### 1. Build the Runtime
 1. Go to `./runtime`
 2. Execute `yarn install`
 3. Execute `yarn run build`
 New `wasm-code` binary file will be generated in the `runtime` folder.
 
-### 2. Running the Unit Tests for Runtime
+### 2. Run the Unit Tests for Runtime
 1. Go to `./runtime`
 2. Execute `yarn run test`
 

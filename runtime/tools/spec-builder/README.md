@@ -107,7 +107,13 @@ Notice that the `code` property is encoded into the well known key `:code` and t
 
 ### Run tests
 
-To run the tests for `spec-builder` execute the following:
+To run the tests for `spec-builder`, first build the `wasm module` used for the tool:
+
+```
+yarn run asbuild
+```
+
+Then execute the following:
 
 ```
 yarn run test
