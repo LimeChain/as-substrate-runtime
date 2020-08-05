@@ -105,3 +105,10 @@ Using the `yarn run build-spec -f spec.json` we are getting the following output
 Notice that the `code` property is encoded into the well known key `:code` and the balances are encoded as `raw` key-values of the storage. The format in which they are encoded is matching the format that the AS Runtime is working with.
 
 
+### Run tests
+
+To run the tests for `spec-builder` execute the following:
+
+```
+yarn test
+```
