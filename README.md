@@ -85,13 +85,13 @@ The Integration tests are written in Rust. They are calling into the WASM code a
 ### 0. Prerequisite
 - Have `rust` installed so that you can build and run the Integration tests
 
-### 1. Building the Runtime
+### 1. Build the Runtime
 1. Go to `./runtime`
 2. Execute `yarn install`
 3. Execute `yarn run build`
 New `wasm-code` binary file will be generated in the `runtime` folder.
 
-### 2. Running the Unit Tests
+### 2. Run the Unit Tests for Runtime
 1. Go to `./runtime`
 2. Execute `yarn run test`
 
@@ -110,6 +110,11 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 ### 4. Run the Integration Tests (Option 2)
 1. Go to `./sandbox`
 2. Execute `bash run-it.sh`
+
+### 5. Run the Unit Tests for Spec-Builder
+1. Go to `./runtime/tools/spec-builder`
+2. Build `wasm module` by executing `yarn run asbuild`
+3. Execute `yarn run test`
 
 # **License**
 This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)
