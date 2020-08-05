@@ -113,7 +113,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 
 ### 5. Run the Unit Tests for Spec-Builder
 1. Go to `./runtime/tools/spec-builder`
-2. Build `wasm module` `yarn run asbuild`
+2. Build `wasm module` by executing `yarn run asbuild`
 3. Execute `yarn run test`
 
 # **License**
