@@ -110,5 +110,5 @@ Notice that the `code` property is encoded into the well known key `:code` and t
 To run the tests for `spec-builder` execute the following:
 
 ```
-yarn test
+yarn run test
 ```
