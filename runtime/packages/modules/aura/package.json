@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@assemblyscript/loader": "^0.13.8",
-    "@as-substrate/balances-module": "1.0.0",
     "@as-substrate/timestamp-module": "1.0.0",
     "@as-substrate/core-modules": "1.0.0",
     "@as-substrate/models": "1.0.0"

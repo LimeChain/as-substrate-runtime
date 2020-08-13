@@ -13,6 +13,7 @@ export class AuraModule {
      */
     public static readonly AURA_AUTHORITIES: u8[] = [16, 97, 117, 114, 97, 44, 97, 117, 116, 104, 111, 114, 105, 116, 105, 101, 115];
     public static readonly INHERENT_IDENTIFIER: string = "auraslot";
+
     /**
      * The function must call the TimeStamp module and access the MINIMUM_PERIOD and return it.
      */
@@ -52,7 +53,7 @@ export class AuraModule {
 }
 
 /**
- * 
+ * Gets timestamp inherent data
  * @param inhData 
  */
 export function auraInherentData(inhData: InherentData): u64 {
