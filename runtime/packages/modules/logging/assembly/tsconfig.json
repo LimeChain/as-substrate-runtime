@@ -1,0 +1,6 @@
+{
+  "extends": "../../aura/node_modules/assemblyscript/std/assembly.json",
+  "include": [
+    "./**/*.ts"
+  ]
+}
