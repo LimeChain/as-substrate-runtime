@@ -1,5 +1,5 @@
 import { UInt128, CompactInt } from 'as-scale-codec';
-import { AccountData } from '@as-substrate/balances-module';
+import { AccountData, AccountId } from '@as-substrate/balances-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AuraModule } from '@as-substrate/aura-module';
 
