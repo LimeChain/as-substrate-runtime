@@ -42,7 +42,7 @@ fn aura_get_slot_duration_works() {
     let mut ext = setup.ext;
     let mut ext = ext.ext();
 
-    let expected_value: u64 = 5;
+    let expected_value: u64 = 5000;
     let result = call_in_wasm(
         "AuraApi_slot_duration", 
         &[],
@@ -53,7 +53,7 @@ fn aura_get_slot_duration_works() {
 }
 
 #[test]
-fn timestamp_get_authorities() {
+fn aura_get_authorities() {
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
