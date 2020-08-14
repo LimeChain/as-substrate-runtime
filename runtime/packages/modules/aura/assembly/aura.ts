@@ -15,7 +15,7 @@ export class AuraModule {
     public static readonly INHERENT_IDENTIFIER: string = "auraslot";
 
     /**
-     * The function calls the TimeStamp module and returns configured.
+     * The function calls the TimeStamp module and returns configured min period.
      */
     static getSlotDuration(): u64 {
         return Timestamp.MINIMUM_PERIOD;

@@ -12,7 +12,7 @@ class Aura {
     static toRaw(authorities){
         validateIsArray(authorities);
 
-        if (authorities.length === 1){
+        if (authorities.length === 0){
             throw new Error("Aura: Array of authorities is empty")
         }
 

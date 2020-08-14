@@ -23,9 +23,9 @@ export function getAccountIdBytes(authorities: Uint8Array): u8[] {
   let auths: u8[] = [];
   let accId = AccountId.fromU8Array(input);
   let counter = 1;
-
+  auths = auths.concat(accId.result.address);
+  
   while (accId.input.length != 0){
-    auths = auths.concat(accId.result.address);
     accId = AccountId.fromU8Array(accId.input);
     auths = auths.concat(accId.result.address);
     counter += 1;
