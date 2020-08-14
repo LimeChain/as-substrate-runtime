@@ -20,7 +20,6 @@
     "@as-substrate/balances-module": "1.0.0",
     "@as-substrate/timestamp-module": "1.0.0",
     "@as-substrate/aura-module": "1.0.0",
-    "@as-substrate/logging-module": "1.0.0",
     "as-scale-codec": "^0.1.1"
   },
   "devDependencies": {
