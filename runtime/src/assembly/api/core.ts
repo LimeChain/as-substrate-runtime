@@ -40,7 +40,7 @@ export function Core_initialize_block(data: i32, len: i32): u64 {
  * Instanciates new RuntimeVersion Configration
  */
 function getRuntimeVersionConfig(): RuntimeVersion {
-    const SPEC_NAME: string = "Node-test";
+    const SPEC_NAME: string = "node-template";
     const IMPL_NAME: string = "AssemblyScript"
     const AUTHORING_VERSION: u32 = 1;
     const SPEC_VERSION: u32 = 1;

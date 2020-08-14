@@ -1,5 +1,6 @@
 const Balances = require("./modules/balances");
 const System = require("./modules/system");
+const Aura = require('./modules/aura');
 
 /**
  * Class for the genesis configuration
@@ -33,6 +34,11 @@ class GenesisBuilder {
             Object.assign(rawGenesis.raw.top, rawBalances);
         }
 
+        // Add any Aura related raw data
+        if(genesisConfig.genesis.runtime.aura){
+            const rawAura = Aura.toRaw(genesisConfig.genesis.runtime.aura.authorities);
+            Object.assign(rawGenesis.raw.top, rawAura);
+        }
         return rawGenesis;
     }
 }

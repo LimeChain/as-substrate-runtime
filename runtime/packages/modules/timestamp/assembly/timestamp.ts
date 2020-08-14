@@ -8,7 +8,7 @@ export class Timestamp{
     /**
      * Minimum period between timestamps
      */
-    public static readonly MINIMUM_PERIOD: u64 = 5;
+    public static readonly MINIMUM_PERIOD: u64 = 5000;
     /**
      * Scale encoded key {scale("timestamp")}{scale("now")} 
      * Scale encoded key {scale("timestamp")}{scale("didupdate")} 
@@ -80,7 +80,7 @@ export class Timestamp{
         }
     }
 }
-
+ 
 /**
  * Gets timestamp inherent data
  * @param inhData inherentData instance provided 

@@ -52,7 +52,7 @@ fn timestamp_set_works() {
     let init_value: u64 = 42;
     ext.set_storage(now.clone(), init_value.encode());
     
-    let value: u64 = 69;
+    let value: u64 = 5043;
     let _result = call_in_wasm(
         "test_timestamp_set", 
         &value.encode(),
@@ -106,14 +106,14 @@ fn double_timestamp_should_fail() {
     let init_value: u64 = 42;
     ext.set_storage(now.clone(), init_value.encode());
 
-    let value: u64 = 69;
+    let value: u64 = 5043;
     let result = call_in_wasm(
         "test_timestamp_set", 
         &value.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
     );
-    let value1: u64 = 80;
+    let value1: u64 = 10044;
     let result1 = call_in_wasm(
         "test_timestamp_set", 
         &value1.encode(),

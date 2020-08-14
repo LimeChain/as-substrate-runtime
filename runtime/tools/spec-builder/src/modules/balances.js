@@ -1,8 +1,8 @@
-const { } = require('../wasm-loader');
 const { __retain, __getUint8Array, __allocArray, __release, getAccountDataBytes, UInt8Array_ID } = require('../wasm-loader');
 const { Keyring } = require('@polkadot/api');
 const { Compact } = require('@polkadot/types');
 const { u8aToHex } = require('@polkadot/util');
+
 
 class Balances {
 

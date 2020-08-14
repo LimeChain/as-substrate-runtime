@@ -15,7 +15,7 @@ fn test_core_version() {
     let mut setup = Setup::new();
     let test_api: Vec<(ApiId, u32)> = vec![([1,1,1,1,1,1,1,1], 10)];
     let version = RuntimeVersion {
-        spec_name: RuntimeString::Borrowed("Node-test"),
+        spec_name: RuntimeString::Borrowed("node-template"),
         impl_name: RuntimeString::Borrowed("AssemblyScript"),
         authoring_version: 1,
         spec_version: 1,
