@@ -1,6 +1,6 @@
 import { Serialiser } from '@as-substrate/core-utils';
 import { ScaleString } from 'as-scale-codec';
-import { ext_misc_print_utf8_version_1 } from '@as-substrate/core-modules';
+import { ext_misc_print_utf8_version_1 } from './env';
 
 export class Logging {
     /**

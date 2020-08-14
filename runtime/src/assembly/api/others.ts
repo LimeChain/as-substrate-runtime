@@ -3,7 +3,7 @@
  * These methods are mocked for this iteration and they return an empty u8 array by default
  */
 import {Serialiser} from "@as-substrate/core-utils";
-import { Logging } from "@as-substrate/logging-module";
+import { Logging } from "@as-substrate/core-modules";
 
 /**
  * 

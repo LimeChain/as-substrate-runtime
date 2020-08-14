@@ -1,7 +1,7 @@
 import { Serialiser } from "@as-substrate/core-utils";
 import { RuntimeVersion, SupportedAPIs, Block, Header } from "@as-substrate/models";
 import { Bool } from "as-scale-codec";
-import { Logging } from '@as-substrate/logging-module';
+import { Logging } from '@as-substrate/core-modules';
 
 /**
  * Returns the version data encoded in ABI format as per the specification
@@ -20,7 +20,6 @@ export function Core_version(data: i32, len: i32): u64 {
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function Core_execute_block(data: i32, len: i32): u64 {
-    Logging.printUtf8("exec block called");
     const input = Serialiser.deserialiseInput(data, len);
     const block = Block.fromU8Array(input);
 
