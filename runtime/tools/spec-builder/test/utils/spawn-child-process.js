@@ -40,7 +40,8 @@ class Utils{
 
             const args = ['-rf', 
                 'test/actual-raw-files/customSpecRaw.json', 
-                'test/actual-raw-files/customSpecRaw-code.json'
+                'test/actual-raw-files/customSpecRaw-code.json',
+                'test/actual-raw-files/customSpecRaw-noAura.json'
             ]
 
             const command = spawn('rm', args);

@@ -20,15 +20,13 @@ export function getAccountDataBytes(freeBalance: Uint8Array): u8[] {
  */
 export function getAccountIdBytes(authorities: Uint8Array): u8[] {
   let input = Utils.toU8Array(authorities);
-  // assumes that there are at least one AccountId in authorities
-  let counter = 1;
   let auths: u8[] = [];
-  let accId = AccountId.fromU8Array(input);
-  auths = auths.concat(accId.result.address);
-  // extract AccountId from the u8[] until it is empty
-  while (accId.input.length != 0){
-    accId = AccountId.fromU8Array(accId.input);
+  let counter = 0;
+  
+  while (input.length != 0){
+    let accId = AccountId.fromU8Array(input);
     auths = auths.concat(accId.result.address);
+    input = accId.input;
     counter += 1;
   }
 
