@@ -34,7 +34,7 @@ export declare function ext_hashing_twox_64_version_1(data: i64): i32;
  * Log: Request to print a log message on the host. Note that this will be
  * only displayed if the host is enabled to display log messages with given level and target.
 */
-export declare function ext_logging_log_version_1(level: i32, target: i64): i64;
+export declare function ext_logging_log_version_1(level: i32, target: i64, message: i64): void;
 
 /**
  * Miscellaneous: Interface that provides miscellaneous functions for communicating between the runtime and the node.
