@@ -3,7 +3,6 @@
  * These methods are mocked for this iteration and they return an empty u8 array by default
  */
 import {Serialiser} from "@as-substrate/core-utils";
-import { Logging } from "@as-substrate/core-modules";
 
 /**
  * 
@@ -47,6 +46,5 @@ export function OffchainWorkerApi_offchain_worker(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function Metadata_metadata(data: i32, len: i32): u64 {
-    Logging.printUtf8("metadata called");
     return Serialiser.serialiseResult([]);
 }
