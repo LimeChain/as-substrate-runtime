@@ -15,22 +15,21 @@ export class AuraModule {
     public static readonly INHERENT_IDENTIFIER: string = "auraslot";
 
     /**
-     * The function must call the TimeStamp module and access the MINIMUM_PERIOD and return it.
+     * The function calls the TimeStamp module and returns configured min period.
      */
     static getSlotDuration(): u64 {
         return Timestamp.MINIMUM_PERIOD;
     }
 
     /**
-     * The function must read from the Storage the authorities that 
-     * were set on genesis, create a vector of AccountIds and return it
+     * The function reads from the Storage the authorities that 
+     * were set on genesis, creates a vector of AccountIds and return it
      */
     static getAuthorities(): Option<ByteArray> {
-        const value = Storage.get(AuraModule.AURA_AUTHORITIES);
-        return value;
+        return Storage.get(AuraModule.AURA_AUTHORITIES);
     }
     /**
-     * The function must set the list of AccountIds to the storage
+     * The function sets the list of AccountIds to the storage
      */ 
     static setAuthorities(auths: u8[]): void {
         Storage.set(AuraModule.AURA_AUTHORITIES, auths);

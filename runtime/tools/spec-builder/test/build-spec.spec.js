@@ -17,6 +17,15 @@ describe('Build spec tests', () => {
         assert.deepStrictEqual(actualRaw, MockedConstants.CUSTOM_SPEC_RAW_FULL);
     })
 
+    it('correctly converts customSpec without Aura authorities', async function() {
+        await Utils.buildSpec('./test/json-files/customSpec-noAura.json', './test/actual-raw-files/customSpecRaw-noAura.json');
+        
+        assert(fs.existsSync('./test/actual-raw-files/customSpecRaw-noAura.json'), 'file does not exist');
+        
+        const actualRaw = require('./actual-raw-files/customSpecRaw-noAura.json');
+        assert.deepStrictEqual(actualRaw, MockedConstants.CUSTOM_SPEC_NO_AURA);
+    })
+
     it('correctly converts customSpec with system property only', async function() {
         await Utils.buildSpec('./test/json-files/customSpec-code.json', './test/actual-raw-files/customSpecRaw-code.json');
         
