@@ -59,7 +59,6 @@ const getAuthoritiesBytes = (authorities) => {
     const aPtr = __retain(__allocArray(UInt8Array_ID, authorities));
     const auths = getAccountIdBytes(aPtr);
     const result = __getUint8Array(auths);
-    console.log(result)
     __release(aPtr);
     __release(auths);
     return result;
