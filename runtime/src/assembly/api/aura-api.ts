@@ -20,13 +20,3 @@ export function AuraApi_authorities(data: i32, len: i32): u64 {
     const authorities = AuraModule.getAuthorities();
     return authorities.isSome() ? Serialiser.serialiseResult((<ByteArray>authorities.unwrap()).values) : Serialiser.serialiseResult([]);
 }
-
-/**
- * @param data - i32 pointer to the start of the arguments passed
- * @param len - i32 length (in bytes) of the arguments passed
- */
-export function AuraApi_set_authorities(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialiseInput(data, len);
-    AuraModule.setAuthorities(input);
-    return Serialiser.serialiseResult(input);
-}
