@@ -40,6 +40,8 @@ The most important components of this project are the following:
 as-substrate-runtime
 │
 └───runtime    <--- Runtime packages & source code
+|
+└───node-template <--- Modified node-template provided by Substrate
 │
 └───sandbox    <--- Rust environment for testing the Runtime
 ```
@@ -73,6 +75,12 @@ All of the packagings are done using `yarn` workspaces. Thus so far we have the 
 
 ### Spec-builder
 In the `runtime/tools` folder, there is a [`spec-builder`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/tools/spec-builder) tool that assists developers in generating `raw` versions of their genesis json files.
+
+## Node
+
+Substrate provides a template node that uses `Aura` consensus for block production and `Granpda` for block finalization. Since our AssemblyScript runtime currently does not support `Grandpa`, we have modified the Node-template to not use `Grandpa` or any other kind of block finalization algorithm.
+
+Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate Nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
 
 ## Playing with the Runtime
 The runtime has 2 types of tests so far -> Integration and Unit tests
