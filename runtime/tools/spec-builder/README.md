@@ -103,13 +103,14 @@ Using the `yarn run build-spec -f spec.json` we are getting the following output
         "0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48": "0x13180000000000001000",
         "0x90b5ab205c6974c9ea841be688864633dc9ca8a357843eeacf2314649965fe22": "0x13180000000000001000",
         "0x10617572612c617574686f726974696573": "0x088eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"
-      }
+      },
+      "childrenDefault": {}
     }
   }
 }
 ```
 
-Notice that the `code` property is encoded into the well known key `:code` and the balances are encoded as `raw` key-values of the storage. The format in which they are encoded is matching the format that the AS Runtime is working with.
+Notice that the `code` property is encoded into the well known key `:code` and the balances are encoded as `raw` key-values of the storage. The format in which they are encoded is matching the format that the AS Runtime is working with. Also, spec-builder by default adds `childrenDefault` property, which is needed to run the node.
 
 
 ### Run tests
