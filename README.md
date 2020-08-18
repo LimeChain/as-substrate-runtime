@@ -155,7 +155,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 
 ## Running in Docker
 
-You should have [Docker](docker.com) installed.
+You should have [Docker](https://docker.io) installed.
 
 First, build the Docker image:
 
