@@ -40,7 +40,7 @@ RUN apt-get -y install cmake
 
 RUN cargo build --release
 
-COPY --from=builder ./runtime/tools/spec-builder/customSpecRaw.json ./
+COPY --from=builder /usr/src/runtime/tools/spec-builder/customSpecRaw.json ./
 
 EXPOSE 9933
 
