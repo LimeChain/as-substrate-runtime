@@ -78,10 +78,12 @@ In the `runtime/tools` folder, there is a [`spec-builder`](https://github.com/Li
 
 ## Substrate Node
 
+```
 node-template
 │
 └───node
 └───runtime
+```
 
 Substrate provides a template node that uses `Aura` consensus for block production and `Granpda` for block finalization. Since our AssemblyScript runtime currently does not support `Grandpa`, we have modified the Node-template to not use `Grandpa` at all.
 
