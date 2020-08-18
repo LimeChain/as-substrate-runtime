@@ -20,7 +20,7 @@ RUN apt-get update -y
 RUN apt-get install jq -y
 RUN yarn run asbuild && bash cr-custom-spec.sh
 RUN yarn build-spec -f customSpec.json
-CMD ["pwd"]
+CMD ["/usr/bin/echo", "succesfully build as-runtime and generated chainspec file"]
 
 # Building node and running it with the customSpecRaw.json
 
@@ -40,13 +40,6 @@ RUN cargo build --release
 
 COPY --from=builder ./runtime/tools/spec-builder/customSpecRaw.json ./
 
-CMD ["./target/release/node-template\
-  --base-path /tmp/node01 \
-  --chain=./customSpecRaw.json \
-  --port 30333 \
-  --ws-port 9944 \
-  --rpc-port 9933 \
-  --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
-  --validator \
-  --rpc-methods=Unsafe \
-  --name MyNode01"]
+EXPOSE 9933
+
+ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json"]
