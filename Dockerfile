@@ -32,6 +32,8 @@ WORKDIR /usr/src/dummy
 
 COPY ./node-template ./
 
+COPY --from=builder /usr/src/runtime/tools/spec-builder/customSpecRaw.json ./
+
 RUN bash ./scripts/init.sh
 RUN apt-get update -y 
 RUN apt-get -y install clang
@@ -39,8 +41,6 @@ RUN apt-get -y install gcc
 RUN apt-get -y install cmake
 
 RUN cargo build --release
-
-COPY --from=builder ./runtime/tools/spec-builder/customSpecRaw.json ./
 
 EXPOSE 9933
 
