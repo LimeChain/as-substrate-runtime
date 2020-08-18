@@ -2,11 +2,13 @@
 
 FROM node:14.8 AS builder
 
-COPY ./ ./
-COPY ./cr-custom-spec.sh ./runtime/tools/spec-builder/cr-custom-spec.sh
-COPY ./customSpec.json ./runtime/tools/spec-builder/customSpec.json
+WORKDIR /usr/src/
 
-WORKDIR /runtime
+COPY ./runtime ./runtime
+COPY ./node-template/cr-custom-spec.sh ./runtime/tools/spec-builder/cr-custom-spec.sh
+COPY ./node-template/customSpec.json ./runtime/tools/spec-builder/customSpec.json
+
+WORKDIR /usr/src/runtime
 
 RUN yarn install
 
@@ -14,7 +16,7 @@ RUN yarn run build
 
 RUN mv wasm-code ./tools/spec-builder
 
-WORKDIR /runtime/tools/spec-builder
+WORKDIR /usr/src/runtime/tools/spec-builder
 
 RUN apt-get update -y 
 RUN apt-get install jq -y
