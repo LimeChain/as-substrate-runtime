@@ -40,6 +40,8 @@ The most important components of this project are the following:
 as-substrate-runtime
 │
 └───runtime    <--- Runtime packages & source code
+|
+└───node-template <--- Substrate node with native runtime
 │
 └───sandbox    <--- Rust environment for testing the Runtime
 ```
@@ -73,6 +75,19 @@ All of the packagings are done using `yarn` workspaces. Thus so far we have the 
 
 ### Spec-builder
 In the `runtime/tools` folder, there is a [`spec-builder`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/tools/spec-builder) tool that assists developers in generating `raw` versions of their genesis json files.
+
+## Substrate Node
+
+```
+node-template
+│
+└───node
+└───runtime
+```
+
+Substrate provides a template node that uses `Aura` consensus for block production and `Granpda` for block finalization. Since our AssemblyScript runtime currently does not support `Grandpa`, we have modified the Node-template to not use `Grandpa` at all.
+
+Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate Nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
 
 ## Playing with the Runtime
 The runtime has 2 types of tests so far -> Integration and Unit tests
@@ -115,6 +130,53 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 1. Go to `./runtime/tools/spec-builder`
 2. Build `wasm module` by executing `yarn run asbuild`
 3. Execute `yarn run test`
+
+### 6. Run the node with WASM code
+1. Go to `./node-template`
+2. Copy `wasm-code` generated earlier from `../runtime`
+3. Place the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
+4. Add `0x` prefix for the the value `code` in `customSpec.json`
+5. Build WASM module and generate chain spec `yarn run asbuild && yarn build-spec -f customSpec.json`
+6. Build the node `cargo build --release` (may take a while)
+7. Run the node with the generated chain spec:  
+   ```
+   ./target/release/node-template \  
+        --chain=./customSpecRaw.json \  
+        --port 30333 \     
+        --ws-port 9944 \      
+        --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \  
+        --validator \   
+        --rpc-methods=Unsafe \  
+        --name Node01 \  
+        --base-path ./tmp/node01 \  
+        --execution Wasm
+    ```    
+
+## Running in Docker
+
+You should have [Docker](https://docker.io) installed.
+
+First, build the Docker image:
+
+```
+docker build -t substrate/runtime .
+```
+It might take a while for Rust to compile the project (~30-40 minutes). After you built the image, run the node:
+
+```
+docker run --rm -P --publish 127.0.0.1:9933:9933 --name node-runtime substrate/runtime \
+    --port 30333 \
+    --ws-port 9944 \
+    --rpc-port 9933 \
+    --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
+    --validator \
+    --rpc-methods=Unsafe \
+    --name Node01 \
+    --base-path ./tmp/node01 \
+    --execution Wasm
+```
+And the node should start running and attempting to produce blocks. However, since block construction is not yet implemented, no blocks will be produced.
+
 
 # **License**
 This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)

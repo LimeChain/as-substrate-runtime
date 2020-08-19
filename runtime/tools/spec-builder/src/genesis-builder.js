@@ -39,6 +39,7 @@ class GenesisBuilder {
             const rawAura = Aura.toRaw(genesisConfig.genesis.runtime.aura.authorities);
             Object.assign(rawGenesis.raw.top, rawAura);
         }
+        rawGenesis['raw']["childrenDefault"] = {};
         return rawGenesis;
     }
 }
