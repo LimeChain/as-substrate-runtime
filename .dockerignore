@@ -1,7 +1,5 @@
-node_modules
-*/node_modules
-*/*/node_modules
-*/*/*/node_modules
+**/node_modules
+node_modules/
 npm-debug.log
 runtime/wasm-code
 .DS_Store
