@@ -42,6 +42,6 @@ RUN apt-get -y install cmake
 
 RUN cargo build --release
 
-EXPOSE 9933
+EXPOSE 9933/tcp
 
-ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json", "--rpc-port 9933"]
+ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json", "--rpc-port", "9933"]
