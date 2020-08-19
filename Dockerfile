@@ -44,4 +44,4 @@ RUN cargo build --release
 
 EXPOSE 9933
 
-ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json"]
+ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json", "--rpc-port 9933"]

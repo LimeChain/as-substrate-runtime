@@ -134,17 +134,16 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 ### 6. Run the node with WASM code
 1. Go to `./node-template`
 2. Copy `wasm-code` generated earlier from `../runtime`
-3. Install `jq` with `apt-get` or `brew`
-4. Run `bash cr-custom-spec.sh` to format `customSpec.json`
+3. Place the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
+4. Add `0x` prefix for the the value `code` in `customSpec.json`
 5. Build WASM module and generate chain spec `yarn run asbuild && yarn build-spec -f customSpec.json`
-6. Build the node `cargo build --release`
+6. Build the node `cargo build --release` (may take a while)
 7. Run the node with the generated chain spec:  
    ```
    ./target/release/node-template \  
         --chain=./customSpecRaw.json \  
         --port 30333 \     
-        --ws-port 9944 \    
-        --rpc-port 9933 \    
+        --ws-port 9944 \      
         --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \  
         --validator \   
         --rpc-methods=Unsafe \  
