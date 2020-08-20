@@ -45,3 +45,11 @@ RUN cargo build --release
 EXPOSE 9933/tcp
 
 ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json", "--rpc-port", "9933"]
+
+
+FROM ubuntu:latest
+WORKDIR /usr/src/node
+COPY --from=node-builder /usr/src/dummy/target/release/node-template ./node-template
+COPY --from=node-builder /usr/src/dummy/customSpecRaw.json ./customSpecRaw.json
+RUN ls
+ENTRYPOINT ["./node-template", "--chain=./customSpecRaw.json", "--rpc-port", "9933"]
