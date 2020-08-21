@@ -44,8 +44,7 @@ RUN cargo build --release
 
 EXPOSE 9933/tcp
 
-ENTRYPOINT ["./target/release/node-template", "--chain=./customSpecRaw.json", "--rpc-port", "9933"]
-
+CMD ["/usr/bin/echo", "succesfully build as-runtime and generated chainspec file"]
 
 FROM ubuntu:latest
 WORKDIR /usr/src/node
