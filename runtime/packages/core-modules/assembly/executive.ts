@@ -1,14 +1,16 @@
 import { Header, Block } from '@as-substrate/models';
 import { System } from './system';
-import { CompactInt } from 'as-scale-codec';
+import { CompactInt, ByteArray } from 'as-scale-codec';
 import { Log } from './log';
+import { Storage } from './storage';
+import { Helpers } from './helpers';
 export namespace Executive{
     /**
      * Calls the System function initializeBlock()
      * @param header Header instance
      */
     export function initializeBlock(header: Header): void{
-        System.initializeBlock(header);
+        System.initialize(header);
     }
 
     /**
@@ -18,10 +20,14 @@ export namespace Executive{
     export function initialChecks(block: Block): void{
         let header = block.header;
         let n: CompactInt = header.number;
-        if(n.value == 0 && System.blockHash.get(n.value - 1) == header.parent_hash){
+
+        const result = Storage.get(Helpers.stringsToU8a(["system", "block_hash"]));
+        let blockHashU8a: u8[] = result.isSome() ? (<ByteArray>result.unwrap()).values : [];
+        const blockHash = Helpers.blockHashFromU8Array(blockHashU8a);
+
+        if(n.value == 0 &&  blockHash.get(new CompactInt(n.value - 1)) == header.parent_hash){
             throw new Error("Parent hash should be valid.");
         }
-
     }
 
     /**
