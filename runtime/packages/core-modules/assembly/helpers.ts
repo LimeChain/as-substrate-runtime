@@ -1,4 +1,5 @@
 import { Hash, CompactInt, ScaleString, Bytes } from 'as-scale-codec';
+import { Log } from './log';
 
 export class Helpers{
     static getDefaultBlockHash(): Map<CompactInt, Hash>{
@@ -12,7 +13,7 @@ export class Helpers{
      * @param modPrefix module prefix
      * @param stgPrefix storage prefix
      */
-    static stringsToU8a(args: string[]){
+    static stringsToU8a(args: string[]): u8[]{
         let result: u8[] = [];
         for (let i=0; i<args.length ; i++){
             const strScale = new ScaleString(args[i]); 
@@ -34,11 +35,13 @@ export class Helpers{
      * @param input SCALE encoded Map<CompactInt, Hash>
      */
     static blockHashFromU8Array(input: u8[]): Map<CompactInt, Hash>{
+        Log.printUtf8(input.toString());
         const blockHash: Map<CompactInt, Hash> = new Map<CompactInt, Hash>();
+        Log.printUtf8('helper1')
         const lenComp = Bytes.decodeCompactInt(input);
         input = input.slice(lenComp.decBytes);
-
         for (let i: u64 = 0; i<lenComp.value; i++){
+            Log.printUtf8('inside loop');
             const blockNumber = Bytes.decodeCompactInt(input);
             input = input.slice(lenComp.decBytes);
             const parentHash = Hash.fromU8a(input);
@@ -58,7 +61,6 @@ export class Helpers{
         result = result.concat(len.toU8a());
         
         for (let i = 0; i<keys.length; i++){
-            const u8Key = Uint8Array.wrap(String.UTF8.encode(keys[i]));
             result = result.concat(keys[i].toU8a());
             
             const value: u8[] = blockHash.get(keys[i]).toU8a();

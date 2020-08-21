@@ -9,7 +9,8 @@ export namespace Executive{
      * Calls the System function initializeBlock()
      * @param header Header instance
      */
-    export function initializeBlock(header: Header): void{
+    export function initializeBlock(header: u8[]): void{
+        Log.printUtf8("inside executive");
         System.initialize(header);
     }
 
@@ -25,7 +26,7 @@ export namespace Executive{
         let blockHashU8a: u8[] = result.isSome() ? (<ByteArray>result.unwrap()).values : [];
         const blockHash = Helpers.blockHashFromU8Array(blockHashU8a);
 
-        if(n.value == 0 &&  blockHash.get(new CompactInt(n.value - 1)) == header.parent_hash){
+        if(n.value == 0 &&  blockHash.get(new CompactInt(n.value - 1)) == header.parentHash){
             throw new Error("Parent hash should be valid.");
         }
     }
@@ -35,10 +36,10 @@ export namespace Executive{
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
-        Executive.initializeBlock(block.header);
+        Executive.initializeBlock(block.header.toU8a());
         Executive.initialChecks(block);
         let header = block.header;
-        let extrinsics = block.extrinsics;
+        // let extrinsics = block.extrinsics;
     }
     /**
      * Finalize the block - it is up the caller to ensure that all header fields are valid
