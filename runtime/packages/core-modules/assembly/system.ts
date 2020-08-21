@@ -34,5 +34,11 @@ export class System {
         currentBlockHash.set(blockNumber, header.parentHash);
         Storage.set(Helpers.stringsToU8a(["system", "block_hash"]), Helpers.blockHashToU8a(currentBlockHash));
     }
+
+    static finalize(): Header {
+        Storage.clear(Helpers.stringsToU8a(["system", "execution_phase"]));
+        let blockNumber = Storage.take(Helpers.stringsToU8a(["system", "block_number"]));
+        let parentHash = Storage.take(Helpers.stringsToU8a(["system", "parent_hash"]));
+    }
 }
 
