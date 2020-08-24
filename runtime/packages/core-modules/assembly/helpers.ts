@@ -1,5 +1,4 @@
 import { Hash, CompactInt, ScaleString, Bytes } from 'as-scale-codec';
-import { Log } from './log';
 
 export class Helpers{
     static getDefaultBlockHash(): Map<CompactInt, Hash>{
@@ -39,7 +38,6 @@ export class Helpers{
         const lenComp = Bytes.decodeCompactInt(input);
         input = input.slice(lenComp.decBytes);
         for (let i: u64 = 0; i<lenComp.value; i++){
-            Log.printUtf8('inside loop');
             const blockNumber = Bytes.decodeCompactInt(input);
             input = input.slice(lenComp.decBytes);
             const parentHash = Hash.fromU8a(input);

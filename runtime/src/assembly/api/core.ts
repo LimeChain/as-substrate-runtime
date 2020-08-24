@@ -1,6 +1,6 @@
 import { Serialiser } from "@as-substrate/core-utils";
 import { RuntimeVersion, SupportedAPIs, Block, Header } from "@as-substrate/models";
-import { System, Log, Executive } from '@as-substrate/core-modules';
+import { Executive } from '@as-substrate/core-modules';
 import { Bool } from "as-scale-codec";
 
 /**
@@ -21,7 +21,6 @@ export function Core_version(data: i32, len: i32): u64 {
 export function Core_execute_block(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const block = Block.fromU8Array(input);
-    Log.printUtf8("execute called");
     Executive.executeBlock(block.result);
     return Serialiser.serialiseResult((new Bool(true)).toU8a()); // Return mocked `true`
 }
@@ -34,7 +33,6 @@ export function Core_execute_block(data: i32, len: i32): u64 {
 
 export function Core_initialize_block(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
-    Log.printUtf8("initialize called");
     Executive.initializeBlock(input);
     return Serialiser.serialiseResult([]);
 }

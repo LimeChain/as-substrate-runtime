@@ -1,10 +1,10 @@
 import { Hash, CompactInt, ByteArray, Bytes } from 'as-scale-codec';
 import { Storage } from './storage';
-import { Option, Header } from '@as-substrate/models';
+import { Header } from '@as-substrate/models';
 import { Helpers } from './helpers';
-import { Log } from './log';
 
 export class System {
+    // execution phases
     static readonly APPLY_EXTRINSIC: string = "ApplyExtrinsic";
     static readonly INITIALIZATION: string = "Initialization";
     static readonly FINALIZATION: string = "Finalization"
