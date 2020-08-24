@@ -1,5 +1,6 @@
 import { Serialiser } from "@as-substrate/core-utils";
 import { AuraModule } from "@as-substrate/aura-module";
+import { Log } from '@as-substrate/core-modules';
 import { UInt64, ByteArray } from 'as-scale-codec';
 
 /**

@@ -35,9 +35,7 @@ export class Helpers{
      * @param input SCALE encoded Map<CompactInt, Hash>
      */
     static blockHashFromU8Array(input: u8[]): Map<CompactInt, Hash>{
-        Log.printUtf8(input.toString());
         const blockHash: Map<CompactInt, Hash> = new Map<CompactInt, Hash>();
-        Log.printUtf8('helper1')
         const lenComp = Bytes.decodeCompactInt(input);
         input = input.slice(lenComp.decBytes);
         for (let i: u64 = 0; i<lenComp.value; i++){

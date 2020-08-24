@@ -10,7 +10,6 @@ export namespace Executive{
      * @param header Header instance
      */
     export function initializeBlock(header: u8[]): void{
-        Log.printUtf8("inside executive");
         System.initialize(header);
     }
 
@@ -39,7 +38,7 @@ export namespace Executive{
         Executive.initializeBlock(block.header.toU8a());
         Executive.initialChecks(block);
         let header = block.header;
-        // let extrinsics = block.extrinsics;
+        // TO-DO
     }
     /**
      * Finalize the block - it is up the caller to ensure that all header fields are valid

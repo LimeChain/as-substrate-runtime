@@ -1,5 +1,6 @@
 import {Serialiser} from '@as-substrate/core-utils';
 import { InherentData, Extrinsic } from '@as-substrate/models';
+import { Log } from '@as-substrate/core-modules';
 import { Bool } from 'as-scale-codec';
 
 /**
@@ -10,6 +11,7 @@ import { Bool } from 'as-scale-codec';
 export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const extrinsic = Extrinsic.fromU8Array(input);
+    Log.printUtf8("apply extrinsics");
     return Serialiser.serialiseResult([]);
 }
 
@@ -20,6 +22,7 @@ export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
+    Log.printUtf8("inherent extrinsics");
     const input = Serialiser.deserialiseInput(data, len);
     const inherent = InherentData.fromU8Array(input);
     return Serialiser.serialiseResult([]);

@@ -18,35 +18,34 @@ export class System {
         Storage.set(Helpers.stringsToU8a(["system", "parent_hsh"]), header.slice(0, 32));
         header = header.slice(32);
 
-        const data = Bytes.decodeCompactInt(header);
-        Storage.set(Helpers.stringsToU8a(["system", "block_num0"]), header.slice(0, data.decBytes));
-        header = header.slice(data.decBytes);
+        const blockNum = Bytes.decodeCompactInt(header);
+        Storage.set(Helpers.stringsToU8a(["system", "block_num0"]), header.slice(0, blockNum.decBytes));
+        header = header.slice(blockNum.decBytes);
 
-        const stateRoot = header.slice(0, 32);
+        const _stateRoot = header.slice(0, 32);
         header = header.slice(32);
 
         Storage.set(Helpers.stringsToU8a(["system", "extcs_root"]), header.slice(0, 32));
         header = header.slice(32);
 
         Storage.set(Helpers.stringsToU8a(["system", "digests_00"]), header);
+        
+        // if the BlockHash is populated in the storage, add current one and renew storage
+        // Rust version of this implementation is following:
+        // <BlockHash<T>>::insert(*number - One::one(), parent_hash);
+        const blockNumber: CompactInt = new CompactInt(blockNum.value - 1);
 
-        // set blockHash, if the block is the first one, populate with default blockHash
-        let currentBlockHash: Map<CompactInt, Hash> = new Map<CompactInt, Hash>();
-        const blockNumber: CompactInt = new CompactInt(data.value - 1);
-
-        // if(Storage.exists(Helpers.stringsToU8a(["system", "block_hash"]))){
-        //     let rawBlockHash = Storage.get(Helpers.stringsToU8a(["system", "block_hash"]));
-        //     let blockHashU8a: u8[] = rawBlockHash.isSome() ? (<ByteArray>rawBlockHash.unwrap()).values : [];
-        //     Log.printUtf8("block > 0")
-        //     currentBlockHash = Helpers.blockHashFromU8Array(blockHashU8a);
-        //     currentBlockHash.set(blockNumber, parentHash);
-        //     Log.printUtf8("still alive")
-        //     Storage.set(Helpers.stringsToU8a(["system", "block_hash"]), Helpers.blockHashToU8a(currentBlockHash));
-        // }else{
-            currentBlockHash = Helpers.getDefaultBlockHash();
+        if(Storage.get(Helpers.stringsToU8a(["system", "block_hash"])).isSome()){
+            let rawBlockHash = Storage.get(Helpers.stringsToU8a(["system", "block_hash"]));
+            let blockHashU8a: u8[] = (<ByteArray>rawBlockHash.unwrap()).values;
+            let currentBlockHash: Map<CompactInt, Hash> = Helpers.blockHashFromU8Array(blockHashU8a);
             currentBlockHash.set(blockNumber, parentHash);
             Storage.set(Helpers.stringsToU8a(["system", "block_hash"]), Helpers.blockHashToU8a(currentBlockHash));
-        // }
+        }else{
+            let currentBlockHash: Map<CompactInt, Hash> = Helpers.getDefaultBlockHash();
+            currentBlockHash.set(blockNumber, parentHash);
+            Storage.set(Helpers.stringsToU8a(["system", "block_hash"]), Helpers.blockHashToU8a(currentBlockHash));
+        }
     }
     /**
      * Remove temporary "environment" entries in storage.
@@ -58,7 +57,6 @@ export class System {
         let digests = Storage.take(Helpers.stringsToU8a(["system", "digests_00"]));
         let extrinsicsRoot = Storage.take(Helpers.stringsToU8a(["system", "extcs_root"]));
         let stateRoot = Storage.storageRoot();
-        // let blockHash = Storage.get(Helpers.stringsToU8a(["system", "block_hash"]));
         return new Header(parentHash, blockNumber, stateRoot, extrinsicsRoot, digests);
     }
 }
