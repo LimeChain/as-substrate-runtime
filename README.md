@@ -144,6 +144,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
         --chain=./customSpecRaw.json \  
         --port 30333 \     
         --ws-port 9944 \      
+        --rpc-port 9933 \
         --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \  
         --validator \   
         --rpc-methods=Unsafe \  
@@ -168,9 +169,8 @@ docker pull limechain/as-substrate
 Then run the executable:
 
 ```
-docker run -p 9933:9933 --name node-runtime limechain/as-substrate \
-    --port 30333 \
-    --ws-port 9944 \
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime 
+limechain/as-substrate \
     --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
     --validator \
     --rpc-methods=Unsafe \
@@ -189,9 +189,7 @@ docker build -t substrate/runtime .
 It might take a while for Rust to compile the project (~30-40 minutes). After you built the image, run the node:
 
 ```
-docker run -p 9933:9933 --name node-runtime substrate/runtime \
-    --port 30333 \
-    --ws-port 9944 \
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrate/runtime \
     --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
     --validator \
     --rpc-methods=Unsafe \
