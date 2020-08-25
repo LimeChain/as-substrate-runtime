@@ -131,13 +131,15 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 2. Build `wasm module` by executing `yarn run asbuild`
 3. Execute `yarn run test`
 
-### 6. Run the node with WASM code
+### 6. Build and Run the node with WASM code
 1. Go to `./node-template`
 2. Copy `wasm-code` generated earlier from `../runtime`
 3. Place the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
 4. Add `0x` prefix for the the value `code` in `customSpec.json`
-5. Build WASM module and generate chain spec `yarn run asbuild && yarn build-spec -f customSpec.json`
-6. Build the node `cargo build --release` (may take a while)
+5. Go to `./runtime`
+6. Build WASM module and generate chain spec `yarn run build && yarn build-spec -f ./../node-template/customSpec.json -o ./../node-template/customSpecRaw.json`
+7. Go to `./node-template`
+8. Build the node `cargo build --release` (may take a while)
 7. Run the node with the generated chain spec:  
    ```
    ./target/release/node-template \  
@@ -169,14 +171,13 @@ docker pull limechain/as-substrate
 Then run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime 
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime \
 limechain/as-substrate \
-    --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
     --validator \
     --rpc-methods=Unsafe \
     --name Node01 \
     --base-path /tmp/node01 \
-    --execution Wasm
+    --execution Wasm \
     --rpc-external
 ```
 
