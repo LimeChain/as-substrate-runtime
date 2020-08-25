@@ -24,10 +24,10 @@ In this milestone, the communication mechanism between the Host and Runtime will
 #### Milestone 2 - Storage Module :white_check_mark:
 In this milestone the basic functionality for setting and getting storage from the AS Runtime using the Polkadot HOST API will be implemented.
 
-#### Milestone 3 - Support for Aura consensus :construction:
+#### Milestone 3 - Support for Aura consensus :white_check_mark:
 In this milestone the Aura Module functionality will be implemented into the AS Runtime.
 
-#### Milestone 4 - State Transition function
+#### Milestone 4 - State Transition function :construction:
 In this milestone the State transition function will be implemented into the AS Runtime. As part of the State transition function the previously mocked WASM API functions will be implemented as-well. At this point the runtime must be able to:
 1.  Define genesis state and account balances
 2.  Run its Aura consensus.
