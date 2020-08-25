@@ -144,6 +144,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
         --chain=./customSpecRaw.json \  
         --port 30333 \     
         --ws-port 9944 \      
+        --rpc-port 9933 \
         --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \  
         --validator \   
         --rpc-methods=Unsafe \  
@@ -156,6 +157,30 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 
 You should have [Docker](https://docker.io) installed.
 
+### Docker image from Docker hub (option 1)
+
+We have a Docker Hub repository where we host the latest image of the whole project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
+
+First, pull the image from the Docker Hub. 
+``` 
+docker pull limechain/as-substrate
+```
+
+Then run the executable:
+
+```
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime 
+limechain/as-substrate \
+    --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
+    --validator \
+    --rpc-methods=Unsafe \
+    --name Node01 \
+    --base-path /tmp/node01 \
+    --execution Wasm
+    --rpc-external
+```
+
+### Build the image (option 2)
 First, build the Docker image:
 
 ```
@@ -164,18 +189,17 @@ docker build -t substrate/runtime .
 It might take a while for Rust to compile the project (~30-40 minutes). After you built the image, run the node:
 
 ```
-docker run -p 9933:9933 --name node-runtime substrate/runtime \
-    --port 30333 \
-    --ws-port 9944 \
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrate/runtime \
     --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
     --validator \
     --rpc-methods=Unsafe \
     --name Node01 \
-    --base-path ./tmp/node01 \
+    --base-path /tmp/node01 \
     --execution Wasm
     --rpc-external
 ```
 And the node should start running and attempting to produce blocks. However, since block construction is not yet implemented, no blocks will be produced. Note that `rpc-external` option is required for accessing the node with RPC calls.
+
 
 ## Test Runtime modules with RPC calls
 
