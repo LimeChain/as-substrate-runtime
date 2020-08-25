@@ -7,7 +7,7 @@
     "test": "mocha",
     "asbuild:optimized": "asc assembly/index.ts -b build/build-spec.wasm -t build/build-spec.wat --runtime full --optimize",
     "asbuild": "npm run asbuild:optimized",
-    "build-spec": "node index.js"
+    "build-spec": "npm run asbuild:optimized && node index.js"
   },
   "author": "",
   "license": "ISC",
