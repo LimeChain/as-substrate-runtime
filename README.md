@@ -139,16 +139,16 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 5. Build the node `cargo build --release` (may take a while)
 6. Run the node with the generated chain spec:  
    ```
-   ./target/release/node-template \  
-        --chain=./customSpecRaw.json \  
-        --port 30333 \     
-        --ws-port 9944 \      
-        --rpc-port 9933 \
-        --validator \   
-        --rpc-methods=Unsafe \  
-        --name Node01 \  
-        --base-path /tmp/node01 \  
-        --execution Wasm
+   ./target/release/node-template \
+    --chain=./customSpecRaw.json \
+    --port 30333 \
+    --ws-port 9944 \
+    --rpc-port 9933 \
+    --validator \
+    --rpc-methods=Unsafe \
+    --name Node01 \
+    --base-path /tmp/node01 \
+    --execution Wasm
     ```    
 
 The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
