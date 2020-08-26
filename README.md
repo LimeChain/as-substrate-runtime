@@ -24,10 +24,10 @@ In this milestone, the communication mechanism between the Host and Runtime will
 #### Milestone 2 - Storage Module :white_check_mark:
 In this milestone the basic functionality for setting and getting storage from the AS Runtime using the Polkadot HOST API will be implemented.
 
-#### Milestone 3 - Support for Aura consensus :construction:
+#### Milestone 3 - Support for Aura consensus :white_check_mark:
 In this milestone the Aura Module functionality will be implemented into the AS Runtime.
 
-#### Milestone 4 - State Transition function
+#### Milestone 4 - State Transition function :construction:
 In this milestone the State transition function will be implemented into the AS Runtime. As part of the State transition function the previously mocked WASM API functions will be implemented as-well. At this point the runtime must be able to:
 1.  Define genesis state and account balances
 2.  Run its Aura consensus.
@@ -131,31 +131,55 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 2. Build `wasm module` by executing `yarn run asbuild`
 3. Execute `yarn run test`
 
-### 6. Run the node with WASM code
-1. Go to `./node-template`
-2. Copy `wasm-code` generated earlier from `../runtime`
-3. Place the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
-4. Add `0x` prefix for the the value `code` in `customSpec.json`
-5. Build WASM module and generate chain spec `yarn run asbuild && yarn build-spec -f customSpec.json`
-6. Build the node `cargo build --release` (may take a while)
-7. Run the node with the generated chain spec:  
+### 6. Build and Run the node with WASM code
+1. Copy `wasm-code` generated earlier in the `../runtime` directory
+2. Go to `./node-template`
+3. Paste the whole content of `wasm-code` with a prefix `0x`, as a value of `code` property in `customSpec.json`
+4. Build WASM module and generate chain spec by executing: `yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json` 
+5. Build the node `cargo build --release` (may take a while)
+6. Run the node with the generated chain spec:  
    ```
-   ./target/release/node-template \  
-        --chain=./customSpecRaw.json \  
-        --port 30333 \     
-        --ws-port 9944 \      
-        --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \  
-        --validator \   
-        --rpc-methods=Unsafe \  
-        --name Node01 \  
-        --base-path /tmp/node01 \  
-        --execution Wasm
+   ./target/release/node-template \
+    --chain=./customSpecRaw.json \
+    --port 30333 \
+    --ws-port 9944 \
+    --rpc-port 9933 \
+    --validator \
+    --rpc-methods=Unsafe \
+    --name Node01 \
+    --base-path /tmp/node01 \
+    --execution Wasm
     ```    
+
+The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
 
 ## Running in Docker
 
 You should have [Docker](https://docker.io) installed.
 
+### Docker image from Docker hub (option 1)
+
+We have a Docker Hub repository where we host the latest stable image of the executable file of the project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
+
+First, pull the image from the Docker Hub. 
+``` 
+docker pull limechain/as-substrate:stable
+```
+
+Then run the executable:
+
+```
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime \
+limechain/as-substrate:stable \
+    --validator \
+    --rpc-methods=Unsafe \
+    --name Node01 \
+    --base-path /tmp/node01 \
+    --execution Wasm \
+    --rpc-external
+```
+
+### Build the image (option 2)
 First, build the Docker image:
 
 ```
@@ -164,18 +188,36 @@ docker build -t substrate/runtime .
 It might take a while for Rust to compile the project (~30-40 minutes). After you built the image, run the node:
 
 ```
-docker run -p 9933:9933 --name node-runtime substrate/runtime \
-    --port 30333 \
-    --ws-port 9944 \
-    --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrate/runtime \
     --validator \
     --rpc-methods=Unsafe \
     --name Node01 \
-    --base-path ./tmp/node01 \
-    --execution Wasm
+    --base-path /tmp/node01 \
+    --execution Wasm \
     --rpc-external
 ```
-And the node should start running and attempting to produce blocks. However, since block construction is not yet implemented, no blocks will be produced. Note that `rpc-external` option is required for accessing the node with RPC calls.
+And the node should start running and attempting to produce blocks. However, we first need to insert our keys for node to start actually producing blocks. Note that `rpc-external` option is required for accessing the node with RPC calls.
+
+## Block production
+
+We already have generated Aura keys for testing purposes, which is also passed to the node with `chain spec` file. Run this to add the keys to the node with `author_insertKey` RPC call:
+```
+curl --location --request POST 'localhost:9933' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "jsonrpc": "2.0",
+    "method": "author_insertKey",
+    "params": ["aura","stool celery junk extend panther shock pact sorry violin spring degree odor","0x82b3f9330690e5a74aa9806d71298e68a03d80e773332f615e3bdd64ee71f050"],
+    "id": 1
+}'
+```
+The response should be:
+
+```
+{"jsonrpc":"2.0","result":null,"id":1}
+```
+
+Now, node will start producing blocks.
 
 ## Test Runtime modules with RPC calls
 

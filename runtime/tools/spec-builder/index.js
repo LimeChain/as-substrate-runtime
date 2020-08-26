@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const GenesisBuilder = require('./src/genesis-builder');
 const fs = require('fs');
+const path = require('path');
 const curPath = process.cwd();
 
 let argv = require('yargs')
@@ -27,7 +28,7 @@ if(!fs.existsSync(`${curPath}/${argv.file}`)){
     return;
 }
 
-let customSpec = require(`${curPath}/${argv.file}`);
+let customSpec = require(path.join(curPath, argv.file));
 
 const rawGenesis = GenesisBuilder.toRaw(customSpec);
 

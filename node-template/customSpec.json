@@ -27,12 +27,12 @@
               1152921504606847000
             ]
           ]
-        },
-        "aura": {
-          "authorities": [
+      },
+      "aura": {
+        "authorities": [
             "5F25Yb9PB9GV6RcqKpWceyx1X48TfnBxWn9m84A1JUYvsEF2"
-          ]
-        }
+        ]
       }
     }
   }
+}
