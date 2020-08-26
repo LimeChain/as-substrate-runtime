@@ -14,7 +14,7 @@
     "build": "cd ./src && yarn run build",
     "test": "cd ./src && yarn run test",
     "test:ci": "cd ./src && yarn run test:ci",
-    "build-spec": "node ./node_modules/@as-substrate/spec-builder"
+    "build-spec": "yarn --cwd=./tools/spec-builder run asbuild:optimized && node ./node_modules/@as-substrate/spec-builder"
   },
   "repository": {
     "type": "git",
