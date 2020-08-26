@@ -1,4 +1,4 @@
-import { Header, Block } from '@as-substrate/models';
+import { Block } from '@as-substrate/models';
 import { System } from './system';
 import { CompactInt, ByteArray } from 'as-scale-codec';
 import { Log } from './log';
@@ -44,7 +44,7 @@ export namespace Executive{
      * Finalize the block - it is up the caller to ensure that all header fields are valid
 	 * except state-root.
      */
-    export function finalizeBlock(): Header {
+    export function finalizeBlock(): u8[] {
         return System.finalize();
     }
 

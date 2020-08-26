@@ -1,5 +1,5 @@
 import { Serialiser } from "@as-substrate/core-utils";
-import { RuntimeVersion, SupportedAPIs, Block, Header } from "@as-substrate/models";
+import { RuntimeVersion, SupportedAPIs, Block } from "@as-substrate/models";
 import { Executive } from '@as-substrate/core-modules';
 import { Bool } from "as-scale-codec";
 

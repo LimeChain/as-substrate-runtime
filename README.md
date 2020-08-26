@@ -139,7 +139,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 5. Build the node `cargo build --release` (may take a while)
 6. Run the node with the generated chain spec:  
    ```
-   ./target/release/node-template \
+./target/release/node-template \
     --chain=./customSpecRaw.json \
     --port 30333 \
     --ws-port 9944 \

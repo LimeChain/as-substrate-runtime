@@ -1,3 +1,5 @@
+import { Hash, ScaleString } from 'as-scale-codec';
+
 export namespace Utils {
 
     /**
@@ -26,6 +28,28 @@ export namespace Utils {
             }
         }
         return true;
+    }
+
+    /**
+     * Converts storage key to u8a
+     * @param args array of strings
+     */
+    export function stringsToU8a(args: string[]): u8[]{
+        let result: u8[] = [];
+        for (let i=0; i<args.length ; i++){
+            const strScale = new ScaleString(args[i]); 
+            result = result.concat(strScale.toU8a());
+        }
+        return result;
+    }
+    /**
+     * 
+     * @param byte default byte
+     */
+    export function getPopulatedHash(byte: u8): Hash {
+        const hashBytes: u8[] = new Array<u8>(32);
+        hashBytes.fill(byte);
+        return Hash.fromU8a(hashBytes);
     }
 
 }
