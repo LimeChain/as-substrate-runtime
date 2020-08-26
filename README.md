@@ -134,7 +134,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 ### 6. Build and Run the node with WASM code
 1. Copy `wasm-code` generated earlier in the `../runtime` directory
 2. Go to `./node-template`
-3. Append the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
+3. Paste the whole content of `wasm-code` with a prefix `0x`, as a value of `code` property in `customSpec.json`
 4. Build WASM module and generate chain spec by executing: `yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json` 
 5. Build the node `cargo build --release` (may take a while)
 6. Run the node with the generated chain spec:  
@@ -162,14 +162,14 @@ We have a Docker Hub repository where we host the latest image of the whole proj
 
 First, pull the image from the Docker Hub. 
 ``` 
-docker pull limechain/as-substrate
+docker pull limechain/as-substrate:stable
 ```
 
 Then run the executable:
 
 ```
 docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime \
-limechain/as-substrate \
+limechain/as-substrate:stable \
     --validator \
     --rpc-methods=Unsafe \
     --name Node01 \
@@ -193,11 +193,31 @@ docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrat
     --rpc-methods=Unsafe \
     --name Node01 \
     --base-path /tmp/node01 \
-    --execution Wasm
+    --execution Wasm \
     --rpc-external
 ```
-And the node should start running and attempting to produce blocks. However, since block construction is not yet implemented, no blocks will be produced. Note that `rpc-external` option is required for accessing the node with RPC calls.
+And the node should start running and attempting to produce blocks. However, we first need to insert our keys for node to start actually producing blocks. Note that `rpc-external` option is required for accessing the node with RPC calls.
 
+## Block production
+
+We already have generated Aura keys for testing purposes, which is also passed to the node with `chain spec` file. Run this to add the keys to the node with `author_insertKey` RPC call:
+```
+curl --location --request POST 'localhost:9933' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "jsonrpc": "2.0",
+    "method": "author_insertKey",
+    "params": ["aura","stool celery junk extend panther shock pact sorry violin spring degree odor","0x82b3f9330690e5a74aa9806d71298e68a03d80e773332f615e3bdd64ee71f050"],
+    "id": 1
+}'
+```
+The response should be:
+
+```
+{"jsonrpc":"2.0","result":null,"id":1}
+```
+
+Now, node will start producing blocks.
 
 ## Test Runtime modules with RPC calls
 
