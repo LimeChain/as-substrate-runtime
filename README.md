@@ -158,7 +158,7 @@ You should have [Docker](https://docker.io) installed.
 
 ### Docker image from Docker hub (option 1)
 
-We have a Docker Hub repository where we host the latest image of the whole project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
+We have a Docker Hub repository where we host the latest stable image of the executable file of the project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
 
 First, pull the image from the Docker Hub. 
 ``` 
