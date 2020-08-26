@@ -134,13 +134,10 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 ### 6. Build and Run the node with WASM code
 1. Copy `wasm-code` generated earlier in the `../runtime` directory
 2. Go to `./node-template`
-3. Place the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
-4. Add `0x` prefix for the the value `code` in `customSpec.json`
-5. Go to `./runtime`
-6. Build WASM module and generate chain spec by executing: `yarn --cwd=./tools/spec-builder build-spec -f ./../node-template/customSpec.json -o ./../node-template/customSpecRaw.json` TODO
-7. Go to `./node-template`
-8. Build the node `cargo build --release` (may take a while)
-7. Run the node with the generated chain spec:  
+3. Append the whole content of `wasm-code` as a value of `code` property in `customSpec.json`
+4. Build WASM module and generate chain spec by executing: `yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json` 
+5. Build the node `cargo build --release` (may take a while)
+6. Run the node with the generated chain spec:  
    ```
    ./target/release/node-template \  
         --chain=./customSpecRaw.json \  
