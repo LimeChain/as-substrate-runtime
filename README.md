@@ -189,7 +189,6 @@ It might take a while for Rust to compile the project (~30-40 minutes). After yo
 
 ```
 docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrate/runtime \
-    --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \
     --validator \
     --rpc-methods=Unsafe \
     --name Node01 \
