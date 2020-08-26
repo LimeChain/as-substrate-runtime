@@ -144,7 +144,6 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
         --port 30333 \     
         --ws-port 9944 \      
         --rpc-port 9933 \
-        --telemetry-url 'ws://telemetry.polkadot.io:1024 0' \  
         --validator \   
         --rpc-methods=Unsafe \  
         --name Node01 \  
@@ -177,6 +176,7 @@ limechain/as-substrate:stable \
     --execution Wasm \
     --rpc-external
 ```
+The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
 
 ### Build the image (option 2)
 First, build the Docker image:
