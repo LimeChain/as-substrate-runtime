@@ -151,6 +151,8 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
         --execution Wasm
     ```    
 
+The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
+
 ## Running in Docker
 
 You should have [Docker](https://docker.io) installed.
@@ -176,7 +178,6 @@ limechain/as-substrate:stable \
     --execution Wasm \
     --rpc-external
 ```
-The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
 
 ### Build the image (option 2)
 First, build the Docker image:
