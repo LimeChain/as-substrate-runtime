@@ -137,7 +137,11 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 3. Paste the whole content of `wasm-code` with a prefix `0x`, as a value of `code` property in `customSpec.json`
 4. Build WASM module and generate chain spec by executing: `yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json` 
 5. Build the node `cargo build --release` (may take a while)
-6. Run the node with the generated chain spec:  
+6. (Optional) Purge the existing db with the following command:
+```
+bash compile-purge.sh 
+```
+7. Run the node with the generated chain spec:  
 ```
 ./target/release/node-template \
     --chain=./customSpecRaw.json \
