@@ -1,4 +1,5 @@
-import { Block, Header } from '@as-substrate/models';
+import { Block, Header, InherentData } from '@as-substrate/models';
+import { Timestamp } from '@as-substrate/timestamp-module';
 import { System } from './system';
 import { CompactInt, ByteArray } from 'as-scale-codec';
 import { Log } from './log';
@@ -46,6 +47,10 @@ export namespace Executive{
      */
     export function finalizeBlock(): Header {
         return System.finalize();
+    }
+
+    export function createExtrinsics(data: InherentData): u8[] {
+        return Timestamp.createInherent(data);
     }
 
     /**

@@ -1,7 +1,7 @@
 import { Storage } from '@as-substrate/core-modules';
 import { InherentData } from '@as-substrate/models';
 import { UInt64, Bool, ByteArray } from 'as-scale-codec';
-
+import { Log } from '@as-substrate/core-modules';
 
 export class Timestamp{
 
@@ -16,6 +16,8 @@ export class Timestamp{
     public static readonly SCALE_TIMESTAMP_NOW: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 12, 110, 111, 119];
     public static readonly SCALE_TIMESTAMP_DID_UPDATE: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 36, 100, 105, 100, 117, 112, 100, 97, 116, 101];
     public static readonly INHERENT_IDENTIFIER: string = "timstmp0";
+    public static readonly EXTRINSIC_VERSION: u8[] = [40];
+    public static readonly CALL_INDEX: u8[] = [2, 0];
 
     /**
      * Sets the current time. When setting the new time, 
@@ -54,10 +56,14 @@ export class Timestamp{
      * Creates timestamp inherent data
      * @param data inherent data to extract timestamp from
      */
-    static createInherent(data: InherentData): void {
-        const timestampData: u64 = extractInherentData(data);
-        const nextTime = Math.max(timestampData, Timestamp.get() + Timestamp.MINIMUM_PERIOD);
+    static createInherent(data: InherentData): u8[] {
+        const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
+        const nextTime: u64 = <u64>(Math.max(<f64>timestampData.value, <f64>(Timestamp.get() + Timestamp.MINIMUM_PERIOD)));
+        let result: u8[] = Timestamp.EXTRINSIC_VERSION;
+        result = result.concat([4]).concat(Timestamp.CALL_INDEX);
+        const arg: UInt64 = new UInt64(nextTime);
         Timestamp.set(nextTime);
+        return result.concat(arg.toU8a());
     }
 
     /**
@@ -67,9 +73,9 @@ export class Timestamp{
      */
     static checkInherent(t: u64, data: InherentData): bool {
         const MAX_TIMESTAMP_DRIFT_MILLS: u64 = 30 * 1000;
-        const timestampData: u64 = extractInherentData(data);
+        const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
         const minimum: u64 = Timestamp.get() + Timestamp.MINIMUM_PERIOD;
-        if (t > timestampData + MAX_TIMESTAMP_DRIFT_MILLS){
+        if (t > timestampData.value + MAX_TIMESTAMP_DRIFT_MILLS){
             return false;
         }
         else if(t < minimum){
@@ -85,6 +91,7 @@ export class Timestamp{
  * Gets timestamp inherent data
  * @param inhData inherentData instance provided 
  */
-export function extractInherentData(inhData: InherentData): u64 {
-    return inhData.data[Timestamp.INHERENT_IDENTIFIER];
+export function extractInherentData(inhData: InherentData): ByteArray {
+    Log.printUtf8(inhData.data.get(Timestamp.INHERENT_IDENTIFIER).values.toString());
+    return inhData.data.get(Timestamp.INHERENT_IDENTIFIER);
 }
