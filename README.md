@@ -187,7 +187,9 @@ limechain/as-substrate:stable \
 ```
 
 ### Build the image (option 2)
-First, build the Docker image:
+
+1. Go to the root directory of the repo
+2. Build the Docker image:
 
 ```
 docker build -t substrate/runtime .
