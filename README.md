@@ -138,7 +138,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 4. Build WASM module and generate chain spec by executing: `yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json` 
 5. Build the node `cargo build --release` (may take a while)
 6. Run the node with the generated chain spec:  
-   ```
+```
 ./target/release/node-template \
     --chain=./customSpecRaw.json \
     --port 30333 \
@@ -149,7 +149,7 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
     --name Node01 \
     --base-path /tmp/node01 \
     --execution Wasm
-    ```    
+```    
 
 The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
 
