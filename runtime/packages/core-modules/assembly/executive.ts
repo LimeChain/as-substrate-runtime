@@ -1,4 +1,4 @@
-import { Block } from '@as-substrate/models';
+import { Block, Header } from '@as-substrate/models';
 import { System } from './system';
 import { CompactInt, ByteArray } from 'as-scale-codec';
 import { Log } from './log';
@@ -9,7 +9,7 @@ export namespace Executive{
      * Calls the System function initializeBlock()
      * @param header Header instance
      */
-    export function initializeBlock(header: u8[]): void{
+    export function initializeBlock(header: Header): void{
         System.initialize(header);
     }
 
@@ -35,7 +35,7 @@ export namespace Executive{
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
-        Executive.initializeBlock(block.header.toU8a());
+        Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
         let header = block.header;
         // TO-DO
@@ -44,7 +44,7 @@ export namespace Executive{
      * Finalize the block - it is up the caller to ensure that all header fields are valid
 	 * except state-root.
      */
-    export function finalizeBlock(): u8[] {
+    export function finalizeBlock(): Header {
         return System.finalize();
     }
 

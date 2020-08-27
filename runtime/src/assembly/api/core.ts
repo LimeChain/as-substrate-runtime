@@ -1,5 +1,5 @@
 import { Serialiser } from "@as-substrate/core-utils";
-import { RuntimeVersion, SupportedAPIs, Block } from "@as-substrate/models";
+import { RuntimeVersion, SupportedAPIs, Block, Header } from "@as-substrate/models";
 import { Executive } from '@as-substrate/core-modules';
 import { Bool } from "as-scale-codec";
 
@@ -33,7 +33,8 @@ export function Core_execute_block(data: i32, len: i32): u64 {
 
 export function Core_initialize_block(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
-    Executive.initializeBlock(input);
+    const header = Header.fromU8Array(input);
+    Executive.initializeBlock(header.result);
     return Serialiser.serialiseResult([]);
 }
 

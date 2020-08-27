@@ -8,4 +8,4 @@ export * from './inherent-data';
 export * from './signature';
 export * from './digest-items';
 export * from './decoded-data';
-export * from './block-hash';
+export * from './blocks';

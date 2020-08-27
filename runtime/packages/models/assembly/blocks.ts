@@ -2,9 +2,9 @@ import { Hash, CompactInt, Bytes } from 'as-scale-codec';
 import { Utils } from '@as-substrate/core-utils';
 import { DecodedData } from '.';
 
-export class BlockHash{
+export class Blocks{
     /**
-     * the content/data of the BlockHash
+     * Map from BlockNumber to Block Hashes
      */
     public data: Map<CompactInt, Hash>;
     
@@ -42,16 +42,16 @@ export class BlockHash{
     /**
      * get default instance
      */
-    static default(): BlockHash{
+    static default(): Blocks{
         const defaultMap: Map<CompactInt, Hash> = new Map();
         defaultMap.set(new CompactInt(0), Utils.getPopulatedHash(69));
-        return new BlockHash(defaultMap);
+        return new Blocks(defaultMap);
     }
     /**
      * Converts SCALE encoded bytes to Map<CompactInt, Hash> 
      * @param input SCALE encoded Map<CompactInt, Hash>
      */
-    static fromU8Array(input: u8[]): DecodedData<BlockHash>{
+    static fromU8Array(input: u8[]): DecodedData<Blocks>{
         const data: Map<CompactInt, Hash> = new Map<CompactInt, Hash>();
         const lenComp = Bytes.decodeCompactInt(input);
         input = input.slice(lenComp.decBytes);
@@ -62,7 +62,7 @@ export class BlockHash{
             input = input.slice(parentHash.encodedLength());
             data.set(new CompactInt(blockNumber.value), parentHash);
         }
-        const blockHash = new BlockHash(data);
-        return new DecodedData<BlockHash>(blockHash, input);
+        const blocks = new Blocks(data);
+        return new DecodedData<Blocks>(blocks, input);
     }
 }
