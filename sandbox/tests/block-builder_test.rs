@@ -1,9 +1,15 @@
 extern crate sandbox_execution_environment;
 use sandbox_execution_environment::{ Transfer, Setup, Header };
-use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
-use parity_scale_codec::{Encode, Compact};
+use sc_executor::{WasmExecutor, WasmExecutionMethod};
+use sp_state_machine::TestExternalities as CoreTestExternalities;
+use parity_scale_codec::{Encode, Compact, Decode};
+use sp_runtime::{ traits::{BlakeTwo256 }};
+use sp_wasm_interface::HostFunctions as _;
 pub use sp_inherents::{InherentData, InherentIdentifier, CheckInherentsResult, IsFatalError};
 use sp_keyring::AccountKeyring;
+use sp_core::{traits::{ CallInWasm, Externalities, MissingHostFunctions}};
+type HostFunctions = sp_io::SubstrateHostFunctions;
+pub type TestExternalities = CoreTestExternalities<BlakeTwo256, u64>;
 
 use hex_literal::hex;
 
@@ -39,9 +45,44 @@ fn get_inherent_data_instance() -> InherentData {
     return inh;
 }
 
+fn call_in_wasm<E: Externalities> (
+    function: &str,
+    call_data: &[u8],
+    execution_method: WasmExecutionMethod,
+    ext: &mut E
+) -> Result<Vec<u8>, String> {
+    let setup = Setup::new();
+    let executor = crate::WasmExecutor::new(
+		execution_method,
+		Some(1024),
+		HostFunctions::host_functions(),
+		8,
+	);
+    executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        function,
+        call_data,
+        ext,
+        MissingHostFunctions::Allow,
+    )
+}
+
+// scale encode array of strings
+fn encode_strs(args: Vec<&str>) -> Vec<u8>{
+    let mut result = vec![];
+    for text in args{
+        result.extend(text.encode());
+    }
+    result
+}
+
 #[test]
 fn test_block_builder_apply_extrinsics() {
-    let mut setup = Setup::new();
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
     let ex = Transfer {
         from: AccountKeyring::Alice.into(),
         to: AccountKeyring::Bob.into(),
@@ -49,74 +90,110 @@ fn test_block_builder_apply_extrinsics() {
         nonce: 5,
     }.into_signed_tx();
     
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
+    let result = call_in_wasm(
         "BlockBuilder_apply_extrinsics",
         &ex.encode(),
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
     println!("{:?}", result);
     assert_eq!(result, [0u8; 0]);
 }
 
 #[test]
 fn test_block_builder_inherent_extrinsics() {
-    let mut setup = Setup::new();
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
 
     let inh = get_inherent_data_instance();
 
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
+    let result = call_in_wasm(
         "BlockBuilder_inherent_extrinsics",
         &inh.encode(),
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
 
-    println!("{:?}", &inh.encode());
-    assert_eq!(result, [0u8; 0]);
+    assert_eq!(result, [0u8; 1]);
 }
 
 #[test]
 fn test_block_builder_check_inherent_result() {
-    let mut setup = Setup::new();
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
     let expected_result = sp_inherents::CheckInherentsResult::new();
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
+    let result = call_in_wasm(
         "BlockBuilder_check_inherents",
         &expected_result.encode(),
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
+        WasmExecutionMethod::Interpreted,
+        &mut ext,
+    ).unwrap();
     println!("{:?}", result);
     assert_eq!(result, [0x1]);
 }
 
 #[test]
 fn test_block_builder_finalize_block() {
-    let mut setup = Setup::new();
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
+    let header: Header = Header {
+        parent_hash: [69u8; 32].into(),
+        number: 1,
+        state_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        extrinsics_root: hex!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").into(),
+        digest: Default::default(),
+    };
+
+    let _ = call_in_wasm(
+        "Core_initialize_block",
+        &header.encode(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext,
+    );
+
+    let result = call_in_wasm(
         "BlockBuilder_finalize_block",
         &[],
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
-    println!("{:?}", result);
-    assert_eq!(result, [0x1]);
-}
+        WasmExecutionMethod::Interpreted,
+        &mut ext,
+    ).unwrap();
 
+    let storage_root = ext.storage_root();
+    // check if values are removed
+    let check_removed: bool = !(ext.exists_storage(&encode_strs(vec!["system", "exec_phase"]))
+        && ext.exists_storage(&encode_strs(vec!["system", "block_num0"]))
+        && ext.exists_storage(&encode_strs(vec!["system", "parent_hsh"]))
+        && ext.exists_storage(&encode_strs(vec!["system", "extcs_root"]))
+        && ext.exists_storage(&encode_strs(vec!["system", "digests_00"])));
+    
+    let final_header = <Header>::decode(&mut result.as_ref()).unwrap(); 
+
+    let cmp_headers: bool = header.parent_hash == final_header.parent_hash
+        && header.number == final_header.number
+        && header.extrinsics_root == final_header.extrinsics_root
+        && header.digest == final_header.digest;
+    
+    assert_eq!(cmp_headers, true);
+    assert_eq!(check_removed, true);
+    assert_eq!(final_header.state_root.encode(), storage_root);
+}
 #[test]
 fn test_block_builder_random_seed() {
-    let mut setup = Setup::new();
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+
+    let result = call_in_wasm(
         "BlockBuilder_random_seed",
         &[],
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
+        WasmExecutionMethod::Interpreted,
+        &mut ext,
+    ).unwrap();
     println!("{:?}", result);
     assert_eq!(result, [0u8; 0]);
 }

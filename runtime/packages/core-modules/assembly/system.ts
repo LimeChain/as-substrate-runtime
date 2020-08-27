@@ -29,15 +29,15 @@ export class System {
         const blockNumber: CompactInt = new CompactInt(header.number.value - 1);
 
         if(Storage.get(Utils.stringsToU8a(["system", "block_hash"])).isSome()){
-            let rawBlockHash = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
-            let blockHashU8a: u8[] = (<ByteArray>rawBlockHash.unwrap()).values;
-            let currentBlockHash: Blocks = Blocks.fromU8Array(blockHashU8a).result;
-            currentBlockHash.insert(blockNumber, header.parentHash);
-            Storage.set(Utils.stringsToU8a(["system", "block_hash"]), currentBlockHash.toU8a());
+            let rawBlocks = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
+            let blocksU8a: u8[] = (<ByteArray>rawBlocks.unwrap()).values;
+            let blocks: Blocks = Blocks.fromU8Array(blocksU8a).result;
+            blocks.insert(blockNumber, header.parentHash);
+            Storage.set(Utils.stringsToU8a(["system", "block_hash"]), blocks.toU8a());
         }else{
-            let currentBlockHash: Blocks = Blocks.default();
-            currentBlockHash.insert(blockNumber, header.parentHash);
-            Storage.set(Utils.stringsToU8a(["system", "block_hash"]), currentBlockHash.toU8a());
+            let blocks: Blocks = Blocks.default();
+            blocks.insert(blockNumber, header.parentHash);
+            Storage.set(Utils.stringsToU8a(["system", "block_hash"]), blocks.toU8a());
         }
     }
     /**
@@ -50,7 +50,6 @@ export class System {
         let digests = Storage.take(Utils.stringsToU8a(["system", "digests_00"]));
         let extrinsicsRoot = Storage.take(Utils.stringsToU8a(["system", "extcs_root"]));
         let stateRoot = Storage.storageRoot();
-
         let result: u8[] = parentHash.concat(blockNumber)
             .concat(stateRoot)
             .concat(extrinsicsRoot)
