@@ -34,6 +34,11 @@ export class AuraModule {
     static setAuthorities(auths: u8[]): void {
         Storage.set(AuraModule.AURA_AUTHORITIES, auths);
     }
+
+    static createInherent(data: InherentData): u8[] {
+        return [0];
+    }
+
     /**
      * Verify the validity of the inherent using the timestamp.
      * @param t new value for the timestamp inherent data

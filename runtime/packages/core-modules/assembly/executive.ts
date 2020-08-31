@@ -1,10 +1,12 @@
-import { Block, Header, InherentData } from '@as-substrate/models';
+import { Block, Header, InherentData, Blocks } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
-import { System } from './system';
+import { AuraModule } from '@as-substrate/aura-module';
+import { Utils } from '@as-substrate/core-utils';
 import { CompactInt, ByteArray } from 'as-scale-codec';
+import { System } from './system';
 import { Log } from './log';
 import { Storage } from './storage';
-import { Helpers } from './helpers';
+
 export namespace Executive{
     /**
      * Calls the System function initializeBlock()
@@ -22,11 +24,11 @@ export namespace Executive{
         let header = block.header;
         let n: CompactInt = header.number;
 
-        const result = Storage.get(Helpers.stringsToU8a(["system", "block_hash"]));
+        const result = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
         let blockHashU8a: u8[] = result.isSome() ? (<ByteArray>result.unwrap()).values : [];
-        const blockHash = Helpers.blockHashFromU8Array(blockHashU8a);
+        const blockHash = Blocks.fromU8Array(blockHashU8a).result;
 
-        if(n.value == 0 &&  blockHash.get(new CompactInt(n.value - 1)) == header.parentHash){
+        if(n.value == 0 &&  blockHash.data.get(new CompactInt(n.value - 1)) == header.parentHash){
             throw new Error("Parent hash should be valid.");
         }
     }
@@ -50,7 +52,10 @@ export namespace Executive{
     }
 
     export function createExtrinsics(data: InherentData): u8[] {
-        return Timestamp.createInherent(data);
+    // number of all modules in the runtime that creates inherents (timestamp and aura, for now)
+        const ALL_MODULES: u8[] = [4];
+        const timestamp: u8[] = Timestamp.createInherent(data);
+        return ALL_MODULES.concat(timestamp);
     }
 
     /**

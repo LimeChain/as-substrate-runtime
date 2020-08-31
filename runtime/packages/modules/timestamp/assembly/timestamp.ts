@@ -15,7 +15,7 @@ export class Timestamp{
      */
     public static readonly SCALE_TIMESTAMP_NOW: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 12, 110, 111, 119];
     public static readonly SCALE_TIMESTAMP_DID_UPDATE: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 36, 100, 105, 100, 117, 112, 100, 97, 116, 101];
-    public static readonly INHERENT_IDENTIFIER: string = "timstmp0";
+    public static readonly INHERENT_IDENTIFIER: string = "timstap0";
     public static readonly EXTRINSIC_VERSION: u8[] = [40];
     public static readonly CALL_INDEX: u8[] = [2, 0];
 
@@ -25,8 +25,8 @@ export class Timestamp{
      * @param now timestamp number
      */
     static set(now: u64): void {
-        const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
-        if(didUpdate.isSome()){
+        const didUpdate = Storage.exists(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
+        if(didUpdate.value){
             throw new Error('Timestamp must be updated only once in the block');
         }
         const prev: u64 = Timestamp.get();
@@ -50,6 +50,7 @@ export class Timestamp{
         const res = now.isSome() ? (<ByteArray>now.unwrap()).values : [4, 0];
         const val: UInt64 = UInt64.fromU8a(res);
         return val.value;
+
     }
 
     /**
@@ -60,7 +61,7 @@ export class Timestamp{
         const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
         const nextTime: u64 = <u64>(Math.max(<f64>timestampData.value, <f64>(Timestamp.get() + Timestamp.MINIMUM_PERIOD)));
         let result: u8[] = Timestamp.EXTRINSIC_VERSION;
-        result = result.concat([4]).concat(Timestamp.CALL_INDEX);
+        result = result.concat([4]).concat(Timestamp.CALL_INDEX).concat([11]);
         const arg: UInt64 = new UInt64(nextTime);
         Timestamp.set(nextTime);
         return result.concat(arg.toU8a());
@@ -92,6 +93,5 @@ export class Timestamp{
  * @param inhData inherentData instance provided 
  */
 export function extractInherentData(inhData: InherentData): ByteArray {
-    Log.printUtf8(inhData.data.get(Timestamp.INHERENT_IDENTIFIER).values.toString());
     return inhData.data.get(Timestamp.INHERENT_IDENTIFIER);
 }

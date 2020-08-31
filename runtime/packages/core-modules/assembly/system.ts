@@ -7,7 +7,7 @@ export class System {
     // execution phases
     static readonly APPLY_EXTRINSIC: string = "ApplyExtrinsic";
     static readonly INITIALIZATION: string = "Initialization";
-    static readonly FINALIZATION: string = "Finalization"
+    static readonly FINALIZATION: string = "Finalization";
     /**
      * Sets up the environment necessary for block production
      * @param header Header instance
