@@ -8,6 +8,8 @@ export class System {
     static readonly APPLY_EXTRINSIC: string = "ApplyExtrinsic";
     static readonly INITIALIZATION: string = "Initialization";
     static readonly FINALIZATION: string = "Finalization";
+    // number of all modules in the runtime that creates inherents (timestamp and aura, for now)
+    static readonly ALL_MODULES: u8[] = [4];
     /**
      * Sets up the environment necessary for block production
      * @param header Header instance

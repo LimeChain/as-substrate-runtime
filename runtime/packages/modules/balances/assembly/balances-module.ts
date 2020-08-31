@@ -36,8 +36,5 @@ export class BalancesModule {
         Storage.set(accountId.getAddress(), currentAccountData.toU8a());
 
         return currentAccountData;
-    } 
-
-
-
+    }
 }

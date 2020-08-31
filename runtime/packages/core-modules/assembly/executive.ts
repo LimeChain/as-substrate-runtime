@@ -1,6 +1,5 @@
 import { Block, Header, InherentData, Blocks } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
-import { AuraModule } from '@as-substrate/aura-module';
 import { Utils } from '@as-substrate/core-utils';
 import { CompactInt, ByteArray } from 'as-scale-codec';
 import { System } from './system';
@@ -52,10 +51,8 @@ export namespace Executive{
     }
 
     export function createExtrinsics(data: InherentData): u8[] {
-    // number of all modules in the runtime that creates inherents (timestamp and aura, for now)
-        const ALL_MODULES: u8[] = [4];
         const timestamp: u8[] = Timestamp.createInherent(data);
-        return ALL_MODULES.concat(timestamp);
+        return System.ALL_MODULES.concat(timestamp);
     }
 
     /**
