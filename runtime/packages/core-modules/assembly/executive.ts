@@ -1,4 +1,4 @@
-import { Block, Header, InherentData, Blocks } from '@as-substrate/models';
+import { Block, Header, InherentData, Blocks, Extrinsic } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
 import { CompactInt, ByteArray } from 'as-scale-codec';
@@ -49,11 +49,28 @@ export namespace Executive{
     export function finalizeBlock(): Header {
         return System.finalize();
     }
-
+    /**
+     * creates inherents from internal modules
+     * @param data inherents
+     */
     export function createExtrinsics(data: InherentData): u8[] {
         const timestamp: u8[] = Timestamp.createInherent(data);
         return System.ALL_MODULES.concat(timestamp);
     }
+
+    /**
+     * 
+     * @param ext extrinsic
+     */
+    export function applyExtrinsic(ext: Extrinsic): u8[] {
+        const encoded: u8[] = ext.toU8a();
+        const encodedLen = encoded.length;
+        return Executive.applyExtrinsicWithLen(ext, encodedLen, encoded);
+    }
+
+    export function applyExtrinsicWithLen(ext: Extrinsic, encodedLen: u32, encoded: u8[]): u8[]{
+        return [];
+    }    
 
     /**
      * module hooks

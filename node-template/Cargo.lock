@@ -3016,6 +3016,7 @@ dependencies = [
  "frame-executive",
  "frame-support",
  "frame-system",
+ "log",
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
