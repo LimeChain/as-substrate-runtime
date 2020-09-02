@@ -331,8 +331,12 @@ impl_runtime_apis! {
 			tx: <Block as BlockT>::Extrinsic,
 		) -> TransactionValidity {
 			info!("source: {:?}", source);
+			info!("tx-original: {:?}", tx);
 			info!("tx: {:?}", tx.encode());
-			Executive::validate_transaction(source, tx)
+			let res: TransactionValidity = Executive::validate_transaction(source, tx);
+			info!("res: {:?}", res.copy());
+			info!("res: {:?}", res.encode());
+			res
 		}
 	}
 

@@ -70,7 +70,12 @@ export namespace Executive{
 
     export function applyExtrinsicWithLen(ext: Extrinsic, encodedLen: u32, encoded: u8[]): u8[]{
         return [];
-    }    
+    }
+
+
+    export function validateTransaction(source: u8, tx: Extrinsic){
+        
+    }
 
     /**
      * module hooks
