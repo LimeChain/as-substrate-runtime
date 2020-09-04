@@ -24,7 +24,7 @@ export class Extrinsic {
     /**
      * nonce of the transaction
      */
-    public nonce: CompactInt
+    public nonce: UInt64
 
     /**
      * the signature of the transaction (64 byte array)
@@ -36,7 +36,7 @@ export class Extrinsic {
      */
     public exhaustResourcesWhenNotFirst: Bool
 
-    constructor(from: Hash, to: Hash, amount: UInt64, nonce: CompactInt, signature: Signature, exhaustResourcesWhenNotFirst: Bool) {
+    constructor(from: Hash, to: Hash, amount: UInt64, nonce: UInt64, signature: Signature, exhaustResourcesWhenNotFirst: Bool) {
         this.from = from;
         this.to = to;
         this.amount = amount;
@@ -70,27 +70,17 @@ export class Extrinsic {
         const to = Hash.fromU8a(input);
         input = input.slice(to.encodedLength());
 
+        const amount = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(amount.encodedLength());
 
-        const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
-        input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
+        const nonce = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(nonce.encodedLength());
 
         const signature = new Signature(input.slice(0, Signature.SIGNATURE_LENGTH));
         input = input.slice(signature.value.length);
-        
-        const blockWeight: u8[] = input.slice(0, 2);
-        input = input.slice(2);
 
-        const nonce = CompactInt.fromU8a(input);
-        input = input.slice(nonce.encodedLength());
-
-        const transactionFee: u8[] = input.slice(0, 1);
-        input = input.slice(1);
-
-        const callIndex: u8[] = input.slice(0, 2);
-        input = input.slice(2);
-
-        const amount = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
-        input = input.slice(amount.encodedLength());
+        const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
+        input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
 
         const extrinsic = new Extrinsic(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
 

@@ -9,6 +9,9 @@ use sp_inherents::InherentDataProviders;
 use sc_executor::native_executor_instance;
 pub use sc_executor::NativeExecutor;
 use parking_lot::Mutex;
+use sp_consensus::{
+	self, BlockImport, Error as ConsensusError,
+};
 use sp_consensus_aura::sr25519::{AuthorityPair as AuraPair};
 use sc_finality_grandpa::{
 	FinalityProofProvider as GrandpaFinalityProofProvider, StorageAndProofProvider, SharedVoterState,
@@ -33,7 +36,8 @@ pub fn new_full_params(config: Configuration) -> Result<(
 		(), FullBackend,
 	>,
 	FullSelectChain,
-	sp_inherents::InherentDataProviders
+	sp_inherents::InherentDataProviders,
+	sc_consensus_aura::AuraBlockImport<Block, FullClient, Arc<FullClient> , AuraPair>,
 ), ServiceError> {
 	let inherent_data_providers = sp_inherents::InherentDataProviders::new();
 
@@ -54,9 +58,13 @@ pub fn new_full_params(config: Configuration) -> Result<(
 		client.clone(),
 	);
 
+	let aura_block_import = sc_consensus_aura::AuraBlockImport::<_, _, _, AuraPair>::new(
+		client.clone(), client.clone(),
+	);
+
 	let import_queue = sc_consensus_aura::import_queue::<_, _, _, AuraPair, _>(
 		sc_consensus_aura::slot_duration(&*client)?,
-		client.clone(),
+		aura_block_import.clone(),
 		None,
 		None,
 		client.clone(),
@@ -79,14 +87,14 @@ pub fn new_full_params(config: Configuration) -> Result<(
 	};
 
 	Ok((
-		params, select_chain, inherent_data_providers,
+		params, select_chain, inherent_data_providers, aura_block_import
 	))
 }
 
 /// Builds a new service for a full client.
 pub fn new_full(config: Configuration) -> Result<TaskManager, ServiceError> {	
 	let (
-		params, select_chain, inherent_data_providers,
+		params, select_chain, inherent_data_providers, aura_block_import
 	) = new_full_params(config)?;
 
 	let (
@@ -126,7 +134,7 @@ pub fn new_full(config: Configuration) -> Result<TaskManager, ServiceError> {
 			sc_consensus_aura::slot_duration(&*client)?,
 			client.clone(),
 			select_chain,
-			client.clone(),
+			aura_block_import,
 			proposer,
 			network.clone(),
 			inherent_data_providers.clone(),

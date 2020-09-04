@@ -1,7 +1,9 @@
 import { Block, Header, InherentData, Blocks, Extrinsic } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
+import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray } from 'as-scale-codec';
+import { u128 } from "as-bignum";
 import { System } from './system';
 import { Log } from './log';
 import { Storage } from './storage';
@@ -73,8 +75,14 @@ export namespace Executive{
     }
 
 
-    export function validateTransaction(source: u8, tx: Extrinsic){
-        
+    export function validateTransaction(source: u8, utx: Extrinsic): u8[] {
+        const from: AccountId = AccountId.fromU8Array(utx.from);
+        const fromBalance = BalancesModule.getAccountData(from);
+        const amount: UInt64 = utx.amount;
+        if(fromBalance.free.value < u128.fromU64(amount.value){
+            
+        }
+        return [];
     }
 
     /**

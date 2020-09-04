@@ -3,7 +3,8 @@
  * These methods are mocked for this iteration and they return an empty u8 array by default
  */
 import {Serialiser} from "@as-substrate/core-utils";
-import { Log } from '@as-substrate/core-modules';
+import { Extrinsic } from '@as-substrate/models';
+import { Executive, Log } from '@as-substrate/core-modules';
 
 /**
  * 
@@ -29,9 +30,12 @@ export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialiseInput(data, len);
-    Log.printUtf8(input.toString());
-    return Serialiser.serialiseResult([]);
+    let input = Serialiser.deserialiseInput(data, len);
+    const source = input.slice(0, 1);
+    input = input.slice(1);
+    const uxt = Extrinsic.fromU8Array(input);
+    const result = Executive.validateTransaction(source, uxt);
+    return Serialiser.serialiseResult(result.toU8a());
 }
 
 /**
