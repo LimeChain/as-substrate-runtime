@@ -49,4 +49,10 @@ export class Serialiser {
         const buffer64 = ((valueSize as u64) << 32) | valuePtr;
         return buffer64;
     }
+
+    static serialiseArray(value: u8[]): i32 {
+        const ptrSize = Serialiser.serialiseResult(value);
+        const arr = Serialiser.separatePointerSize(ptrSize);
+        return arr[0];
+    }
 }

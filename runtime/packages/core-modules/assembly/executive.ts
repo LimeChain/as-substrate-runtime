@@ -1,8 +1,8 @@
-import { Block, Header, InherentData, Blocks, Extrinsic } from '@as-substrate/models';
+import { Block, Header, InherentData, Blocks, Extrinsic, ValidTransaction, TransactionTag, Transfer } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
-import { CompactInt, ByteArray } from 'as-scale-codec';
+import { CompactInt, ByteArray, UInt128, Bool } from 'as-scale-codec';
 import { u128 } from "as-bignum";
 import { System } from './system';
 import { Log } from './log';
@@ -74,15 +74,38 @@ export namespace Executive{
         return [];
     }
 
-
-    export function validateTransaction(source: u8, utx: Extrinsic): u8[] {
-        const from: AccountId = AccountId.fromU8Array(utx.from);
+    export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
+        const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
+        const to: AccountId = AccountId.fromU8Array(utx.to.toU8a()).result;
         const fromBalance = BalancesModule.getAccountData(from);
-        const amount: UInt64 = utx.amount;
-        if(fromBalance.free.value < u128.fromU64(amount.value){
-            
+
+        const transfer = new Transfer(from, to, utx.amount, utx.nonce);
+
+        if(!System.verifySignature(utx.signature, transfer.toU8a(), from)){
+            throw new Error("Invalid signature");
+        }   
+        const nonce = System.accountNonce(from);
+        if (<u64>nonce.value >= <u64>utx.nonce.value){
+            throw new Error("Nonce value is less than or equal to the latest nonce");
         }
-        return [];
+        // const balance: UInt128 = fromBalance.getFree();
+        // if(balance.value < u128.fromU64(utx.amount.value)){
+        //     throw new Error("Sender does not have enough balance");
+        // }
+
+        // const priority: UInt64 = UInt64.fromU8a([82, 71, 178, 30, 0, 0, 0, 0]);
+        // const requires: TransactionTag[] = [];
+        // const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
+        // const longevity: UInt64 = new UInt64(63);
+        // const propogate: Bool = new Bool(true);
+        // const validTransaction = new ValidTransaction(
+        //     priority,
+        //     requires,
+        //     provides,
+        //     longevity,
+        //     propogate
+        // );
+        return from.getAddress();
     }
 
     /**

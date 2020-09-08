@@ -9,7 +9,7 @@ export class TransactionError{
      */
     public unknownTransaction: string;
 
-    toU8a(){
+    toU8a(): u8[]{
         return Utils.stringsToU8a([this.invalidTransaction, this.unknownTransaction]);
     }
 }

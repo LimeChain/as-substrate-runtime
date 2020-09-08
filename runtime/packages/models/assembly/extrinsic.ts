@@ -1,4 +1,4 @@
-import { Hash, UInt64, BIT_LENGTH, Bool, CompactInt } from "as-scale-codec";
+import { Hash, UInt64, BIT_LENGTH, Bool } from "as-scale-codec";
 import { Signature, DecodedData } from ".";
 
 /**

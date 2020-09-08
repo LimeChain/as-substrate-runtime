@@ -5,7 +5,7 @@ export class TransactionValidity{
     /**
      * 
      */
-    public valid: bool;
+    // public valid: bool;
 
     /**
      * valid transaction with necessary methods
@@ -16,13 +16,13 @@ export class TransactionValidity{
      */
     public transactionError: TransactionError;
 
-    constructor(valid: ValidTransaction, error: TransactionError){
-
+    constructor(validTransaction: ValidTransaction, error: TransactionError){
+        this.validTransaction = validTransaction;
+        this.transactionError = error;
     }
 
-    toU8a(){
+    toU8a(): u8[]{
         return this.validTransaction.toU8a()
             .concat(this.transactionError.toU8a());
     }
-    
 }

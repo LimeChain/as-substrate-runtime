@@ -34,8 +34,9 @@ export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32)
     const source = input.slice(0, 1);
     input = input.slice(1);
     const uxt = Extrinsic.fromU8Array(input);
-    const result = Executive.validateTransaction(source, uxt);
-    return Serialiser.serialiseResult(result.toU8a());
+    const result = Executive.validateTransaction(source, uxt.result);
+    // Log.printUtf8(result.toU8a().toString());
+    return Serialiser.serialiseResult(uxt.result.toU8a());
 }
 
 /**

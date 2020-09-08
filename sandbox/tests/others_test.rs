@@ -1,6 +1,40 @@
 extern crate sandbox_execution_environment;
-use sandbox_execution_environment::{ Setup };
-use sp_core::{ traits::{ CallInWasm, MissingHostFunctions }};
+use sandbox_execution_environment::{ Transfer, Setup };
+use sp_state_machine::TestExternalities as CoreTestExternalities;
+use sp_keyring::AccountKeyring;
+use parity_scale_codec::{Encode};
+use sp_wasm_interface::HostFunctions as _;
+use sp_runtime::{ traits::{BlakeTwo256 }};
+use sc_executor::{WasmExecutor, WasmExecutionMethod};
+use sp_core::{ traits::{ CallInWasm, Externalities, MissingHostFunctions }};
+type HostFunctions = sp_io::SubstrateHostFunctions;
+pub type TestExternalities = CoreTestExternalities<BlakeTwo256, u64>;
+
+
+
+fn call_in_wasm<E: Externalities> (
+    function: &str,
+    call_data: &[u8],
+    execution_method: WasmExecutionMethod,
+    ext: &mut E
+) -> Result<Vec<u8>, String> {
+    let setup = Setup::new();
+    let executor = crate::WasmExecutor::new(
+		execution_method,
+		Some(1024),
+		HostFunctions::host_functions(),
+		8,
+	);
+    executor.call_in_wasm(
+        &setup.wasm_code_array,
+        None,
+        function,
+        call_data,
+        ext,
+        MissingHostFunctions::Allow,
+    )
+}
+
 
 #[test]
 fn test_babeapi_configuration() {
@@ -33,16 +67,26 @@ fn test_session_keys_generate_session_keys() {
 
 #[test]
 fn test_tagged_transaction_queue_validate_transaction() {
-    let mut setup = Setup::new();
-    let result = setup.executor.call_in_wasm(
-        &setup.wasm_code_array,
-        None,
+    let setup = Setup::new();
+    let mut ext = setup.ext;
+    let mut ext = ext.ext();
+    let ex = Transfer {
+        from: AccountKeyring::Alice.into(),
+        to: AccountKeyring::Bob.into(),
+        amount: 69,
+        nonce: 5,
+    }.into_signed_tx();
+
+    let result = call_in_wasm(
         "TaggedTransactionQueue_validate_transaction",
-        &[],
-        &mut setup.ext.ext(),
-        MissingHostFunctions::Allow).unwrap();
+        &ex.encode(),
+        WasmExecutionMethod::Interpreted,
+        &mut ext
+    ).unwrap();
+
+    println!("{:?}", ex.encode());    
     println!("{:?}", result);
-    assert_eq!(result, [0u8; 0]);
+    // assert_eq!(result, [0u8; 0]);
 }
 
 #[test]
