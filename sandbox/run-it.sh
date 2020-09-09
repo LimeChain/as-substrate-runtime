@@ -1,1 +1,1 @@
-cd ../runtime && yarn install && yarn run build && cd ../sandbox && cargo test --test others_test -- --nocapture
+cd ../runtime && yarn install && yarn run build && cd ../sandbox && cargo test && cd ..
