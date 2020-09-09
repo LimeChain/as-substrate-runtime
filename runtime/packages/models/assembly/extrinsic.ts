@@ -58,6 +58,16 @@ export class Extrinsic {
     }
 
     /**
+     * get SCALE encoded bytes for the Transfer instance
+     */
+    getTransferBytes(): u8[]{
+        return this.from.toU8a()
+            .concat(this.to.toU8a())
+            .concat(this.amount.toU8a())
+            .concat(this.nonce.toU8a())
+    }
+
+    /**
      * Instanciates new Extrinsic object from SCALE encoded byte array
      * @param input - SCALE encoded Extrinsic
      * TODO - avoid slicing the aray for better performance

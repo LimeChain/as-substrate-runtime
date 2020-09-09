@@ -99,7 +99,6 @@ export class System {
      * @param msg message to be verified
      * @param sender 
      */
-
     static verifySignature(signature: Signature, msg: u8[], sender: AccountId): bool{
         const serialisedSign: i32 = Serialiser.serialiseArray(signature.value);
         const serialiseMsg: u64 = Serialiser.serialiseResult(msg);

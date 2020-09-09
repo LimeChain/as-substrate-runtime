@@ -51,8 +51,6 @@ export class Serialiser {
     }
 
     static serialiseArray(value: u8[]): i32 {
-        const ptrSize = Serialiser.serialiseResult(value);
-        const arr = Serialiser.separatePointerSize(ptrSize);
-        return arr[0];
+        return value.dataStart as i32;
     }
 }
