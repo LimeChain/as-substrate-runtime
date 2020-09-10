@@ -16,7 +16,7 @@ use hex_literal::hex;
 fn get_inherent_data_instance() -> InherentData {
     let mut inh = InherentData::new();
     
-    const TM_KEY: InherentIdentifier = *b"timstmp0";
+    const TM_KEY: InherentIdentifier = *b"timstap0";
     let tm_value: u64 = 1;
     
     const BS_KEY: InherentIdentifier = *b"babeslot";
@@ -91,7 +91,7 @@ fn test_block_builder_apply_extrinsics() {
     }.into_signed_tx();
     
     let result = call_in_wasm(
-        "BlockBuilder_apply_extrinsics",
+        "BlockBuilder_apply_extrinsic",
         &ex.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
@@ -106,6 +106,22 @@ fn test_block_builder_inherent_extrinsics() {
     let mut ext = setup.ext;
     let mut ext = ext.ext();
 
+    const ALL_MODULES: Compact<u8> = Compact(1);
+    const SIZE: Compact<u8> = Compact(10);
+    const OPTION: Compact<u8> = Compact(1);
+    let call_index: Vec<u8> = vec![2, 0];
+    const COMPACT_PREFIX: u8 = 11;
+    const MIN_PERIOD: u64 = 5000;
+    const DEFAULT_VALUE: u64 = 4;
+
+    let mut exp_inherent: Vec<u8> = vec![];
+    exp_inherent.extend(ALL_MODULES.encode());
+    exp_inherent.extend(SIZE.encode());
+    exp_inherent.extend(OPTION.encode());
+    exp_inherent.extend(call_index);
+    exp_inherent.push(COMPACT_PREFIX);
+    exp_inherent.extend((MIN_PERIOD+DEFAULT_VALUE).encode());
+
     let inh = get_inherent_data_instance();
 
     let result = call_in_wasm(
@@ -115,7 +131,7 @@ fn test_block_builder_inherent_extrinsics() {
         &mut ext
     ).unwrap();
 
-    assert_eq!(result, [0u8; 1]);
+    assert_eq!(result, exp_inherent);
 }
 
 #[test]
