@@ -82,7 +82,7 @@ fn test_tagged_transaction_queue_validate_transaction() {
         &ex.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
-    ).unwrap();
+    );
 
     println!("{:?}", ex.encode());    
     println!("{:?}", result);
