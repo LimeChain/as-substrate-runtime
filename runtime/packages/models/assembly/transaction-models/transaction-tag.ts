@@ -24,7 +24,7 @@ export class TransactionTag{
         const lenCompact = new CompactInt(TransactionTag.TAG_LEN);
         const res: u8[] = lenCompact.toU8a();
         return res.concat(this.sender.getAddress())
-            .concat(this.nonce.toU8a());
+            .concat(this.nonce.toU8a().slice(0, this.nonce.toU8a().length - 4));
     }
 
     static fromU8Array(input: u8[]): DecodedData<TransactionTag>{

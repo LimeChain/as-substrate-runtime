@@ -9,9 +9,9 @@ import { Bool } from 'as-scale-codec';
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
-    Log.printUtf8("apply exts");
     const input = Serialiser.deserialiseInput(data, len);
-    const extrinsic = Extrinsic.fromU8Array(input);
+    Log.printUtf8("apply exts: " + input.toString());
+    Executive.applyExtrinsic(input);
     return Serialiser.serialiseResult([]);
 }
 
@@ -37,8 +37,8 @@ export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
+    Log.printUtf8("finalize block");
     const header = Executive.finalizeBlock();
-    Log.printUtf8("inherent exts");
     return Serialiser.serialiseResult(header.toU8a());
 }
 

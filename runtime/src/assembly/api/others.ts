@@ -5,6 +5,7 @@
 import {Serialiser} from "@as-substrate/core-utils";
 import { Extrinsic } from '@as-substrate/models';
 import { Executive, Log } from '@as-substrate/core-modules';
+import { CompactInt } from "as-scale-codec";
 
 /**
  * 
@@ -31,11 +32,15 @@ export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
  */
 export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
-    Log.printUtf8(input.toString());
+    const size = CompactInt.fromU8a(input);
+    input = input.slice(size.encodedLength());
     const source = input.slice(0, 1);
     input = input.slice(1);
+    Log.printUtf8("calling transaction validation...: " + input.toString());
     const uxt = Extrinsic.fromU8Array(input);
+    Log.printUtf8("after ext decoding");
     const result = Executive.validateTransaction(source, uxt.result);
+    Log.printUtf8("after validation: " + result.toString());
     return Serialiser.serialiseResult(result);
 }
 

@@ -333,7 +333,9 @@ impl_runtime_apis! {
 			info!("source: {:?}", source);
 			info!("tx-original: {:?}", tx);
 			info!("tx: {:?}", tx.encode());
-			Executive::validate_transaction(source, tx)
+			let mut res = Executive::validate_transaction(source, tx);
+			info!("res: {:?}", res.encode());
+			res
 		}
 	}
 
