@@ -3,7 +3,6 @@ import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray, UInt128, Bool, UInt64 } from 'as-scale-codec';
-import { u128 } from "as-bignum";
 import { System } from './system';
 import { Log } from './log';
 import { Storage } from './storage';
@@ -61,16 +60,36 @@ export namespace Executive{
     }
 
     /**
-     * 
+     * Apply Extrinsics
      * @param ext extrinsic
      */
-    export function applyExtrinsic(ext: Extrinsic): u8[] {
-        const encoded: u8[] = ext.toU8a();
-        const encodedLen = encoded.length;
-        return Executive.applyExtrinsicWithLen(ext, encodedLen, encoded);
+    export function applyExtrinsic(ext: u8[]): u8[] {
+        const encodedLen = ext.length;
+        return Executive.applyExtrinsicWithLen(ext, encodedLen);
     }
-
-    export function applyExtrinsicWithLen(ext: Extrinsic, encodedLen: u32, encoded: u8[]): u8[]{
+    
+    /**
+     * 
+     * @param ext extrinsic
+     * @param encodedLen length
+     * @param encoded encoded extrinsic
+     */
+    export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
+        // if the length of the encoded extrinsic is less than 144, it's inherent
+        // in our case, we have only timestamp inherent
+        if(encodedLen < 144){
+            // inherent comes without
+            const now: UInt64 = UInt64.fromU8a(ext.slice(5).concat([0, 0]));
+            Timestamp.set(now.value);
+            Timestamp.toggleUpdate();
+            Log.printUtf8("setting timestamp: " + now.value.toString());
+            return [];
+        }
+        const extrinsic = Extrinsic.fromU8Array(ext.slice(3)).result;
+        const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
+        const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
+        BalancesModule.transfer(sender, receiver, extrinsic.amount.value);
+        Log.printUtf8("done transfering: " + extrinsic.toU8a().toString());
         return [];
     }
 
@@ -89,11 +108,11 @@ export namespace Executive{
             throw new Error("Nonce value is less than or equal to the latest nonce");
         }
         const balance: UInt128 = fromBalance.getFree();
-        if(balance.value < u128.fromU64(utx.amount.value)){
-            throw new Error("Sender does not have enough balance");
-        } 
+        // if(balance.value < u128.fromU64(utx.amount.value)){
+        //     throw new Error("Sender does not have enough balance");
+        // } 
 
-        const priority: UInt64 = UInt64.fromU8a([1, 0, 0, 0, 0, 0, 0, 0]);
+        const priority: UInt64 = new UInt64(utx.toU8a().length);
         const requires: TransactionTag[] = [];
         const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
         const longevity: UInt64 = new UInt64(1000000);
@@ -105,7 +124,8 @@ export namespace Executive{
             longevity,
             propogate
         );
-        return validTransaction.toU8a();
+        const option: u8[] = [0];
+        return option.concat(validTransaction.toU8a());
     }
 
     /**

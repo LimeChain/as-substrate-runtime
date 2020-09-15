@@ -9,36 +9,35 @@ import { Bool } from 'as-scale-codec';
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
-    Log.printUtf8("apply exts");
     const input = Serialiser.deserialiseInput(data, len);
-    const extrinsic = Extrinsic.fromU8Array(input);
-    return Serialiser.serialiseResult([]);
+    Executive.applyExtrinsic(input);
+    return Serialiser.serialiseResult([0, 0]);
 }
 
 /**
- * On success, returns an empty array
+ * On success, returns an array of inherents
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */
 
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
-    Log.printUtf8("inherent exts");
     const input = Serialiser.deserialiseInput(data, len);
+    Log.printUtf8("inherent exts: " + input.toString());
     const inherent = InherentData.fromU8Array(input);
     const inherents = Executive.createExtrinsics(inherent.result);
+    Log.printUtf8("ex: " + inherents.toString());
     return Serialiser.serialiseResult(inherents);
 }
 
 /**
  * Upon succesfull validation of Block's fields, appends the block to the chain
- * Mocked to return true in this iteration
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */
 
 export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
+    Log.printUtf8("finalize block");
     const header = Executive.finalizeBlock();
-    Log.printUtf8("inherent exts");
     return Serialiser.serialiseResult(header.toU8a());
 }
 

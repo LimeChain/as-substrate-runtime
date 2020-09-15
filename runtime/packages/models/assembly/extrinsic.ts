@@ -74,6 +74,7 @@ export class Extrinsic {
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic> {
         assert(input.length >= 144, "Extrinsic: Invalid bytes provided. EOF");
+
         const from = Hash.fromU8a(input);
         input = input.slice(from.encodedLength());
 

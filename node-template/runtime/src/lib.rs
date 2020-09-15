@@ -302,21 +302,26 @@ impl_runtime_apis! {
 
 	impl sp_block_builder::BlockBuilder<Block> for Runtime {
 		fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyExtrinsicResult {
+			info!("applying extrinsic: {:?}", extrinsic.encode());
 			Executive::apply_extrinsic(extrinsic)
 		}
 
 		fn finalize_block() -> <Block as BlockT>::Header {
+			info!("finalizing a block");
 			Executive::finalize_block()
 		}
 
 		fn inherent_extrinsics(data: sp_inherents::InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
-			data.create_extrinsics()
+			let mut inherents = data.create_extrinsics();
+			info!("calling inherents: {:?}", inherents.encode());
+			inherents
 		}
 
 		fn check_inherents(
 			block: Block,
 			data: sp_inherents::InherentData,
 		) -> sp_inherents::CheckInherentsResult {
+			info!("checking exts: {:?}", data.encode());
 			data.check_extrinsics(&block)
 		}
 
@@ -333,7 +338,9 @@ impl_runtime_apis! {
 			info!("source: {:?}", source);
 			info!("tx-original: {:?}", tx);
 			info!("tx: {:?}", tx.encode());
-			Executive::validate_transaction(source, tx)
+			let mut res = Executive::validate_transaction(source, tx);
+			info!("res: {:?}", res.encode());
+			res
 		}
 	}
 

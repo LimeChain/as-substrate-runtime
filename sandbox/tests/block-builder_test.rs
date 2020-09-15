@@ -96,7 +96,7 @@ fn test_block_builder_apply_extrinsics() {
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    println!("{:?}", result);
+    println!("{:?}", ex.encode());
     assert_eq!(result, [0u8; 0]);
 }
 
