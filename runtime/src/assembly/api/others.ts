@@ -50,6 +50,7 @@ export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32)
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function OffchainWorkerApi_offchain_worker(data: i32, len: i32): u64 {
+    Log.printUtf8("asking for offchain");
     return Serialiser.serialiseResult([]);
 }
 

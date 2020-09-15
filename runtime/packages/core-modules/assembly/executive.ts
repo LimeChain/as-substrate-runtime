@@ -80,8 +80,9 @@ export namespace Executive{
         if(encodedLen < 144){
             // inherent comes without
             const now: UInt64 = UInt64.fromU8a(ext.slice(5).concat([0, 0]));
-            Log.printUtf8("setting timestamp: " + now.toU8a().toString());
             Timestamp.set(now.value);
+            Timestamp.toggleUpdate();
+            Log.printUtf8("setting timestamp: " + now.value.toString());
             return [];
         }
         const extrinsic = Extrinsic.fromU8Array(ext.slice(3)).result;
@@ -111,7 +112,7 @@ export namespace Executive{
         //     throw new Error("Sender does not have enough balance");
         // } 
 
-        const priority: UInt64 = UInt64.fromU8a([1, 0, 0, 0, 0, 0, 0, 0]);
+        const priority: UInt64 = new UInt64(utx.toU8a().length);
         const requires: TransactionTag[] = [];
         const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
         const longevity: UInt64 = new UInt64(1000000);

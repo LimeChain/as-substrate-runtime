@@ -1,6 +1,6 @@
 import { Storage } from '@as-substrate/core-modules';
 import { InherentData } from '@as-substrate/models';
-import { UInt64, Bool, ByteArray } from 'as-scale-codec';
+import { UInt64, Bool, ByteArray, BIT_LENGTH } from 'as-scale-codec';
 import { Log } from '@as-substrate/core-modules';
 
 export class Timestamp{
@@ -20,17 +20,34 @@ export class Timestamp{
     public static readonly CALL_INDEX: u8[] = [2, 0];
 
     /**
+     * Toggles the current value of didUpdate
+     */
+    static toggleUpdate(): void {
+        const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
+        const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
+        if(didUpdateValue.value){
+            const falseu8 = new Bool(false);
+            Storage.set(Timestamp.SCALE_TIMESTAMP_DID_UPDATE, falseu8.toU8a());
+        }
+        else{
+            const trueu8 = new Bool(true);
+            Storage.set(Timestamp.SCALE_TIMESTAMP_DID_UPDATE, trueu8.toU8a());
+        }
+    }
+
+    /**
      * Sets the current time. When setting the new time, 
      * it must be greater than the last one (set into storage) with at least a MinimumPeriod
      * @param now timestamp number
      */
     static set(now: u64): void {
-        const didUpdate = Storage.exists(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
-        if(didUpdate.value){
+        const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
+        const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
+        if(didUpdateValue.value){
             throw new Error('Timestamp must be updated only once in the block');
         }
         const prev: u64 = Timestamp.get();
-        
+                
         if(now < prev + Timestamp.MINIMUM_PERIOD){
             throw new Error('Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
         }
@@ -63,8 +80,7 @@ export class Timestamp{
         let result: u8[] = Timestamp.EXTRINSIC_VERSION;
         result = result.concat([4]).concat(Timestamp.CALL_INDEX).concat([11]);
         const arg: UInt64 = new UInt64(nextTime);
-        Timestamp.set(nextTime);
-        return result.concat(arg.toU8a());
+        return result.concat(arg.toU8a().slice(0, BIT_LENGTH.INT_64 - 2));
     }
 
     /**
