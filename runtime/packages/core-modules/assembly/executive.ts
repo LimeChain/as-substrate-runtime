@@ -1,8 +1,9 @@
-import { Block, Header, InherentData, Blocks, Extrinsic, ValidTransaction, TransactionTag } from '@as-substrate/models';
+import { Block, Header, InherentData, Blocks, Extrinsic, ValidTransaction, TransactionTag, TransactionError } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray, UInt128, Bool, UInt64 } from 'as-scale-codec';
+import { u128 } from 'as-bignum';
 import { System } from './system';
 import { Log } from './log';
 import { Storage } from './storage';
@@ -34,7 +35,7 @@ export namespace Executive{
     }
 
     /**
-     * Actually execute all transitions for Block
+     * Actually execute all transactions for Block
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
@@ -78,44 +79,46 @@ export namespace Executive{
         // if the length of the encoded extrinsic is less than 144, it's inherent
         // in our case, we have only timestamp inherent
         if(encodedLen < 144){
-            // inherent comes without
             const now: UInt64 = UInt64.fromU8a(ext.slice(5).concat([0, 0]));
             Timestamp.set(now.value);
             Timestamp.toggleUpdate();
-            Log.printUtf8("setting timestamp: " + now.value.toString());
             return [];
         }
         const extrinsic = Extrinsic.fromU8Array(ext.slice(3)).result;
         const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
         const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
         BalancesModule.transfer(sender, receiver, extrinsic.amount.value);
-        Log.printUtf8("done transfering: " + extrinsic.toU8a().toString());
         return [];
     }
 
     export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
         const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
-        const to: AccountId = AccountId.fromU8Array(utx.to.toU8a()).result;
         const fromBalance = BalancesModule.getAccountData(from);
 
         const transfer = utx.getTransferBytes();
 
         if(!System.verifySignature(utx.signature, transfer, from)){
-            throw new Error("Invalid signature");
+            Log.printUtf8("Transaction error: Invalid signature");
+            return TransactionError.BAD_PROOF_ERROR;
         }   
         const nonce = System.accountNonce(from);
         if (<u64>nonce.value >= <u64>utx.nonce.value){
-            throw new Error("Nonce value is less than or equal to the latest nonce");
+            Log.printUtf8("Transaction error: Nonce value is less than or equal to the latest nonce");
+            return TransactionError.STALE_ERROR;
         }
         const balance: UInt128 = fromBalance.getFree();
-        // if(balance.value < u128.fromU64(utx.amount.value)){
-        //     throw new Error("Sender does not have enough balance");
-        // } 
-
+        if(balance.value < u128.fromU64(utx.amount.value)){
+            Log.printUtf8("Transaction error: Sender does not have enough balance");
+            return TransactionError.PAYMENT_ERROR;
+        } 
+        /**
+         * If all the validations are passed, construct validTransaction instance
+         */
+        const result: u8[] = [0];
         const priority: UInt64 = new UInt64(utx.toU8a().length);
         const requires: TransactionTag[] = [];
         const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
-        const longevity: UInt64 = new UInt64(1000000);
+        const longevity: UInt64 = new UInt64(64);
         const propogate: Bool = new Bool(true);
         const validTransaction = new ValidTransaction(
             priority,
@@ -124,8 +127,7 @@ export namespace Executive{
             longevity,
             propogate
         );
-        const option: u8[] = [0];
-        return option.concat(validTransaction.toU8a());
+        return result.concat(validTransaction.toU8a());
     }
 
     /**

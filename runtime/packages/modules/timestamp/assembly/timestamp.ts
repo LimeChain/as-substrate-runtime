@@ -16,7 +16,7 @@ export class Timestamp{
     public static readonly SCALE_TIMESTAMP_NOW: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 12, 110, 111, 119];
     public static readonly SCALE_TIMESTAMP_DID_UPDATE: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 36, 100, 105, 100, 117, 112, 100, 97, 116, 101];
     public static readonly INHERENT_IDENTIFIER: string = "timstap0";
-    public static readonly EXTRINSIC_VERSION: u8[] = [40];
+    public static readonly EXTRINSIC_LENGTH: u8[] = [40];
     public static readonly CALL_INDEX: u8[] = [2, 0];
 
     /**
@@ -77,7 +77,7 @@ export class Timestamp{
     static createInherent(data: InherentData): u8[] {
         const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
         const nextTime: u64 = <u64>(Math.max(<f64>timestampData.value, <f64>(Timestamp.get() + Timestamp.MINIMUM_PERIOD)));
-        let result: u8[] = Timestamp.EXTRINSIC_VERSION;
+        let result: u8[] = Timestamp.EXTRINSIC_LENGTH;
         result = result.concat([4]).concat(Timestamp.CALL_INDEX).concat([11]);
         const arg: UInt64 = new UInt64(nextTime);
         return result.concat(arg.toU8a().slice(0, BIT_LENGTH.INT_64 - 2));
@@ -102,6 +102,8 @@ export class Timestamp{
             return true;
         }
     }
+
+    static extractNow()
 }
  
 /**

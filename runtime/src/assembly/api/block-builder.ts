@@ -10,7 +10,7 @@ import { Bool } from 'as-scale-codec';
  */
 export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
-    Executive.applyExtrinsic(input);
+    const applyExtResult = Executive.applyExtrinsic(input);
     return Serialiser.serialiseResult([0, 0]);
 }
 
@@ -22,10 +22,8 @@ export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
 
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
-    Log.printUtf8("inherent exts: " + input.toString());
     const inherent = InherentData.fromU8Array(input);
     const inherents = Executive.createExtrinsics(inherent.result);
-    Log.printUtf8("ex: " + inherents.toString());
     return Serialiser.serialiseResult(inherents);
 }
 

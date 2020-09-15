@@ -1,4 +1,7 @@
-export class TransactionError{
+/**
+ * Class contains all well-known errors that may result from apply_extrinsic method
+ */
+export class ApplyExtrinsicResult{
     /**
      * Applying extrinsic succeded
      */
@@ -27,4 +30,16 @@ export class TransactionError{
      * Invalid transaction proofs (e.g. bad signature)
      */
     public static readonly BAD_PROOF_ERROR: u8[] = [1, 0, 4];
+
+
+    /**
+     * Returns a dispatch error message
+     * @param moduleIndex 
+     * @param errorValue specific error value
+     */
+    static dispatchError(moduleIndex: u8, errorValue: u8): u8[]{
+        const errorPrefix: u8[] = [0, 1];
+        return errorPrefix.concat([moduleIndex, errorValue]);
+    }
+
 }
