@@ -1,6 +1,7 @@
 import { Block, Header, InherentData, Blocks, Extrinsic, ValidTransaction, TransactionTag } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
+import { u128 } from 'as-bignum';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray, UInt128, Bool, UInt64 } from 'as-scale-codec';
 import { System } from './system';
@@ -78,7 +79,7 @@ export namespace Executive{
         // if the length of the encoded extrinsic is less than 144, it's inherent
         // in our case, we have only timestamp inherent
         if(encodedLen < 144){
-            // inherent comes without
+            // inherent has length 10, where 2 bytes are truncated
             const now: UInt64 = UInt64.fromU8a(ext.slice(5).concat([0, 0]));
             Timestamp.set(now.value);
             Timestamp.toggleUpdate();
@@ -108,9 +109,9 @@ export namespace Executive{
             throw new Error("Nonce value is less than or equal to the latest nonce");
         }
         const balance: UInt128 = fromBalance.getFree();
-        // if(balance.value < u128.fromU64(utx.amount.value)){
-        //     throw new Error("Sender does not have enough balance");
-        // } 
+        if(balance.value < u128.fromU64(utx.amount.value)){
+            throw new Error("Sender does not have enough balance");
+        } 
 
         const priority: UInt64 = new UInt64(utx.toU8a().length);
         const requires: TransactionTag[] = [];

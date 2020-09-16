@@ -2,10 +2,6 @@ import { ValidTransaction } from "./valid-transaction";
 import { TransactionError } from "./transaction-error";
 
 export class TransactionValidity{
-    /**
-     * 
-     */
-    // public valid: bool;
 
     /**
      * valid transaction with necessary methods
