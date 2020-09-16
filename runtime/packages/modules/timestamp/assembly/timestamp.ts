@@ -44,12 +44,14 @@ export class Timestamp{
         const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
         const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
         if(didUpdateValue.value){
-            throw new Error('Timestamp must be updated only once in the block');
+            Log.error('Validation error: Timestamp must be updated only once in the block');
+            return;
         }
         const prev: u64 = Timestamp.get();
                 
         if(now < prev + Timestamp.MINIMUM_PERIOD){
-            throw new Error('Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
+            Log.error('Validation error: Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
+            return;
         }
 
         const nowu8 = new UInt64(now);
@@ -102,8 +104,6 @@ export class Timestamp{
             return true;
         }
     }
-
-    static extractNow()
 }
  
 /**

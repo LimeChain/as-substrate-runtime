@@ -33,7 +33,6 @@ export function Core_execute_block(data: i32, len: i32): u64 {
  */
 
 export function Core_initialize_block(data: i32, len: i32): u64 {
-    Log.printUtf8("initializing a block");
     const input = Serialiser.deserialiseInput(data, len);
     const header = Header.fromU8Array(input);
     Executive.initializeBlock(header.result);

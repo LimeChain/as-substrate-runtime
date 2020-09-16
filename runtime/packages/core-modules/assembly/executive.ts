@@ -30,7 +30,7 @@ export namespace Executive{
         const blockHash = Blocks.fromU8Array(blockHashU8a).result;
 
         if(n.value == 0 &&  blockHash.data.get(new CompactInt(n.value - 1)) == header.parentHash){
-            throw new Error("Parent hash should be valid.");
+            Log.error("Initial checks: Parent hash should be valid.");
         }
     }
 
@@ -91,6 +91,11 @@ export namespace Executive{
         return [];
     }
 
+    /**
+     * Initial transaction validation
+     * @param source source of the transaction (external, inblock, etc.)
+     * @param utx transaction
+     */
     export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
         const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
         const fromBalance = BalancesModule.getAccountData(from);
@@ -98,17 +103,17 @@ export namespace Executive{
         const transfer = utx.getTransferBytes();
 
         if(!System.verifySignature(utx.signature, transfer, from)){
-            Log.printUtf8("Transaction error: Invalid signature");
+            Log.error("Validation error: Invalid signature");
             return TransactionError.BAD_PROOF_ERROR;
         }   
         const nonce = System.accountNonce(from);
         if (<u64>nonce.value >= <u64>utx.nonce.value){
-            Log.printUtf8("Transaction error: Nonce value is less than or equal to the latest nonce");
+            Log.error("Validation error: Nonce value is less than or equal to the latest nonce");
             return TransactionError.STALE_ERROR;
         }
         const balance: UInt128 = fromBalance.getFree();
         if(balance.value < u128.fromU64(utx.amount.value)){
-            Log.printUtf8("Transaction error: Sender does not have enough balance");
+            Log.error("Validation error: Sender does not have enough balance");
             return TransactionError.PAYMENT_ERROR;
         } 
         /**

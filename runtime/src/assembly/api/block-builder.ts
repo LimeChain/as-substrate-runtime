@@ -34,7 +34,6 @@ export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
-    Log.printUtf8("finalize block");
     const header = Executive.finalizeBlock();
     return Serialiser.serialiseResult(header.toU8a());
 }
