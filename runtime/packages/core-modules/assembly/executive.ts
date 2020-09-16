@@ -7,6 +7,7 @@ import {
 } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
+import { u128 } from 'as-bignum';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray, UInt128, Bool, UInt64, Bytes } from 'as-scale-codec';
 import { u128 } from 'as-bignum';
