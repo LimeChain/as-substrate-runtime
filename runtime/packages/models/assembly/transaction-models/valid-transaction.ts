@@ -1,5 +1,4 @@
-import { UInt64, Bool, Bytes, BIT_LENGTH, CompactInt } from 'as-scale-codec';
-import { DecodedData } from '../decoded-data';
+import { UInt64, Bool, CompactInt } from 'as-scale-codec';
 import { TransactionTag } from './transaction-tag';
 
 export class ValidTransaction{
@@ -38,9 +37,12 @@ export class ValidTransaction{
             this.provides = provides;
             this.longevity = longevity;
             this.propogate = propogate;
-        }
+    }
 
     toU8a(): u8[]{
+        // indicates that the Result<ValidTransaction, TransactionError> is ValidTransaction
+        const result: u8[] = [0];
+
         const reqLen = new CompactInt(this.requires.length);
         let requires: u8[] = reqLen.toU8a();
         for (let i: i32 = 0; i < this.requires.length; i++){
@@ -52,46 +54,10 @@ export class ValidTransaction{
         for (let i: i32 = 0; i < this.provides.length; i++){
             provides = provides.concat(this.provides[i].toU8a());
         }
-
-        return this.priority.toU8a()
+        return result.concat(this.priority.toU8a())
             .concat(requires)
             .concat(provides)
             .concat(this.longevity.toU8a())
-            .concat(this.propogate.toU8a())
-    }
-
-    /**
-     * Instance of ValidTransaction from bytes
-     * @param input bytes
-     */
-
-    static fromU8Array(input: u8[]): DecodedData<ValidTransaction>{
-        const priority = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
-        input = input.slice(BIT_LENGTH.INT_64);
-
-        const lenReq = Bytes.decodeCompactInt(input);
-        const requires: TransactionTag[] = [];
-        for (let i: u32=0; i<lenReq.value; i++){
-            const transactionTag = TransactionTag.fromU8Array(input);
-            requires.push(transactionTag.result);
-            input = transactionTag.input;
-        }
-
-        const lenProv = Bytes.decodeCompactInt(input);
-        const provides: TransactionTag[] = [];
-        for(let i: u32 = 0; i<lenProv.value; i++){
-            const transactionTag = TransactionTag.fromU8Array(input);
-            provides.push(transactionTag.result);
-            input = transactionTag.input;
-        }
-        const longevity = UInt64.fromU8a(input);
-        input = input.slice(longevity.encodedLength());
-
-        const propogate = Bool.fromU8a(input.slice(0,1));
-        input = input.slice(1);
-
-        const validTransaction = new ValidTransaction(priority, requires, provides, longevity, propogate);
-
-        return new DecodedData(validTransaction, input);
+            .concat(this.propogate.toU8a());
     }
 }

@@ -1,6 +1,6 @@
 import { Storage } from '@as-substrate/core-modules';
-import { InherentData } from '@as-substrate/models';
-import { UInt64, Bool, ByteArray, BIT_LENGTH } from 'as-scale-codec';
+import { InherentData, Inherent } from '@as-substrate/models';
+import { UInt64, Bool, ByteArray, BIT_LENGTH, CompactInt } from 'as-scale-codec';
 import { Log } from '@as-substrate/core-modules';
 
 export class Timestamp{
@@ -18,6 +18,8 @@ export class Timestamp{
     public static readonly INHERENT_IDENTIFIER: string = "timstap0";
     public static readonly EXTRINSIC_LENGTH: u8[] = [40];
     public static readonly CALL_INDEX: u8[] = [2, 0];
+    public static readonly API_VERSION: u8 = 4;
+    public static readonly PREFIX: u8 = 11;
 
     /**
      * Toggles the current value of didUpdate
@@ -76,13 +78,18 @@ export class Timestamp{
      * Creates timestamp inherent data
      * @param data inherent data to extract timestamp from
      */
-    static createInherent(data: InherentData): u8[] {
+    static createInherent(data: InherentData): Inherent {
         const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
         const nextTime: u64 = <u64>(Math.max(<f64>timestampData.value, <f64>(Timestamp.get() + Timestamp.MINIMUM_PERIOD)));
-        let result: u8[] = Timestamp.EXTRINSIC_LENGTH;
-        result = result.concat([4]).concat(Timestamp.CALL_INDEX).concat([11]);
         const arg: UInt64 = new UInt64(nextTime);
-        return result.concat(arg.toU8a().slice(0, BIT_LENGTH.INT_64 - 2));
+        const inherent = new Inherent(
+            new CompactInt(10), 
+            Timestamp.CALL_INDEX, 
+            Timestamp.API_VERSION, 
+            Timestamp.PREFIX,
+            arg
+            );
+        return inherent;
     }
 
     /**

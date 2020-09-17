@@ -4,7 +4,7 @@
  */
 import {Serialiser} from "@as-substrate/core-utils";
 import { Extrinsic } from '@as-substrate/models';
-import { Executive  } from '@as-substrate/core-modules';
+import { Executive } from '@as-substrate/core-modules';
 import { CompactInt } from "as-scale-codec";
 
 /**

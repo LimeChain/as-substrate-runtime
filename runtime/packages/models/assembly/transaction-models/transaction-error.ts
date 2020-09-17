@@ -1,9 +1,5 @@
 export class TransactionError{
     /**
-     * Applying extrinsic succeded
-     */
-    public static readonly SUCCESS: u8[] = [0, 0];
-    /**
      * Any error to do with the transaction validity
      */
     public static readonly VALIDITY_ERROR: u8[] = [1, 2];

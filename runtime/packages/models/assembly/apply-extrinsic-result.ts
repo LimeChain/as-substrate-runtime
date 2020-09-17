@@ -3,6 +3,10 @@
  */
 export class ApplyExtrinsicResult{
     /**
+     * Prefix code for error result
+     */
+    static readonly ERROR_PREFIX: u8[] = [0, 1];
+    /**
      * Applying extrinsic succeded
      */
     public static readonly SUCCESS: u8[] = [0, 0];
@@ -38,8 +42,6 @@ export class ApplyExtrinsicResult{
      * @param errorValue specific error value
      */
     static dispatchError(moduleIndex: u8, errorValue: u8): u8[]{
-        const errorPrefix: u8[] = [0, 1];
-        return errorPrefix.concat([moduleIndex, errorValue]);
+        return this.ERROR_PREFIX.concat([moduleIndex, errorValue]);
     }
-
 }

@@ -1,5 +1,5 @@
 import { AccountData, AccountId } from ".";
-import { Storage, Log } from "@as-substrate/core-modules";
+import { Storage, Log, System } from "@as-substrate/core-modules";
 import { ByteArray, UInt128 } from "as-scale-codec";
 import { u128 } from "as-bignum";
 
@@ -54,6 +54,7 @@ export class BalancesModule {
         const receiverNewBalance: UInt128 = new UInt128(u128.add(receiverAccData.getFree().value, u128.fromU64(amount)));
         BalancesModule.setBalance(sender, senderNewBalance, senderAccData.getReserved());
         BalancesModule.setBalance(receiver, receiverNewBalance, receiverAccData.getReserved());
+        System.incAccountNonce(sender);
         Log.printUtf8("done transfering: " + amount.toString());
     }
 }

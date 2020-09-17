@@ -1,8 +1,14 @@
-import { Block, Header, InherentData, Blocks, Extrinsic, ValidTransaction, TransactionTag, TransactionError } from '@as-substrate/models';
+import { 
+    Block, Header, 
+    InherentData, Blocks, 
+    Extrinsic, Inherent, 
+    ValidTransaction, TransactionTag, 
+    TransactionError, ApplyExtrinsicResult
+} from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
-import { CompactInt, ByteArray, UInt128, Bool, UInt64 } from 'as-scale-codec';
+import { CompactInt, ByteArray, UInt128, Bool, UInt64, Bytes } from 'as-scale-codec';
 import { u128 } from 'as-bignum';
 import { System } from './system';
 import { Log } from './log';
@@ -56,8 +62,8 @@ export namespace Executive{
      * @param data inherents
      */
     export function createExtrinsics(data: InherentData): u8[] {
-        const timestamp: u8[] = Timestamp.createInherent(data);
-        return System.ALL_MODULES.concat(timestamp);
+        const timestamp: Inherent = Timestamp.createInherent(data);
+        return System.ALL_MODULES.concat(timestamp.toU8a());
     }
 
     /**
@@ -65,8 +71,8 @@ export namespace Executive{
      * @param ext extrinsic
      */
     export function applyExtrinsic(ext: u8[]): u8[] {
-        const encodedLen = ext.length;
-        return Executive.applyExtrinsicWithLen(ext, encodedLen);
+        const encodedLen = Bytes.decodeCompactInt(ext);
+        return Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
     }
     
     /**
@@ -78,17 +84,23 @@ export namespace Executive{
     export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
         // if the length of the encoded extrinsic is less than 144, it's inherent
         // in our case, we have only timestamp inherent
-        if(encodedLen < 144){
-            const now: UInt64 = UInt64.fromU8a(ext.slice(5).concat([0, 0]));
-            Timestamp.set(now.value);
+        if(Inherent.isInherent(ext)){
+            const inherent = Inherent.fromU8Array(ext).result;
+            Timestamp.set(inherent.arg.value);
             Timestamp.toggleUpdate();
-            return [];
+            return ApplyExtrinsicResult.SUCCESS;
         }
-        const extrinsic = Extrinsic.fromU8Array(ext.slice(3)).result;
-        const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
-        const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
-        BalancesModule.transfer(sender, receiver, extrinsic.amount.value);
-        return [];
+        const cmpLen = Bytes.decodeCompactInt(ext);
+        ext = ext.slice(cmpLen.decBytes);
+        const result = ext.shift();
+        if (result as bool){
+            const extrinsic = Extrinsic.fromU8Array(ext).result;
+            const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
+            const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
+            BalancesModule.transfer(sender, receiver, extrinsic.amount.value);
+            return ApplyExtrinsicResult.SUCCESS;
+        }
+        return ApplyExtrinsicResult.CALL_ERROR;
     }
 
     /**
@@ -98,6 +110,7 @@ export namespace Executive{
      */
     export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
         const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
+
         const fromBalance = BalancesModule.getAccountData(from);
 
         const transfer = utx.getTransferBytes();
@@ -116,10 +129,10 @@ export namespace Executive{
             Log.error("Validation error: Sender does not have enough balance");
             return TransactionError.PAYMENT_ERROR;
         } 
+
         /**
          * If all the validations are passed, construct validTransaction instance
          */
-        const result: u8[] = [0];
         const priority: UInt64 = new UInt64(utx.toU8a().length);
         const requires: TransactionTag[] = [];
         const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
@@ -132,7 +145,7 @@ export namespace Executive{
             longevity,
             propogate
         );
-        return result.concat(validTransaction.toU8a());
+        return validTransaction.toU8a();
     }
 
     /**

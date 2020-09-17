@@ -11,7 +11,7 @@ import { Bool } from 'as-scale-codec';
 export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const applyExtResult = Executive.applyExtrinsic(input);
-    return Serialiser.serialiseResult([0, 0]);
+    return Serialiser.serialiseResult(applyExtResult);
 }
 
 /**
