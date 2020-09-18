@@ -1,6 +1,6 @@
 import { Serialiser } from '@as-substrate/core-utils';
-import { InherentData, Extrinsic } from '@as-substrate/models';
-import { Executive, Log } from '@as-substrate/core-modules';
+import { InherentData } from '@as-substrate/models';
+import { Executive } from '@as-substrate/core-modules';
 import { Bool } from 'as-scale-codec';
 
 /**

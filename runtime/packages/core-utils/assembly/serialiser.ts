@@ -50,7 +50,11 @@ export class Serialiser {
         return buffer64;
     }
 
-    static serialiseArray(value: u8[]): i32 {
+    /**
+     * Serialize bytes
+     * @param value 
+     */
+    static serialiseBytes(value: u8[]): i32 {
         return value.dataStart as i32;
     }
 }

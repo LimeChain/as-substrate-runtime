@@ -1,4 +1,4 @@
-import { UInt64, CompactInt, Bytes } from 'as-scale-codec';
+import { UInt64, CompactInt } from 'as-scale-codec';
 import { AccountId } from '@as-substrate/balances-module';
 export class TransactionTag{
     /**

@@ -100,9 +100,9 @@ export class System {
      * @param sender 
      */
     static verifySignature(signature: Signature, msg: u8[], sender: AccountId): bool{
-        const serialisedSign: i32 = Serialiser.serialiseArray(signature.value);
+        const serialisedSign: i32 = Serialiser.serialiseBytes(signature.value);
         const serialiseMsg: u64 = Serialiser.serialiseResult(msg);
-        const serialisedSender: i32 = Serialiser.serialiseArray(sender.getAddress());
+        const serialisedSender: i32 = Serialiser.serialiseBytes(sender.getAddress());
         const result: i32 = ext_crypto_sr25519_verify_version_2(serialisedSign, serialiseMsg, serialisedSender);
         return result as bool;
     }

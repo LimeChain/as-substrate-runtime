@@ -10,7 +10,6 @@ import { Utils } from '@as-substrate/core-utils';
 import { u128 } from 'as-bignum';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray, UInt128, Bool, UInt64, Bytes } from 'as-scale-codec';
-import { u128 } from 'as-bignum';
 import { System } from './system';
 import { Log } from './log';
 import { Storage } from './storage';
