@@ -47,13 +47,13 @@ export class Timestamp{
         const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
         if(didUpdateValue.value){
             Log.error('Validation error: Timestamp must be updated only once in the block');
-            return;
+            throw new Error();
         }
         const prev: u64 = Timestamp.get();
                 
         if(now < prev + Timestamp.MINIMUM_PERIOD){
             Log.error('Validation error: Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
-            return;
+            throw new Error();
         }
 
         const nowu8 = new UInt64(now);
