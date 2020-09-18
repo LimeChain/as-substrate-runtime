@@ -115,17 +115,17 @@ export namespace Executive{
 
         if(!System.verifySignature(utx.signature, transfer, from)){
             Log.error("Validation error: Invalid signature");
-            return TransactionError.BAD_PROOF_ERROR;
+            return TransactionError.INVALID_SIGNATURE;
         }   
         const nonce = System.accountNonce(from);
         if (<u64>nonce.value >= <u64>utx.nonce.value){
             Log.error("Validation error: Nonce value is less than or equal to the latest nonce");
-            return TransactionError.STALE_ERROR;
+            return TransactionError.NONCE_TOO_LOW;
         }
         const balance: UInt128 = fromBalance.getFree();
         if(balance.value < u128.fromU64(utx.amount.value)){
             Log.error("Validation error: Sender does not have enough balance");
-            return TransactionError.PAYMENT_ERROR;
+            return TransactionError.INSUFFICIENT_BALANCE;
         } 
 
         /**
