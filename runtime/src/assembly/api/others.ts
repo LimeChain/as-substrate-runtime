@@ -26,7 +26,8 @@ export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
 }
 
 /**
- * 
+ * Receives encoded byte array of Extrinsic appended to the source of transaction
+ * Returns ValidTransaction or TransactionError code
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */
@@ -34,6 +35,13 @@ export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32)
     let input = Serialiser.deserialiseInput(data, len);
     const size = CompactInt.fromU8a(input);
     input = input.slice(size.encodedLength());
+    /**
+     * first element of the input is the source of Extrinsic
+     * Possible values:
+     * InBlock - 1
+     * Local - 2
+     * External - 3
+    */  
     const source = input.slice(0, 1);
     input = input.slice(1);
     const uxt = Extrinsic.fromU8Array(input);

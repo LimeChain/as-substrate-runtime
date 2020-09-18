@@ -8,12 +8,9 @@ import {
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { AuraModule } from '@as-substrate/aura-module';
 import { Utils } from '@as-substrate/core-utils';
-import { u128 } from 'as-bignum';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, ByteArray, UInt128, Bool, UInt64, Bytes } from 'as-scale-codec';
-import { System } from './system';
-import { Log } from './log';
-import { Storage } from './storage';
+import { System, Log, Storage, Crypto } from '.';
 
 export namespace Executive{
     /**
@@ -66,7 +63,7 @@ export namespace Executive{
         const timestamp: Inherent = Timestamp.createInherent(data);
         const aura = AuraModule.createInherent(data);
         if(aura.isSome()){
-            return System.ALL_MODULES.concat(timestamp.toU8a()).concat(aura.unwrap().toU8a());
+            return System.ALL_MODULES.concat(timestamp.toU8a()).concat((<Inherent>aura.unwrap()).toU8a());
         }
         return System.ALL_MODULES.concat(timestamp.toU8a());
     }
@@ -91,8 +88,7 @@ export namespace Executive{
         // in our case, we have only timestamp inherent
         if(Inherent.isInherent(ext)){
             const inherent = Inherent.fromU8Array(ext).result;
-            Timestamp.set(inherent.arg.value);
-            Timestamp.toggleUpdate();
+            Timestamp.applyInherent(inherent);
             return ApplyExtrinsicResult.SUCCESS;
         }
         const cmpLen = Bytes.decodeCompactInt(ext);
@@ -100,9 +96,7 @@ export namespace Executive{
         const result = ext.shift();
         if (result as bool){
             const extrinsic = Extrinsic.fromU8Array(ext).result;
-            const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
-            const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
-            BalancesModule.transfer(sender, receiver, extrinsic.amount.value);
+            BalancesModule.applyExtrinsic(extrinsic);
             return ApplyExtrinsicResult.SUCCESS;
         }
         return ApplyExtrinsicResult.CALL_ERROR;
@@ -118,7 +112,7 @@ export namespace Executive{
         const fromBalance = BalancesModule.getAccountData(from);
         const transfer = utx.getTransferBytes();
 
-        if(!System.verifySignature(utx.signature, transfer, from)){
+        if(!Crypto.verifySignature(utx.signature, transfer, from)){
             Log.error("Validation error: Invalid signature");
             return TransactionError.INVALID_SIGNATURE;
         }   
@@ -128,10 +122,10 @@ export namespace Executive{
             return TransactionError.NONCE_TOO_LOW;
         }
         const balance: UInt128 = fromBalance.getFree();
-        if(balance.value < u128.fromU64(utx.amount.value)){
+        if(!BalancesModule.validateTransaction(utx)){
             Log.error("Validation error: Sender does not have enough balance");
             return TransactionError.INSUFFICIENT_BALANCE;
-        } 
+        }
 
         /**
          * If all the validations are passed, construct validTransaction instance
@@ -155,6 +149,6 @@ export namespace Executive{
      * module hooks
      */
     export function onFinalize(): void{
-        Log.printUtf8("onInitialize() called");
+        Log.info("onInitialize() called");
     }
 }

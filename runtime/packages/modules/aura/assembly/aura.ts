@@ -37,7 +37,7 @@ export class AuraModule {
 
     static createInherent(data: InherentData): Option<Inherent> {
         // TO-DO meaningful checks
-        return Option<Inherent>(null);
+        return new Option<Inherent>(null);
     }
 
     /**

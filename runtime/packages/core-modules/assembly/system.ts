@@ -10,8 +10,11 @@ export class System {
     static readonly APPLY_EXTRINSIC: string = "ApplyExtrinsic";
     static readonly INITIALIZATION: string = "Initialization";
     static readonly FINALIZATION: string = "Finalization";
-    // number of all modules in the runtime that creates inherents (timestamp and aura, for now)
-    static readonly ALL_MODULES: u8[] = [4];
+    /**
+     * number of all modules in the runtime that creates inherents (timestamp, for now)
+     * array is encoded as CompactInt
+    */
+     static readonly ALL_MODULES: u8[] = [4];
     // nonce key
     static readonly NONCE_KEY: string = "nonce";
     /**
@@ -91,20 +94,6 @@ export class System {
         const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
         const newNonce = new UInt64(oldNonce.value + 1);
         Storage.set(who.getAddress().concat(nonceKey), newNonce.toU8a());
-    }
-
-    /**
-     * Verifies the message and signature of the extrinsic
-     * @param signature 
-     * @param msg message to be verified
-     * @param sender 
-     */
-    static verifySignature(signature: Signature, msg: u8[], sender: AccountId): bool{
-        const serialisedSign: i32 = Serialiser.getPointerToBytes(signature.value);
-        const serialiseMsg: u64 = Serialiser.serialiseResult(msg);
-        const serialisedSender: i32 = Serialiser.getPointerToBytes(sender.getAddress());
-        const result: i32 = ext_crypto_sr25519_verify_version_2(serialisedSign, serialiseMsg, serialisedSender);
-        return result as bool;
     }
 }
 

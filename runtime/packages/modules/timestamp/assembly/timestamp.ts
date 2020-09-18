@@ -1,6 +1,6 @@
 import { Storage } from '@as-substrate/core-modules';
 import { InherentData, Inherent } from '@as-substrate/models';
-import { UInt64, Bool, ByteArray, BIT_LENGTH, CompactInt } from 'as-scale-codec';
+import { UInt64, Bool, ByteArray, CompactInt } from 'as-scale-codec';
 import { Log } from '@as-substrate/core-modules';
 
 export class Timestamp{
@@ -122,6 +122,15 @@ export class Timestamp{
         else{
             return true;
         }
+    }
+
+    /**
+     * 
+     * @param inherent 
+     */
+    static applyInherent(inherent: Inherent): void {
+        Timestamp.set(inherent.arg.value);
+        Timestamp.toggleUpdate();
     }
 }
  

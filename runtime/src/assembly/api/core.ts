@@ -19,7 +19,7 @@ export function Core_version(data: i32, len: i32): u64 {
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function Core_execute_block(data: i32, len: i32): u64 {
-    Log.printUtf8("executing a block");
+    Log.info("executing a block");
     const input = Serialiser.deserialiseInput(data, len);
     const block = Block.fromU8Array(input);
     Executive.executeBlock(block.result);
