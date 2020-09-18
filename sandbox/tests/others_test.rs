@@ -1,12 +1,13 @@
 extern crate sandbox_execution_environment;
-use sandbox_execution_environment::{ Transfer, Setup };
+use sandbox_execution_environment::{ Transfer, Setup, AccountId };
 use sp_state_machine::TestExternalities as CoreTestExternalities;
 use sp_keyring::AccountKeyring;
-use parity_scale_codec::{Encode};
+use parity_scale_codec::{Encode, Compact};
 use sp_wasm_interface::HostFunctions as _;
 use sp_runtime::{ traits::{BlakeTwo256 }};
 use sc_executor::{WasmExecutor, WasmExecutionMethod};
 use sp_core::{ traits::{ CallInWasm, Externalities, MissingHostFunctions }};
+use std::convert::{TryFrom};
 type HostFunctions = sp_io::SubstrateHostFunctions;
 pub type TestExternalities = CoreTestExternalities<BlakeTwo256, u64>;
 
@@ -70,23 +71,37 @@ fn test_tagged_transaction_queue_validate_transaction() {
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
+
+    let init_balance: u64 = 1234567;
+
+    let from: AccountId = AccountKeyring::Alice.into();
+    let to: AccountId = AccountKeyring::Bob.into();
+
+    ext.set_storage(from.encode(), init_balance.encode());
+    ext.set_storage(to.encode(), init_balance.encode());
+
+
     let ex = Transfer {
-        from: AccountKeyring::Alice.into(),
-        to: AccountKeyring::Bob.into(),
+        from: from,
+        to: to,
         amount: 69,
         nonce: 5,
     }.into_signed_tx();
 
+    let len: Compact<u16> = Compact(u16::try_from(ex.encode().len()).unwrap());
+
+    let mut bytes = len.encode();
+
+    bytes.extend(ex.encode());
     let result = call_in_wasm(
         "TaggedTransactionQueue_validate_transaction",
-        &ex.encode(),
+        &bytes,
         WasmExecutionMethod::Interpreted,
         &mut ext
-    );
+    ).unwrap();
 
-    println!("{:?}", ex.encode());    
-    println!("{:?}", result);
-    // assert_eq!(result, [0u8; 0]);
+    let valid_transaction: Vec<u8> = vec![0, 145, 0, 0, 0, 0, 0, 0, 0, 0, 4, 144, 212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125, 5, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 1];
+    assert_eq!(result, valid_transaction);
 }
 
 #[test]
