@@ -1,6 +1,6 @@
 import { Timestamp } from "@as-substrate/timestamp-module";
 import { Storage } from "@as-substrate/core-modules";
-import { InherentData, Option } from "@as-substrate/models";
+import { InherentData, Inherent, Option } from "@as-substrate/models";
 import { ByteArray } from 'as-scale-codec';
 
 /**
@@ -35,8 +35,9 @@ export class AuraModule {
         Storage.set(AuraModule.AURA_AUTHORITIES, auths);
     }
 
-    static createInherent(data: InherentData): u8[] {
-        return [0];
+    static createInherent(data: InherentData): Option<Inherent> {
+        // TO-DO meaningful checks
+        return Option<Inherent>(null);
     }
 
     /**

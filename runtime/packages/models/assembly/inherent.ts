@@ -68,9 +68,6 @@ export class Inherent{
      */
     static isInherent(bytes: u8[]): bool{
         const len = Bytes.decodeCompactInt(bytes);
-        if (len.value>=11){
-            return false;
-        }
-        return true;
+        return len.value < 11;
     }
 }

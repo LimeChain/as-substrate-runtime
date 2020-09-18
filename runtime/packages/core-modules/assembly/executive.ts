@@ -6,6 +6,7 @@ import {
     TransactionError, ApplyExtrinsicResult
 } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
+import { AuraModule } from '@as-substrate/aura-module';
 import { Utils } from '@as-substrate/core-utils';
 import { u128 } from 'as-bignum';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
@@ -63,6 +64,10 @@ export namespace Executive{
      */
     export function createExtrinsics(data: InherentData): u8[] {
         const timestamp: Inherent = Timestamp.createInherent(data);
+        const aura = AuraModule.createInherent(data);
+        if(aura.isSome()){
+            return System.ALL_MODULES.concat(timestamp.toU8a()).concat(aura.unwrap().toU8a());
+        }
         return System.ALL_MODULES.concat(timestamp.toU8a());
     }
 

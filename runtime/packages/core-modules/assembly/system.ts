@@ -13,7 +13,7 @@ export class System {
     // number of all modules in the runtime that creates inherents (timestamp and aura, for now)
     static readonly ALL_MODULES: u8[] = [4];
     // nonce key
-    static readonly nonceKey: string = "nonce";
+    static readonly NONCE_KEY: string = "nonce";
     /**
      * Sets up the environment necessary for block production
      * @param header Header instance
@@ -68,10 +68,10 @@ export class System {
      * Get the nonce value of the given AccountId
      * The format of the key for storing nonce in the storage is:
      * SCALE(AccountId) + SCALE("nonce")
-     * @param who nonce of this account
+     * @param who account for which to get the nonce
      */
     static accountNonce(who: AccountId): UInt64{
-        const nonceKey: u8[] = Utils.stringsToU8a([System.nonceKey]);
+        const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
         const value = Storage.get(who.getAddress().concat(nonceKey));
         if(value.isSome()){
             const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
@@ -88,7 +88,7 @@ export class System {
      */
     static incAccountNonce(who: AccountId): void{
         const oldNonce = System.accountNonce(who);
-        const nonceKey: u8[] = Utils.stringsToU8a([System.nonceKey]);
+        const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
         const newNonce = new UInt64(oldNonce.value + 1);
         Storage.set(who.getAddress().concat(nonceKey), newNonce.toU8a());
     }
@@ -100,9 +100,9 @@ export class System {
      * @param sender 
      */
     static verifySignature(signature: Signature, msg: u8[], sender: AccountId): bool{
-        const serialisedSign: i32 = Serialiser.serialiseBytes(signature.value);
+        const serialisedSign: i32 = Serialiser.getPointerToBytes(signature.value);
         const serialiseMsg: u64 = Serialiser.serialiseResult(msg);
-        const serialisedSender: i32 = Serialiser.serialiseBytes(sender.getAddress());
+        const serialisedSender: i32 = Serialiser.getPointerToBytes(sender.getAddress());
         const result: i32 = ext_crypto_sr25519_verify_version_2(serialisedSign, serialiseMsg, serialisedSender);
         return result as bool;
     }

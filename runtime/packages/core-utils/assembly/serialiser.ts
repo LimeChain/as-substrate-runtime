@@ -54,7 +54,7 @@ export class Serialiser {
      * Serialize bytes
      * @param value 
      */
-    static serialiseBytes(value: u8[]): i32 {
+    static getPointerToBytes(value: u8[]): i32 {
         return value.dataStart as i32;
     }
 }

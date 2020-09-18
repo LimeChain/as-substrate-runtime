@@ -16,9 +16,21 @@ export class Timestamp{
     public static readonly SCALE_TIMESTAMP_NOW: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 12, 110, 111, 119];
     public static readonly SCALE_TIMESTAMP_DID_UPDATE: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 36, 100, 105, 100, 117, 112, 100, 97, 116, 101];
     public static readonly INHERENT_IDENTIFIER: string = "timstap0";
-    public static readonly EXTRINSIC_LENGTH: u8[] = [40];
+    /**
+     * Fixed length of the inherent
+     */
+    public static readonly INHERENT_LENGTH: u8 = 10;
+    /**
+     * Call index for timestamp inherent
+     */
     public static readonly CALL_INDEX: u8[] = [2, 0];
+    /**
+     * Runtime API version
+     */
     public static readonly API_VERSION: u8 = 4;
+    /**
+     * Module prefix
+     */
     public static readonly PREFIX: u8 = 11;
 
     /**
@@ -83,12 +95,12 @@ export class Timestamp{
         const nextTime: u64 = <u64>(Math.max(<f64>timestampData.value, <f64>(Timestamp.get() + Timestamp.MINIMUM_PERIOD)));
         const arg: UInt64 = new UInt64(nextTime);
         const inherent = new Inherent(
-            new CompactInt(10), 
+            new CompactInt(this.INHERENT_LENGTH), 
             Timestamp.CALL_INDEX, 
             Timestamp.API_VERSION, 
             Timestamp.PREFIX,
             arg
-            );
+        );
         return inherent;
     }
 
