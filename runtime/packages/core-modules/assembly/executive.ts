@@ -92,8 +92,8 @@ export namespace Executive{
         const result = ext.shift();
         if (result as bool){
             const extrinsic = Extrinsic.fromU8Array(ext).result;
-            BalancesModule.applyExtrinsic(extrinsic);
-            return ResponseCodes.SUCCESS;
+            const response = BalancesModule.applyExtrinsic(extrinsic);
+            return response;
         }
         return ResponseCodes.CALL_ERROR;
     }
@@ -105,7 +105,6 @@ export namespace Executive{
      */
     export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
         const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
-        const fromBalance = BalancesModule.getAccountData(from);
         const transfer = utx.getTransferBytes();
 
         if(!Crypto.verifySignature(utx.signature, transfer, from)){
