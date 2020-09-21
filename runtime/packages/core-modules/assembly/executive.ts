@@ -1,9 +1,16 @@
-import { Block, Header } from '@as-substrate/models';
-import { System } from './system';
-import { CompactInt, ByteArray } from 'as-scale-codec';
-import { Log } from './log';
-import { Storage } from './storage';
-import { Helpers } from './helpers';
+import { 
+    Block, Header, 
+    InherentData, Blocks, 
+    Extrinsic, Inherent, 
+    ValidTransaction, TransactionTag, ResponseCodes
+} from '@as-substrate/models';
+import { Timestamp } from '@as-substrate/timestamp-module';
+import { AuraModule } from '@as-substrate/aura-module';
+import { Utils } from '@as-substrate/core-utils';
+import { AccountId, BalancesModule } from '@as-substrate/balances-module';
+import { CompactInt, ByteArray, UInt128, Bool, UInt64, Bytes } from 'as-scale-codec';
+import { System, Log, Storage, Crypto } from '.';
+
 export namespace Executive{
     /**
      * Calls the System function initializeBlock()
@@ -21,17 +28,17 @@ export namespace Executive{
         let header = block.header;
         let n: CompactInt = header.number;
 
-        const result = Storage.get(Helpers.stringsToU8a(["system", "block_hash"]));
+        const result = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
         let blockHashU8a: u8[] = result.isSome() ? (<ByteArray>result.unwrap()).values : [];
-        const blockHash = Helpers.blockHashFromU8Array(blockHashU8a);
+        const blockHash = Blocks.fromU8Array(blockHashU8a).result;
 
-        if(n.value == 0 &&  blockHash.get(new CompactInt(n.value - 1)) == header.parentHash){
-            throw new Error("Parent hash should be valid.");
+        if(n.value == 0 &&  blockHash.data.get(new CompactInt(n.value - 1)) == header.parentHash){
+            Log.error("Initial checks: Parent hash should be valid.");
         }
     }
 
     /**
-     * Actually execute all transitions for Block
+     * Actually execute all transactions for Block
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
@@ -47,11 +54,95 @@ export namespace Executive{
     export function finalizeBlock(): Header {
         return System.finalize();
     }
+    /**
+     * creates inherents from internal modules
+     * @param data inherents
+     */
+    export function createExtrinsics(data: InherentData): u8[] {
+        const timestamp: Inherent = Timestamp.createInherent(data);
+        const aura = AuraModule.createInherent(data);
+        return System.ALL_MODULES.concat(timestamp.toU8a()).concat(aura);
+    }
+
+    /**
+     * Apply Extrinsics
+     * @param ext extrinsic
+     */
+    export function applyExtrinsic(ext: u8[]): u8[] {
+        const encodedLen = Bytes.decodeCompactInt(ext);
+        return Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
+    }
+    
+    /**
+     * 
+     * @param ext extrinsic
+     * @param encodedLen length
+     * @param encoded encoded extrinsic
+     */
+    export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
+        // if the length of the encoded extrinsic is less than 144, it's inherent
+        // in our case, we have only timestamp inherent
+        if(Inherent.isInherent(ext)){
+            const inherent = Inherent.fromU8Array(ext).result;
+            Timestamp.applyInherent(inherent);
+            return ResponseCodes.SUCCESS;
+        }
+        const cmpLen = Bytes.decodeCompactInt(ext);
+        ext = ext.slice(cmpLen.decBytes);
+        const result = ext.shift();
+        if (result as bool){
+            const extrinsic = Extrinsic.fromU8Array(ext).result;
+            return BalancesModule.applyExtrinsic(extrinsic);
+        }
+        return ResponseCodes.CALL_ERROR;
+    }
+
+    /**
+     * Initial transaction validation
+     * @param source source of the transaction (external, inblock, etc.)
+     * @param utx transaction
+     */
+    export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
+        const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
+        const transfer = utx.getTransferBytes();
+
+        if(!Crypto.verifySignature(utx.signature, transfer, from)){
+            Log.error("Validation error: Invalid signature");
+            return ResponseCodes.INVALID_SIGNATURE;
+        }   
+        const nonce = System.accountNonce(from);
+        if (<u64>nonce.value >= <u64>utx.nonce.value){
+            Log.error("Validation error: Nonce value is less than or equal to the latest nonce");
+            return ResponseCodes.NONCE_TOO_LOW;
+        }
+        const validated = BalancesModule.validateTransaction(utx);
+        if(!validated.valid){
+            Log.error(validated.message);
+            return validated.error;
+        }
+
+        /**
+         * If all the validations are passed, construct validTransaction instance
+         */
+        const priority: UInt64 = new UInt64(utx.toU8a().length);
+        const requires: TransactionTag[] = [];
+        const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
+        const longevity: UInt64 = new UInt64(64);
+        const propogate: Bool = new Bool(true);
+        const validTransaction = new ValidTransaction(
+            priority,
+            requires,
+            provides,
+            longevity,
+            propogate
+        );
+        return validTransaction.toU8a();
+    }
 
     /**
      * module hooks
      */
     export function onFinalize(): void{
-        Log.printUtf8("onInitialize() called");
+        Log.info("onInitialize() called");
     }
 }

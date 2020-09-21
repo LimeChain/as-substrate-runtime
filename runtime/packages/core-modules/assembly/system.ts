@@ -1,13 +1,22 @@
-import { CompactInt, ByteArray } from 'as-scale-codec';
+import { CompactInt, ByteArray, Bytes, UInt64 } from 'as-scale-codec';
 import { Storage } from './storage';
-import { Blocks, Header } from '@as-substrate/models';
-import { Utils } from '@as-substrate/core-utils';
+import { Blocks, Header, Signature } from '@as-substrate/models';
+import { Utils, Serialiser } from '@as-substrate/core-utils';
+import { AccountId } from '@as-substrate/balances-module';
+import { ext_crypto_sr25519_verify_version_2 } from './env';
 
 export class System {
     // execution phases
     static readonly APPLY_EXTRINSIC: string = "ApplyExtrinsic";
     static readonly INITIALIZATION: string = "Initialization";
-    static readonly FINALIZATION: string = "Finalization"
+    static readonly FINALIZATION: string = "Finalization";
+    /**
+     * number of all modules in the runtime that creates inherents (timestamp, for now)
+     * array is encoded as CompactInt
+    */
+     static readonly ALL_MODULES: u8[] = [4];
+    // nonce key
+    static readonly NONCE_KEY: string = "nonce";
     /**
      * Sets up the environment necessary for block production
      * @param header Header instance
@@ -57,6 +66,34 @@ export class System {
 
         const decodedHeader = Header.fromU8Array(result);
         return decodedHeader.result;
+    }
+    /**
+     * Get the nonce value of the given AccountId
+     * The format of the key for storing nonce in the storage is:
+     * SCALE(AccountId) + SCALE("nonce")
+     * @param who account for which to get the nonce
+     */
+    static accountNonce(who: AccountId): UInt64{
+        const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
+        const value = Storage.get(who.getAddress().concat(nonceKey));
+        if(value.isSome()){
+            const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
+            return new UInt64(decValue.value);
+        }
+        else{
+            return new UInt64(0);
+        }
+    }
+
+    /**
+     * Increment nonce of this account
+     * @param who account
+     */
+    static incAccountNonce(who: AccountId): void{
+        const oldNonce = System.accountNonce(who);
+        const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
+        const newNonce = new UInt64(oldNonce.value + 1);
+        Storage.set(who.getAddress().concat(nonceKey), newNonce.toU8a());
     }
 }
 

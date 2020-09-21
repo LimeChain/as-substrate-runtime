@@ -1,5 +1,5 @@
 extern crate sandbox_execution_environment;
-use sandbox_execution_environment::{ Transfer, Setup, Header };
+use sandbox_execution_environment::{ Transfer, Setup, Header, AccountId };
 use sc_executor::{WasmExecutor, WasmExecutionMethod};
 use sp_state_machine::TestExternalities as CoreTestExternalities;
 use parity_scale_codec::{Encode, Compact, Decode};
@@ -10,13 +10,15 @@ use sp_keyring::AccountKeyring;
 use sp_core::{traits::{ CallInWasm, Externalities, MissingHostFunctions}};
 type HostFunctions = sp_io::SubstrateHostFunctions;
 pub type TestExternalities = CoreTestExternalities<BlakeTwo256, u64>;
+use std::convert::{TryFrom};
 
 use hex_literal::hex;
+
 
 fn get_inherent_data_instance() -> InherentData {
     let mut inh = InherentData::new();
     
-    const TM_KEY: InherentIdentifier = *b"timstmp0";
+    const TM_KEY: InherentIdentifier = *b"timstap0";
     let tm_value: u64 = 1;
     
     const BS_KEY: InherentIdentifier = *b"babeslot";
@@ -78,26 +80,37 @@ fn encode_strs(args: Vec<&str>) -> Vec<u8>{
 }
 
 #[test]
-fn test_block_builder_apply_extrinsics() {
+fn test_block_builder_apply_extrinsic() {
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
+    
+    let init_balance: u64 = 1234567;
+
+    let from: AccountId = AccountKeyring::Alice.into();
+    let to: AccountId = AccountKeyring::Bob.into();
+
+    ext.set_storage(from.encode(), init_balance.encode());
+    ext.set_storage(to.encode(), init_balance.encode());
 
     let ex = Transfer {
-        from: AccountKeyring::Alice.into(),
-        to: AccountKeyring::Bob.into(),
+        from: from,
+        to: to,
         amount: 69,
-        nonce: 5,
+        nonce: 0,
     }.into_signed_tx();
     
+    let len: Compact<u16> = Compact(u16::try_from(ex.encode().len()).unwrap());
+
+    let mut bytes = len.encode();
+    bytes.extend(ex.encode());
     let result = call_in_wasm(
-        "BlockBuilder_apply_extrinsics",
-        &ex.encode(),
+        "BlockBuilder_apply_extrinsic",
+        &bytes,
         WasmExecutionMethod::Interpreted,
         &mut ext
     ).unwrap();
-    println!("{:?}", result);
-    assert_eq!(result, [0u8; 0]);
+    assert_eq!(result, [0u8; 2]);
 }
 
 #[test]
@@ -105,6 +118,22 @@ fn test_block_builder_inherent_extrinsics() {
     let setup = Setup::new();
     let mut ext = setup.ext;
     let mut ext = ext.ext();
+
+    const ALL_MODULES: Compact<u8> = Compact(1);
+    const SIZE: Compact<u8> = Compact(10);
+    const OPTION: Compact<u8> = Compact(1);
+    let call_index: Vec<u8> = vec![2, 0];
+    const COMPACT_PREFIX: u8 = 11;
+    const MIN_PERIOD: u64 = 5000;
+    const DEFAULT_VALUE: u64 = 4;
+
+    let mut exp_inherent: Vec<u8> = vec![];
+    exp_inherent.extend(ALL_MODULES.encode());
+    exp_inherent.extend(SIZE.encode());
+    exp_inherent.extend(OPTION.encode());
+    exp_inherent.extend(call_index);
+    exp_inherent.push(COMPACT_PREFIX);
+    exp_inherent.extend((MIN_PERIOD+DEFAULT_VALUE).encode());
 
     let inh = get_inherent_data_instance();
 
@@ -115,7 +144,7 @@ fn test_block_builder_inherent_extrinsics() {
         &mut ext
     ).unwrap();
 
-    assert_eq!(result, [0u8; 1]);
+    assert_eq!(result, &exp_inherent[0..12]);
 }
 
 #[test]

@@ -20,6 +20,7 @@ export declare function ext_crypto_sr25519_generate_version_1(key_type_id: i32, 
 export declare function ext_crypto_sr25519_public_keys_version_1(key_type_id: i64): i64;
 export declare function ext_crypto_sr25519_sign_version_1(key_type_id: i32, key: i32, msg: i64): i64;
 export declare function ext_crypto_sr25519_verify_version_1(sig: i32, msg: i64, key: i32): i32;
+export declare function ext_crypto_sr25519_verify_version_2(sig: i32, msg: i64, key: i32): i32;
 
 /**
  * Hashing: Interface that provides functions for hashing with diﬀerent algorithms.

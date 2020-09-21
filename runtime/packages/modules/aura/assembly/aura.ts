@@ -1,6 +1,6 @@
 import { Timestamp } from "@as-substrate/timestamp-module";
 import { Storage } from "@as-substrate/core-modules";
-import { InherentData, Option } from "@as-substrate/models";
+import { InherentData, Inherent, Option } from "@as-substrate/models";
 import { ByteArray } from 'as-scale-codec';
 
 /**
@@ -34,6 +34,12 @@ export class AuraModule {
     static setAuthorities(auths: u8[]): void {
         Storage.set(AuraModule.AURA_AUTHORITIES, auths);
     }
+
+    static createInherent(data: InherentData): u8[] {
+        // TO-DO meaningful checks
+        return [];
+    }
+
     /**
      * Verify the validity of the inherent using the timestamp.
      * @param t new value for the timestamp inherent data

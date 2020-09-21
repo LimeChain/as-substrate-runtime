@@ -1,5 +1,5 @@
 import { Serialiser } from '@as-substrate/core-utils';
-import { InherentData, Extrinsic } from '@as-substrate/models';
+import { InherentData } from '@as-substrate/models';
 import { Executive } from '@as-substrate/core-modules';
 import { Bool } from 'as-scale-codec';
 
@@ -8,14 +8,14 @@ import { Bool } from 'as-scale-codec';
  * @param data - i32 pointer to the start of the arguments passed
  * @param len - i32 length (in bytes) of the arguments passed
  */
-export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
+export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
-    const extrinsic = Extrinsic.fromU8Array(input);
-    return Serialiser.serialiseResult([]);
+    const applyExtResult = Executive.applyExtrinsic(input);
+    return Serialiser.serialiseResult(applyExtResult);
 }
 
 /**
- * On success, returns an empty array
+ * On success, returns an array of inherents
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */
@@ -23,12 +23,12 @@ export function BlockBuilder_apply_extrinsics(data: i32, len: i32): u64 {
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const inherent = InherentData.fromU8Array(input);
-    return Serialiser.serialiseResult([0]);
+    const inherents = Executive.createExtrinsics(inherent.result);
+    return Serialiser.serialiseResult(inherents);
 }
 
 /**
  * Upon succesfull validation of Block's fields, appends the block to the chain
- * Mocked to return true in this iteration
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
  */

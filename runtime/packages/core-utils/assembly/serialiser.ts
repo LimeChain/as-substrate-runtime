@@ -49,4 +49,12 @@ export class Serialiser {
         const buffer64 = ((valueSize as u64) << 32) | valuePtr;
         return buffer64;
     }
+
+    /**
+     * Serialize bytes
+     * @param value 
+     */
+    static getPointerToBytes(value: u8[]): i32 {
+        return value.dataStart as i32;
+    }
 }

@@ -31,7 +31,7 @@ export namespace Utils {
     }
 
     /**
-     * Converts storage key to u8a
+     * Converts array of strings to array of bytes
      * @param args array of strings
      */
     export function stringsToU8a(args: string[]): u8[]{

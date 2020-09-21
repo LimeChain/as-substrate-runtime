@@ -58,12 +58,23 @@ export class Extrinsic {
     }
 
     /**
+     * get SCALE encoded bytes for the Transfer instance
+     */
+    getTransferBytes(): u8[]{
+        return this.from.toU8a()
+            .concat(this.to.toU8a())
+            .concat(this.amount.toU8a())
+            .concat(this.nonce.toU8a())
+    }
+
+    /**
      * Instanciates new Extrinsic object from SCALE encoded byte array
      * @param input - SCALE encoded Extrinsic
      * TODO - avoid slicing the aray for better performance
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic> {
         assert(input.length >= 144, "Extrinsic: Invalid bytes provided. EOF");
+
         const from = Hash.fromU8a(input);
         input = input.slice(from.encodedLength());
 
@@ -81,7 +92,7 @@ export class Extrinsic {
 
         const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
         input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
-        
+
         const extrinsic = new Extrinsic(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
 
         return new DecodedData(extrinsic, input);

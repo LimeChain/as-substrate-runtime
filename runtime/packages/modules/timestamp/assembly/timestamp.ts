@@ -1,7 +1,7 @@
 import { Storage } from '@as-substrate/core-modules';
-import { InherentData } from '@as-substrate/models';
-import { UInt64, Bool, ByteArray } from 'as-scale-codec';
-
+import { InherentData, Inherent } from '@as-substrate/models';
+import { UInt64, Bool, ByteArray, CompactInt } from 'as-scale-codec';
+import { Log } from '@as-substrate/core-modules';
 
 export class Timestamp{
 
@@ -15,7 +15,39 @@ export class Timestamp{
      */
     public static readonly SCALE_TIMESTAMP_NOW: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 12, 110, 111, 119];
     public static readonly SCALE_TIMESTAMP_DID_UPDATE: u8[] = [36, 116, 105, 109, 101, 115, 116, 97, 109, 112, 36, 100, 105, 100, 117, 112, 100, 97, 116, 101];
-    public static readonly INHERENT_IDENTIFIER: string = "timstmp0";
+    public static readonly INHERENT_IDENTIFIER: string = "timstap0";
+    /**
+     * Fixed length of the inherent
+     */
+    public static readonly INHERENT_LENGTH: u8 = 10;
+    /**
+     * Call index for timestamp inherent
+     */
+    public static readonly CALL_INDEX: u8[] = [2, 0];
+    /**
+     * Runtime API version
+     */
+    public static readonly API_VERSION: u8 = 4;
+    /**
+     * Module prefix
+     */
+    public static readonly PREFIX: u8 = 11;
+
+    /**
+     * Toggles the current value of didUpdate
+     */
+    static toggleUpdate(): void {
+        const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
+        const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
+        if(didUpdateValue.value){
+            const falseu8 = new Bool(false);
+            Storage.set(Timestamp.SCALE_TIMESTAMP_DID_UPDATE, falseu8.toU8a());
+        }
+        else{
+            const trueu8 = new Bool(true);
+            Storage.set(Timestamp.SCALE_TIMESTAMP_DID_UPDATE, trueu8.toU8a());
+        }
+    }
 
     /**
      * Sets the current time. When setting the new time, 
@@ -24,13 +56,16 @@ export class Timestamp{
      */
     static set(now: u64): void {
         const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
-        if(didUpdate.isSome()){
-            throw new Error('Timestamp must be updated only once in the block');
+        const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
+        if(didUpdateValue.value){
+            Log.error('Validation error: Timestamp must be updated only once in the block');
+            throw new Error();
         }
         const prev: u64 = Timestamp.get();
-        
+                
         if(now < prev + Timestamp.MINIMUM_PERIOD){
-            throw new Error('Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
+            Log.error('Validation error: Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
+            throw new Error();
         }
 
         const nowu8 = new UInt64(now);
@@ -48,16 +83,25 @@ export class Timestamp{
         const res = now.isSome() ? (<ByteArray>now.unwrap()).values : [4, 0];
         const val: UInt64 = UInt64.fromU8a(res);
         return val.value;
+
     }
 
     /**
      * Creates timestamp inherent data
      * @param data inherent data to extract timestamp from
      */
-    static createInherent(data: InherentData): void {
-        const timestampData: u64 = extractInherentData(data);
-        const nextTime = Math.max(timestampData, Timestamp.get() + Timestamp.MINIMUM_PERIOD);
-        Timestamp.set(nextTime);
+    static createInherent(data: InherentData): Inherent {
+        const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
+        const nextTime: u64 = <u64>(Math.max(<f64>timestampData.value, <f64>(Timestamp.get() + Timestamp.MINIMUM_PERIOD)));
+        const arg: UInt64 = new UInt64(nextTime);
+        const inherent = new Inherent(
+            new CompactInt(this.INHERENT_LENGTH), 
+            Timestamp.CALL_INDEX, 
+            Timestamp.API_VERSION, 
+            Timestamp.PREFIX,
+            arg
+        );
+        return inherent;
     }
 
     /**
@@ -67,9 +111,9 @@ export class Timestamp{
      */
     static checkInherent(t: u64, data: InherentData): bool {
         const MAX_TIMESTAMP_DRIFT_MILLS: u64 = 30 * 1000;
-        const timestampData: u64 = extractInherentData(data);
+        const timestampData: UInt64 = UInt64.fromU8a(extractInherentData(data).values);
         const minimum: u64 = Timestamp.get() + Timestamp.MINIMUM_PERIOD;
-        if (t > timestampData + MAX_TIMESTAMP_DRIFT_MILLS){
+        if (t > timestampData.value + MAX_TIMESTAMP_DRIFT_MILLS){
             return false;
         }
         else if(t < minimum){
@@ -79,12 +123,21 @@ export class Timestamp{
             return true;
         }
     }
+
+    /**
+     * 
+     * @param inherent 
+     */
+    static applyInherent(inherent: Inherent): void {
+        Timestamp.set(inherent.arg.value);
+        Timestamp.toggleUpdate();
+    }
 }
  
 /**
  * Gets timestamp inherent data
  * @param inhData inherentData instance provided 
  */
-export function extractInherentData(inhData: InherentData): u64 {
-    return inhData.data[Timestamp.INHERENT_IDENTIFIER];
+export function extractInherentData(inhData: InherentData): ByteArray {
+    return inhData.data.get(Timestamp.INHERENT_IDENTIFIER);
 }

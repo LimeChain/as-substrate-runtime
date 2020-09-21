@@ -5,9 +5,9 @@
 // Make the WASM binary available.
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
-
+use log::{info, warn};
 use sp_std::prelude::*;
-use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
+use sp_core::{crypto::KeyTypeId, OpaqueMetadata, Encode};
 use sp_runtime::{
 	ApplyExtrinsicResult, generic, create_runtime_str, impl_opaque_keys, MultiSignature,
 	transaction_validity::{TransactionValidity, TransactionSource},
@@ -302,21 +302,26 @@ impl_runtime_apis! {
 
 	impl sp_block_builder::BlockBuilder<Block> for Runtime {
 		fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyExtrinsicResult {
+			info!("applying extrinsic: {:?}", extrinsic.encode());
 			Executive::apply_extrinsic(extrinsic)
 		}
 
 		fn finalize_block() -> <Block as BlockT>::Header {
+			info!("finalizing a block");
 			Executive::finalize_block()
 		}
 
 		fn inherent_extrinsics(data: sp_inherents::InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
-			data.create_extrinsics()
+			let mut inherents = data.create_extrinsics();
+			info!("calling inherents: {:?}", inherents.encode());
+			inherents
 		}
 
 		fn check_inherents(
 			block: Block,
 			data: sp_inherents::InherentData,
 		) -> sp_inherents::CheckInherentsResult {
+			info!("checking exts: {:?}", data.encode());
 			data.check_extrinsics(&block)
 		}
 
@@ -330,7 +335,12 @@ impl_runtime_apis! {
 			source: TransactionSource,
 			tx: <Block as BlockT>::Extrinsic,
 		) -> TransactionValidity {
-			Executive::validate_transaction(source, tx)
+			info!("source: {:?}", source);
+			info!("tx-original: {:?}", tx);
+			info!("tx: {:?}", tx.encode());
+			let mut res = Executive::validate_transaction(source, tx);
+			info!("res: {:?}", res.encode());
+			res
 		}
 	}
 
