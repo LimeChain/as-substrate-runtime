@@ -35,9 +35,9 @@ export class AuraModule {
         Storage.set(AuraModule.AURA_AUTHORITIES, auths);
     }
 
-    static createInherent(data: InherentData): Option<Inherent> {
+    static createInherent(data: InherentData): u8[] {
         // TO-DO meaningful checks
-        return new Option<Inherent>(null);
+        return [];
     }
 
     /**

@@ -1,5 +1,5 @@
 import { AccountData, AccountId } from ".";
-import { Extrinsic } from '@as-substrate/models';
+import { Extrinsic, TransactionValidity, ResponseCodes } from '@as-substrate/models';
 import { Storage, Log, System } from "@as-substrate/core-modules";
 import { ByteArray, UInt128 } from "as-scale-codec";
 import { u128 } from "as-bignum";
@@ -66,20 +66,33 @@ export class BalancesModule {
     static applyExtrinsic(extrinsic: Extrinsic): void{
         const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
         const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
+        const validated = this.validateTransaction(extrinsic);
+        if(!validated.valid){
+            Log.error(validated.message);
+            return ;
+        }
         this.transfer(sender, receiver, extrinsic.amount.value);
     }
 
     /**
      * 
      */
-    static validateTransaction(extrinsic: Extrinsic): bool{
+    static validateTransaction(extrinsic: Extrinsic): TransactionValidity{
         const from: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
         const fromBalance = BalancesModule.getAccountData(from);
         const balance: UInt128 = fromBalance.getFree();
         if(balance.value < u128.fromU64(extrinsic.amount.value)){
-            return false;
+            return new TransactionValidity(
+                false,
+                ResponseCodes.INSUFFICIENT_BALANCE,
+                "Validation error: Sender does not have enough balance"
+            );
         }
         // TO-DO add check for existentialDeposit amount
-        return true;
+        return new TransactionValidity(
+            true,
+            [],
+            "Valid transaction"
+        );
     }
 }

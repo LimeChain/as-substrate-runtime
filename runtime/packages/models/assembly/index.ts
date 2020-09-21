@@ -10,5 +10,5 @@ export * from './digest-items';
 export * from './decoded-data';
 export * from './blocks';
 export * from './transaction-models';
-export * from './apply-extrinsic-result';
+export * from './response-codes';
 export * from './inherent';

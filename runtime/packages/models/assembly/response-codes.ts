@@ -1,15 +1,23 @@
 /**
- * Class contains well-known transaction errors
+ * Class contains all well-known errors that may result from apply_extrinsic method
  */
-export class TransactionError{
+export class ResponseCodes{
+    /**
+     * Prefix code for error result
+     */
+    static readonly ERROR_PREFIX: u8[] = [0, 1];
+    /**
+     * Applying extrinsic succeded
+     */
+    public static readonly SUCCESS: u8[] = [0, 0];
+    /**
+     * Any error to do with the transaction validity
+     */
+    public static readonly VALIDITY_ERROR: u8[] = [1, 2];
     /**
      * The call of the transaction is not expected
      */
     public static readonly CALL_ERROR: u8[] = [1, 0, 0];
-    /**
-     * Any error to do with the transaction validity
-     */
-    public static readonly INVALID_PAYMENT: u8[] = [1, 0, 0];
     /**
      * Inability to pay fees (e.g. account balance too low)
      */
@@ -36,4 +44,14 @@ export class TransactionError{
      * No validator found for the given unsigned transaction.
      */
     public static readonly NO_UNSIGNED_VALIDATOR: u8[] = [1, 1, 1];
+
+
+    /**
+     * Returns a dispatch error message
+     * @param moduleIndex 
+     * @param errorValue specific error value
+     */
+    static dispatchError(moduleIndex: u8, errorValue: u8): u8[]{
+        return this.ERROR_PREFIX.concat([moduleIndex, errorValue]);
+    }
 }

@@ -2,8 +2,7 @@ import {
     Block, Header, 
     InherentData, Blocks, 
     Extrinsic, Inherent, 
-    ValidTransaction, TransactionTag, 
-    TransactionError, ApplyExtrinsicResult
+    ValidTransaction, TransactionTag, ResponseCodes
 } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { AuraModule } from '@as-substrate/aura-module';
@@ -62,10 +61,7 @@ export namespace Executive{
     export function createExtrinsics(data: InherentData): u8[] {
         const timestamp: Inherent = Timestamp.createInherent(data);
         const aura = AuraModule.createInherent(data);
-        if(aura.isSome()){
-            return System.ALL_MODULES.concat(timestamp.toU8a()).concat((<Inherent>aura.unwrap()).toU8a());
-        }
-        return System.ALL_MODULES.concat(timestamp.toU8a());
+        return System.ALL_MODULES.concat(timestamp.toU8a()).concat(aura);
     }
 
     /**
@@ -89,7 +85,7 @@ export namespace Executive{
         if(Inherent.isInherent(ext)){
             const inherent = Inherent.fromU8Array(ext).result;
             Timestamp.applyInherent(inherent);
-            return ApplyExtrinsicResult.SUCCESS;
+            return ResponseCodes.SUCCESS;
         }
         const cmpLen = Bytes.decodeCompactInt(ext);
         ext = ext.slice(cmpLen.decBytes);
@@ -97,9 +93,9 @@ export namespace Executive{
         if (result as bool){
             const extrinsic = Extrinsic.fromU8Array(ext).result;
             BalancesModule.applyExtrinsic(extrinsic);
-            return ApplyExtrinsicResult.SUCCESS;
+            return ResponseCodes.SUCCESS;
         }
-        return ApplyExtrinsicResult.CALL_ERROR;
+        return ResponseCodes.CALL_ERROR;
     }
 
     /**
@@ -114,17 +110,17 @@ export namespace Executive{
 
         if(!Crypto.verifySignature(utx.signature, transfer, from)){
             Log.error("Validation error: Invalid signature");
-            return TransactionError.INVALID_SIGNATURE;
+            return ResponseCodes.INVALID_SIGNATURE;
         }   
         const nonce = System.accountNonce(from);
         if (<u64>nonce.value >= <u64>utx.nonce.value){
             Log.error("Validation error: Nonce value is less than or equal to the latest nonce");
-            return TransactionError.NONCE_TOO_LOW;
+            return ResponseCodes.NONCE_TOO_LOW;
         }
-        const balance: UInt128 = fromBalance.getFree();
-        if(!BalancesModule.validateTransaction(utx)){
-            Log.error("Validation error: Sender does not have enough balance");
-            return TransactionError.INSUFFICIENT_BALANCE;
+        const validated = BalancesModule.validateTransaction(utx);
+        if(!validated.valid){
+            Log.error(validated.message);
+            return validated.error;
         }
 
         /**
