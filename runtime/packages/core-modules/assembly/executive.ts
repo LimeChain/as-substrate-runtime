@@ -92,8 +92,7 @@ export namespace Executive{
         const result = ext.shift();
         if (result as bool){
             const extrinsic = Extrinsic.fromU8Array(ext).result;
-            const response = BalancesModule.applyExtrinsic(extrinsic);
-            return response;
+            return BalancesModule.applyExtrinsic(extrinsic);
         }
         return ResponseCodes.CALL_ERROR;
     }
