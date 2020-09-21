@@ -37,15 +37,16 @@ export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32)
     input = input.slice(size.encodedLength());
     /**
      * first element of the input is the source of Extrinsic
+     * Depending on source, we use different validation schemes (TO-DO)
      * Possible values:
      * InBlock - 1
      * Local - 2
      * External - 3
     */  
-    const source = input.slice(0, 1);
+    const _source = input.slice(0, 1);
     input = input.slice(1);
     const uxt = Extrinsic.fromU8Array(input);
-    const result = Executive.validateTransaction(source, uxt.result);
+    const result = Executive.validateTransaction(_source, uxt.result);
     return Serialiser.serialiseResult(result);
 }
 

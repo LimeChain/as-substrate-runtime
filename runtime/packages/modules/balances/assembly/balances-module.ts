@@ -63,15 +63,16 @@ export class BalancesModule {
      * Apply extrinsic for the module
      * @param extrinsic 
      */
-    static applyExtrinsic(extrinsic: Extrinsic): void{
+    static applyExtrinsic(extrinsic: Extrinsic): u8[]{
         const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
         const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
         const validated = this.validateTransaction(extrinsic);
         if(!validated.valid){
             Log.error(validated.message);
-            return ;
+            return validated.error;
         }
         this.transfer(sender, receiver, extrinsic.amount.value);
+        return ResponseCodes.SUCCESS;
     }
 
     /**
