@@ -1,6 +1,6 @@
 import { Timestamp } from "@as-substrate/timestamp-module";
 import { Storage } from "@as-substrate/core-modules";
-import { InherentData, Inherent, Option } from "@as-substrate/models";
+import { InherentData, Option } from "@as-substrate/models";
 import { ByteArray } from 'as-scale-codec';
 
 /**

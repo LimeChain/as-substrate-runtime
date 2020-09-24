@@ -57,7 +57,7 @@ export class Blocks{
         input = input.slice(lenComp.decBytes);
         for (let i: u64 = 0; i<lenComp.value; i++){
             const blockNumber = Bytes.decodeCompactInt(input);
-            input = input.slice(lenComp.decBytes);
+            input = input.slice(blockNumber.decBytes);
             const parentHash = Hash.fromU8a(input);
             input = input.slice(parentHash.encodedLength());
             data.set(new CompactInt(blockNumber.value), parentHash);

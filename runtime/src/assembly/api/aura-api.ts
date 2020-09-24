@@ -1,4 +1,5 @@
 import { Serialiser } from "@as-substrate/core-utils";
+import { Log } from "@as-substrate/core-modules";
 import { AuraModule } from "@as-substrate/aura-module";
 import { UInt64, ByteArray } from 'as-scale-codec';
 
@@ -17,6 +18,7 @@ export function AuraApi_slot_duration(data: i32, len: i32): u64 {
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function AuraApi_authorities(data: i32, len: i32): u64 {
+    Log.info("authorities called");
     const authorities = AuraModule.getAuthorities();
     return authorities.isSome() ? Serialiser.serialiseResult((<ByteArray>authorities.unwrap()).values) : Serialiser.serialiseResult([]);
 }

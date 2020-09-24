@@ -38,7 +38,7 @@ export namespace Utils {
         let result: u8[] = [];
         for (let i=0; i<args.length ; i++){
             const strScale = new ScaleString(args[i]); 
-            result = result.concat(strScale.toU8a());
+            result = result.concat(strScale.values);
         }
         return result;
     }

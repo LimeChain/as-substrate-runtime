@@ -1,9 +1,8 @@
 import { CompactInt, ByteArray, Bytes, UInt64 } from 'as-scale-codec';
 import { Storage } from './storage';
-import { Blocks, Header, Signature } from '@as-substrate/models';
-import { Utils, Serialiser } from '@as-substrate/core-utils';
+import { Blocks, Header } from '@as-substrate/models';
+import { Utils } from '@as-substrate/core-utils';
 import { AccountId } from '@as-substrate/balances-module';
-import { ext_crypto_sr25519_verify_version_2 } from './env';
 
 export class System {
     // execution phases
@@ -14,13 +13,16 @@ export class System {
      * number of all modules in the runtime that creates inherents (timestamp, for now)
      * array is encoded as CompactInt
     */
-     static readonly ALL_MODULES: u8[] = [4];
+    static readonly ALL_MODULES: u8[] = [4];
     // nonce key
     static readonly NONCE_KEY: string = "nonce";
     /**
      * Sets up the environment necessary for block production
      * @param header Header instance
-     */
+    */
+
+    // static extrinsicsRoot(extrinsics: u8[]):
+
     static initialize(header: Header): void{
         Storage.set(Utils.stringsToU8a(["system", "exec_phase"]), Utils.stringsToU8a([System.INITIALIZATION]));
         Storage.set(Utils.stringsToU8a(["system", "parent_hsh"]), header.parentHash.toU8a());
