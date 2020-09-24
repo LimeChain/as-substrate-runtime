@@ -20,12 +20,4 @@ export namespace Crypto{
         const result: i32 = ext_crypto_sr25519_verify_version_2(serialisedSign, serialiseMsg, serialisedSender);
         return result as bool;
     }
-
-    // /**
-    //  * Compute the trie root of a list of extrinsics
-    //  * @param bytes bytes to compute 
-    //  */
-    // export function orderedTrieRoot(bytes: u8[][]): Hash {
-
-    // }
 }

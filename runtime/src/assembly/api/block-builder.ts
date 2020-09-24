@@ -1,6 +1,6 @@
 import { Serialiser } from '@as-substrate/core-utils';
 import { InherentData } from '@as-substrate/models';
-import { Executive, Log } from '@as-substrate/core-modules';
+import { Executive } from '@as-substrate/core-modules';
 import { Bool } from 'as-scale-codec';
 
 /**
@@ -34,7 +34,6 @@ export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
-    const input = Serialiser.deserialiseInput(data, len);
     const header = Executive.finalizeBlock();
     return Serialiser.serialiseResult(header.toU8a());
 }

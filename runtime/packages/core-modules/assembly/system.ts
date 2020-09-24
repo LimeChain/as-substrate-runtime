@@ -20,9 +20,6 @@ export class System {
      * Sets up the environment necessary for block production
      * @param header Header instance
     */
-
-    // static extrinsicsRoot(extrinsics: u8[]):
-
     static initialize(header: Header): void{
         Storage.set(Utils.stringsToU8a(["system", "exec_phase"]), Utils.stringsToU8a([System.INITIALIZATION]));
         Storage.set(Utils.stringsToU8a(["system", "parent_hsh"]), header.parentHash.toU8a());
