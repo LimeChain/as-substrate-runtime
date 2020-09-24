@@ -1,8 +1,9 @@
-import { CompactInt, ByteArray, Bytes, UInt64 } from 'as-scale-codec';
+import { CompactInt, ByteArray, Bytes, UInt64, UInt32, Hash } from 'as-scale-codec';
 import { Storage } from './storage';
-import { Blocks, Header } from '@as-substrate/models';
+import { Blocks, Header, ExtrinsicData } from '@as-substrate/models';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId } from '@as-substrate/balances-module';
+import { Crypto } from '.';
 
 export class System {
     // execution phases
@@ -56,11 +57,13 @@ export class System {
         let blockNumber = Storage.take(Utils.stringsToU8a(["system", "block_num0"]));
         let parentHash = Storage.take(Utils.stringsToU8a(["system", "parent_hsh"]));
         let digests = Storage.take(Utils.stringsToU8a(["system", "digests_00"]));
-        let extrinsicsRoot = Storage.take(Utils.stringsToU8a(["system", "extcs_root"]));
+        let extrinsicsDataU8a = Storage.take(Utils.stringsToU8a(["system", "extcs_data"]));
+        const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).result;
+        let extrinsicsRoot = this.extrinsicsRoot(extcsData);
         let stateRoot = Storage.storageRoot();
         let result: u8[] = parentHash.concat(blockNumber)
             .concat(stateRoot)
-            .concat(extrinsicsRoot)
+            .concat(extrinsicsRoot.toU8a())
             .concat(digests);
 
         const decodedHeader = Header.fromU8Array(result);
@@ -79,9 +82,7 @@ export class System {
             const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
             return new UInt64(decValue.value);
         }
-        else{
-            return new UInt64(0);
-        }
+        return new UInt64(0);
     }
 
     /**
@@ -93,6 +94,57 @@ export class System {
         const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
         const newNonce = new UInt64(oldNonce.value + 1);
         Storage.set(who.getAddress().concat(nonceKey), newNonce.toU8a());
+    }
+
+    /**
+     * Total extrinsics count for the current block.
+     * Used as an extrinsic index for extrinsicData map
+     */
+    static extrinsicCount(): UInt32{
+        const extcsCount = Storage.get(Utils.stringsToU8a(["system", "extcs_cout"]));
+        if(extcsCount.isSome()){
+            return UInt32.fromU8a((<ByteArray>extcsCount.unwrap()).values);
+        }
+        return new UInt32(0);
+    }
+
+    /**
+     * Increment extrinsic count
+     */
+    static incExtrinsicCount(): void {
+        const count = this.extrinsicCount();
+        const newCount = new UInt32(count.value + 1);
+        Storage.set(Utils.stringsToU8a(["system", "extcs_cout"]), newCount.toU8a());
+    }
+
+    /**
+     * Computes the extrinsicsRoot for the given data
+     * @param data 
+     */
+    static extrinsicsRoot(data: ExtrinsicData): Hash{
+        return Crypto.computeExtrinsicRoot(data.toOrderedTrie());
+    }
+
+    /**
+     * Adds applied extrinsic to the current ExtrinsicData
+     * @param ext extrinsic as bytes
+     */
+    static noteExtrinsic(ext: u8[]): void{
+        const extrinsics = Storage.get(Utils.stringsToU8a(["system", "extcs_data"]));
+        const extIndex = this.extrinsicCount();
+        const extValue = ByteArray.fromU8a(ext);
+        if (extrinsics.isSome()){
+            let extrinsicsU8a: u8[] = (<ByteArray>extrinsics.unwrap()).values;
+            const extcsData = ExtrinsicData.fromU8Array(extrinsicsU8a).result;
+            extcsData.insert(extIndex, extValue);
+            Storage.set(Utils.stringsToU8a(["system", "extcs_data"]), extcsData.toU8a());
+            this.incExtrinsicCount();
+            return ;
+        }
+        const data: Map<UInt32, ByteArray> = new Map();
+        data.set(extIndex, extValue);
+        const extcsData = new ExtrinsicData(data);
+        Storage.set(Utils.stringsToU8a(["system", "extcs_data"]), extcsData.toU8a());
     }
 }
 

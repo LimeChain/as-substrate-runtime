@@ -12,3 +12,4 @@ export * from './blocks';
 export * from './transaction-models';
 export * from './response-codes';
 export * from './inherent';
+export * from './extrinsic-data';

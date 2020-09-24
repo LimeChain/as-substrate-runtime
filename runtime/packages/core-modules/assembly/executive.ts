@@ -70,7 +70,13 @@ export namespace Executive{
      */
     export function applyExtrinsic(ext: u8[]): u8[] {
         const encodedLen = Bytes.decodeCompactInt(ext);
-        return Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
+        const result = Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
+        // if applying extrinsic succeeded, notify System about it
+        if(Utils.areArraysEqual(result, ResponseCodes.SUCCESS)){
+            System.noteExtrinsic(ext);
+            return result;
+        }
+        return result;
     }
     
     /**
