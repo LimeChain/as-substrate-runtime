@@ -17,7 +17,6 @@ export namespace Storage {
         const result: u64 = ext_storage_get_version_1(key64);
         const ptrSize: i32[] = Serialiser.separatePointerSize(result);
         let resultU8a: u8[] = Serialiser.deserialiseInput(ptrSize[0], ptrSize[1]);
-    
         if (Option.isArraySomething(resultU8a)) {
             const byteArray = ByteArray.fromU8a(resultU8a.slice(1));
             return new Option<ByteArray>(byteArray);
