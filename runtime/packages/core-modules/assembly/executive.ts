@@ -28,7 +28,7 @@ export namespace Executive{
         let header = block.header;
         let n: CompactInt = header.number;
 
-        const result = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
+        const result = Storage.get(Utils.stringsToBytes(["system", "block_hash"], true));
         let blockHashU8a: u8[] = result.isSome() ? (<ByteArray>result.unwrap()).values : [];
         const blockHash = Blocks.fromU8Array(blockHashU8a).result;
 
@@ -52,6 +52,8 @@ export namespace Executive{
 	 * except state-root.
      */
     export function finalizeBlock(): Header {
+        System.noteFinishedExtrinsics();
+        System.deriveExtrinsics();
         return System.finalize();
     }
     /**
@@ -73,7 +75,7 @@ export namespace Executive{
         const result = Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
         // if applying extrinsic succeeded, notify System about it
         if(Utils.areArraysEqual(result, ResponseCodes.SUCCESS)){
-            System.noteExtrinsic(ext);
+            System.noteAppliedExtrinsic(ext);
             return result;
         }
         return result;

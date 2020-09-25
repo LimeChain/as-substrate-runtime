@@ -7,6 +7,7 @@ import { ext_trie_blake2_256_ordered_root_version_1 } from '.';
 
 export class System {
     // execution phases
+    static readonly EXTRINSIC_INDEX: string = ":extrinsic_index";
     static readonly APPLY_EXTRINSIC: string = "ApplyExtrinsic";
     static readonly INITIALIZATION: string = "Initialization";
     static readonly FINALIZATION: string = "Finalization";
@@ -22,48 +23,49 @@ export class System {
      * @param header Header instance
     */
     static initialize(header: Header): void{
-        Storage.set(Utils.stringsToU8a(["system", "exec_phase"]), Utils.stringsToU8a([System.INITIALIZATION]));
-        Storage.set(Utils.stringsToU8a(["system", "parent_hsh"]), header.parentHash.toU8a());
-        Storage.set(Utils.stringsToU8a(["system", "block_num0"]), header.number.toU8a());
-        Storage.set(Utils.stringsToU8a(["system", "extcs_root"]), header.extrinsicsRoot.toU8a());
+        Storage.set(Utils.stringsToBytes([System.EXTRINSIC_INDEX], true), [<u8>0]);
+        Storage.set(Utils.stringsToBytes(["system", "exec_phase"], true), Utils.stringsToBytes([System.INITIALIZATION], true));
+        Storage.set(Utils.stringsToBytes(["system", "parent_hsh"], true), header.parentHash.toU8a());
+        Storage.set(Utils.stringsToBytes(["system", "block_num0"], true), header.number.toU8a());
+        Storage.set(Utils.stringsToBytes(["system", "extcs_root"], true), header.extrinsicsRoot.toU8a());
 
         const digestStartIndex: i32 = header.number.encodedLength() + 3*header.parentHash.encodedLength();
         const digests = header.toU8a().slice(digestStartIndex);
 
-        Storage.set(Utils.stringsToU8a(["system", "digests_00"]), digests);
+        Storage.set(Utils.stringsToBytes(["system", "digests_00"], true), digests);
         
         // if the BlockHash is populated in the storage, add current one and renew storage
         // Rust version of this implementation is following:
         // <BlockHash<T>>::insert(*number - One::one(), parent_hash);
         const blockNumber: CompactInt = new CompactInt(header.number.value - 1);
 
-        if(Storage.get(Utils.stringsToU8a(["system", "block_hash"])).isSome()){
-            let rawBlocks = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
+        if(Storage.get(Utils.stringsToBytes(["system", "block_hash"], true)).isSome()){
+            let rawBlocks = Storage.get(Utils.stringsToBytes(["system", "block_hash"], true));
             let blocksU8a: u8[] = (<ByteArray>rawBlocks.unwrap()).values;
             let blocks: Blocks = Blocks.fromU8Array(blocksU8a).result;
             blocks.insert(blockNumber, header.parentHash);
-            Storage.set(Utils.stringsToU8a(["system", "block_hash"]), blocks.toU8a());
+            Storage.set(Utils.stringsToBytes(["system", "block_hash"], true), blocks.toU8a());
         }else{
             let blocks: Blocks = Blocks.default();
             blocks.insert(blockNumber, header.parentHash);
-            Storage.set(Utils.stringsToU8a(["system", "block_hash"]), blocks.toU8a());
+            Storage.set(Utils.stringsToBytes(["system", "block_hash"], true), blocks.toU8a());
         }
     }
     /**
      * Remove temporary "environment" entries in storage.
      */
     static finalize(): Header {
-        Storage.clear(Utils.stringsToU8a(["system", "exec_phase"]));
-        let blockNumber = Storage.take(Utils.stringsToU8a(["system", "block_num0"]));
-        let parentHash = Storage.take(Utils.stringsToU8a(["system", "parent_hsh"]));
-        let digests = Storage.take(Utils.stringsToU8a(["system", "digests_00"]));
-        let extrinsicsDataU8a = Storage.take(Utils.stringsToU8a(["system", "extcs_data"]));
-        const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).result;
-        let extrinsicsRoot = this.extrinsicsRoot(extcsData);
+        Storage.clear(Utils.stringsToBytes(["system", "exec_phase"], true));
+        Storage.clear(Utils.stringsToBytes(["system", "extcs_cout"], true));
+        let blockNumber = Storage.take(Utils.stringsToBytes(["system", "block_num0"], true));
+        let parentHash = Storage.take(Utils.stringsToBytes(["system", "parent_hsh"], true));
+        let digests = Storage.take(Utils.stringsToBytes(["system", "digests_00"], true));
+        let extrinsicsRoot = Storage.take(Utils.stringsToBytes(["system", "extcs_root"], true));
         let stateRoot = Storage.storageRoot();
+
         let result: u8[] = parentHash.concat(blockNumber)
             .concat(stateRoot)
-            .concat(extrinsicsRoot.toU8a())
+            .concat(extrinsicsRoot)
             .concat(digests);
 
         const decodedHeader = Header.fromU8Array(result);
@@ -76,7 +78,7 @@ export class System {
      * @param who account for which to get the nonce
      */
     static accountNonce(who: AccountId): UInt64{
-        const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
+        const nonceKey: u8[] = Utils.stringsToBytes([System.NONCE_KEY], true);
         const value = Storage.get(who.getAddress().concat(nonceKey));
         if(value.isSome()){
             const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
@@ -91,45 +93,47 @@ export class System {
      */
     static incAccountNonce(who: AccountId): void{
         const oldNonce = System.accountNonce(who);
-        const nonceKey: u8[] = Utils.stringsToU8a([System.NONCE_KEY]);
+        const nonceKey: u8[] = Utils.stringsToBytes([System.NONCE_KEY], true);
         const newNonce = new UInt64(oldNonce.value + 1);
         Storage.set(who.getAddress().concat(nonceKey), newNonce.toU8a());
     }
 
     /**
-     * Total extrinsics count for the current block.
-     * Used as an extrinsic index for extrinsicData map
+     * Gets the index of extrinsic that is currently executing.
      */
-    static extrinsicCount(): UInt32{
-        const extcsCount = Storage.get(Utils.stringsToU8a(["system", "extcs_cout"]));
-        if(extcsCount.isSome()){
-            return UInt32.fromU8a((<ByteArray>extcsCount.unwrap()).values);
-        }
-        return new UInt32(0);
+    static extrinsicIndex(): UInt32{
+        const extIndex = Storage.take(Utils.stringsToBytes([System.EXTRINSIC_INDEX], true));
+        return UInt32.fromU8a(extIndex);
     }
 
     /**
-     * Increment extrinsicCount
+     * Increment extrinsic index
      */
-    static incExtrinsicCount(): void {
-        const count = this.extrinsicCount();
+    static incExtrinsicIndex(): void {
+        const count = this.extrinsicIndex();
         const newCount = new UInt32(count.value + 1);
-        Storage.set(Utils.stringsToU8a(["system", "extcs_cout"]), newCount.toU8a());
+        Storage.set(Utils.stringsToBytes([System.EXTRINSIC_INDEX], true), newCount.toU8a());
     }
 
     /**
-     * Computes the extrinsicsRoot for the given data
+     * Computes the extrinsicsRoot for the given data and populates storage
      * @param data 
      */
-    static extrinsicsRoot(data: ExtrinsicData): Hash{
-        return this.computeExtrinsicRoot(data.toEnumeratedValues());
+    static deriveExtrinsics(): void{
+        let extrinsicsDataU8a = Storage.take(Utils.stringsToBytes(["system", "extcs_data"], true));
+        const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).result;
+        Storage.set(Utils.stringsToBytes(["system", "exec_phase"], true), Utils.stringsToBytes([System.APPLY_EXTRINSIC], true));
+        const extcsRoot = this.extrinsicsDataRoot(extcsData.toEnumeratedValues());
+        Storage.set(Utils.stringsToBytes(["system", "extcs_root"], true), extcsRoot.toU8a());
     }
 
-        /**
-     * Computes the orderedTrieRoot hash of the extrinsics data using 
+    /**
+     * Removes all extrinsic data,
+     * Computes the orderedTrieRoot hash of the extrinsics data
+     * and saves it into the Storage 
      * @param data enumerated values
      */
-    static computeExtrinsicRoot(data: u8[]): Hash{
+    static extrinsicsDataRoot(data: u8[]): Hash{
         let dataPtr = data.dataStart;
         let dataLen = data.length;
         __retain(dataPtr);
@@ -142,22 +146,32 @@ export class System {
      * Adds applied extrinsic to the current ExtrinsicData
      * @param ext extrinsic as bytes
      */
-    static noteExtrinsic(ext: u8[]): void{
-        const extrinsics = Storage.get(Utils.stringsToU8a(["system", "extcs_data"]));
-        const extIndex = this.extrinsicCount();
+    static noteAppliedExtrinsic(ext: u8[]): void{
+        const extrinsics = Storage.get(Utils.stringsToBytes(["system", "extcs_data"], true));
+        const extIndex = this.extrinsicIndex();
         const extValue = ByteArray.fromU8a(ext);
         if (extrinsics.isSome()){
             let extrinsicsU8a: u8[] = (<ByteArray>extrinsics.unwrap()).values;
             const extcsData = ExtrinsicData.fromU8Array(extrinsicsU8a).result;
             extcsData.insert(extIndex, extValue);
-            Storage.set(Utils.stringsToU8a(["system", "extcs_data"]), extcsData.toU8a());
-            this.incExtrinsicCount();
+            Storage.set(Utils.stringsToBytes(["system", "extcs_data"], true), extcsData.toU8a());
+            this.incExtrinsicIndex();
             return ;
         }
         const data: Map<UInt32, ByteArray> = new Map();
         data.set(extIndex, extValue);
         const extcsData = new ExtrinsicData(data);
-        Storage.set(Utils.stringsToU8a(["system", "extcs_data"]), extcsData.toU8a());
+        Storage.set(Utils.stringsToBytes(["system", "extcs_data"], true), extcsData.toU8a());
+        this.incExtrinsicIndex();
+    }
+
+    /**
+     * Sets the new extrinsicsCount and set execution phase to finalization
+     */
+    static noteFinishedExtrinsics(): void{
+        let extIndex = this.extrinsicIndex();
+        Storage.set(Utils.stringsToBytes(["system", "extcs_cout"], true), extIndex.toU8a());
+        Storage.set(Utils.stringsToBytes(["system", "exec_phase"], true), Utils.stringsToBytes([System.FINALIZATION], true));
     }
 }
 

@@ -13,8 +13,8 @@ export class Log {
      * @param message 
      */
     static _baseLog(logLevel: i32, message: string): void {
-        const messageU8a: u8[] = Utils.stringsToU8a([message]);
-        const logTarget = Serialiser.serialiseResult(Utils.stringsToU8a([Log.LOG_TARGET]));
+        const messageU8a: u8[] = Utils.stringsToBytes([message], false);
+        const logTarget = Serialiser.serialiseResult(Utils.stringsToBytes([Log.LOG_TARGET], false));
         const encodedMessage = Serialiser.serialiseResult(messageU8a);
         ext_logging_log_version_1(logLevel, logTarget, encodedMessage);
     }

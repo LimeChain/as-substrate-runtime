@@ -1,7 +1,6 @@
 import { Hash, ScaleString } from 'as-scale-codec';
 
 export namespace Utils {
-
     /**
      * Returns new Array<u8> from Uint8 Typed array
      * @param typedArr 
@@ -34,11 +33,11 @@ export namespace Utils {
      * Converts array of strings to array of bytes
      * @param args array of strings
      */
-    export function stringsToU8a(args: string[]): u8[]{
+    export function stringsToBytes(args: string[], scale: bool): u8[]{
         let result: u8[] = [];
         for (let i=0; i<args.length ; i++){
             const strScale = new ScaleString(args[i]); 
-            result = result.concat(strScale.values);
+            result = result.concat(scale ? strScale.toU8a() : strScale.values);
         }
         return result;
     }
@@ -51,5 +50,4 @@ export namespace Utils {
         hashBytes.fill(byte);
         return Hash.fromU8a(hashBytes);
     }
-
 }
