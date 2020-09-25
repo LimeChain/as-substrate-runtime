@@ -8,7 +8,7 @@ import { Timestamp } from '@as-substrate/timestamp-module';
 import { AuraModule } from '@as-substrate/aura-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
-import { CompactInt, ByteArray, UInt128, Bool, UInt64, Bytes } from 'as-scale-codec';
+import { CompactInt, ByteArray, Bool, UInt64, Bytes } from 'as-scale-codec';
 import { System, Log, Storage, Crypto } from '.';
 
 export namespace Executive{

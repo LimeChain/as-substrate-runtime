@@ -286,10 +286,12 @@ impl_runtime_apis! {
 		}
 
 		fn execute_block(block: Block) {
+			info!("executing block: {:?}", block.encode());
 			Executive::execute_block(block)
 		}
 
 		fn initialize_block(header: &<Block as BlockT>::Header) {
+			info!("header: {:?}", header.encode());
 			Executive::initialize_block(header)
 		}
 	}
@@ -307,8 +309,9 @@ impl_runtime_apis! {
 		}
 
 		fn finalize_block() -> <Block as BlockT>::Header {
-			info!("finalizing a block");
-			Executive::finalize_block()
+			let mut header = Executive::finalize_block();
+			info!("finalizing a block: {:?}", header.encode());
+			header
 		}
 
 		fn inherent_extrinsics(data: sp_inherents::InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
@@ -362,7 +365,9 @@ impl_runtime_apis! {
 
 	impl sp_session::SessionKeys<Block> for Runtime {
 		fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
-			opaque::SessionKeys::generate(seed)
+			let keys = opaque::SessionKeys::generate(seed);
+			info!("calling session keys: {:?}", keys);
+			keys
 		}
 
 		fn decode_session_keys(
