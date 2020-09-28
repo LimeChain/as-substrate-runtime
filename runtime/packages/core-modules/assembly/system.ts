@@ -1,6 +1,6 @@
 import { CompactInt, ByteArray, Bytes, UInt64, UInt32, Hash } from 'as-scale-codec';
 import { Storage } from './storage';
-import { Blocks, Header, ExtrinsicData } from '@as-substrate/models';
+import { Header, ExtrinsicData } from '@as-substrate/models';
 import { Utils, Serialiser } from '@as-substrate/core-utils';
 import { AccountId } from '@as-substrate/balances-module';
 import { ext_trie_blake2_256_ordered_root_version_1 } from '.';
@@ -34,25 +34,12 @@ export class System {
 
         Storage.set(Utils.stringsToBytes(["system", "digests_00"], true), digests);
         
-        // if the BlockHash is populated in the storage, add current one and renew storage
-        // Rust version of this implementation is following:
-        // <BlockHash<T>>::insert(*number - One::one(), parent_hash);
         const blockNumber: CompactInt = new CompactInt(header.number.value - 1);
-
-        if(Storage.get(Utils.stringsToBytes(["system", "block_hash"], true)).isSome()){
-            let rawBlocks = Storage.get(Utils.stringsToBytes(["system", "block_hash"], true));
-            let blocksU8a: u8[] = (<ByteArray>rawBlocks.unwrap()).values;
-            let blocks: Blocks = Blocks.fromU8Array(blocksU8a).result;
-            blocks.insert(blockNumber, header.parentHash);
-            Storage.set(Utils.stringsToBytes(["system", "block_hash"], true), blocks.toU8a());
-        }else{
-            let blocks: Blocks = Blocks.default();
-            blocks.insert(blockNumber, header.parentHash);
-            Storage.set(Utils.stringsToBytes(["system", "block_hash"], true), blocks.toU8a());
-        }
+        const blockHashKey: u8[] = Utils.stringsToBytes(["system", "block_hash"], true).concat(blockNumber.toU8a());
+        Storage.set(blockHashKey, blockNumber.toU8a());
     }
     /**
-     * Remove temporary "environment" entries in storage.
+     * Remove temporary "environment" entries in storage and finalize block
      */
     static finalize(): Header {
         Storage.clear(Utils.stringsToBytes(["system", "exec_phase"], true));
@@ -61,6 +48,21 @@ export class System {
         let parentHash = Storage.take(Utils.stringsToBytes(["system", "parent_hsh"], true));
         let digests = Storage.take(Utils.stringsToBytes(["system", "digests_00"], true));
         let extrinsicsRoot = Storage.take(Utils.stringsToBytes(["system", "extcs_root"], true));
+        
+        // move block hash pruning window by one block
+        let blockHashCount = <u32>(this.blockHashCount().value);
+        let blockNum = <u32>(CompactInt.fromU8a(blockNumber).value);
+        if(blockNum > blockHashCount){
+            let toRemove = blockNum - blockHashCount - 1;
+
+            // keep genesis hash
+            if(toRemove != 0){
+                let toRemoveNum = new CompactInt(toRemove);
+                const blockHashKey = Utils.stringsToBytes(["system", "block_hash"], true).concat(toRemoveNum.toU8a());
+                Storage.clear(blockHashKey);
+            }
+        }
+
         let stateRoot = Storage.storageRoot();
 
         let result: u8[] = parentHash.concat(blockNumber)
@@ -96,6 +98,18 @@ export class System {
         const nonceKey: u8[] = Utils.stringsToBytes([System.NONCE_KEY], true);
         const newNonce = new UInt64(oldNonce.value + 1);
         Storage.set(who.getAddress().concat(nonceKey), newNonce.toU8a());
+    }
+
+    /**
+    * Maximum number of block number to block hash mappings to keep (oldest pruned first).
+    */
+    static blockHashCount(): UInt32 {
+        const value = Storage.get(Utils.stringsToBytes(["system", "block_cout"], true));
+        if(value.isSome()){
+            const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
+            return new UInt32(<u32>decValue.value);
+        }
+        return new UInt32(0);
     }
 
     /**

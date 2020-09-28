@@ -8,7 +8,6 @@ export * from './inherent-data';
 export * from './signature';
 export * from './digest-items';
 export * from './decoded-data';
-export * from './blocks';
 export * from './transaction-models';
 export * from './response-codes';
 export * from './inherent';
