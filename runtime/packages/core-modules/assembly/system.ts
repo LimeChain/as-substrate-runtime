@@ -35,8 +35,7 @@ export class System {
         Storage.set(Utils.stringsToBytes(["system", "digests_00"], true), digests);
         
         const blockNumber: CompactInt = new CompactInt(header.number.value - 1);
-        const blockHashKey: u8[] = Utils.stringsToBytes(["system", "block_hash"], true).concat(blockNumber.toU8a());
-        Storage.set(blockHashKey, blockNumber.toU8a());
+        this.setHashAtBlock(blockNumber, header.parentHash);
     }
     /**
      * Remove temporary "environment" entries in storage and finalize block
@@ -104,7 +103,7 @@ export class System {
     * Maximum number of block number to block hash mappings to keep (oldest pruned first).
     */
     static blockHashCount(): UInt32 {
-        const value = Storage.get(Utils.stringsToBytes(["system", "block_cout"], true));
+        const value = Storage.get(Utils.stringsToBytes(["system", "bhsh_count"], true));
         if(value.isSome()){
             const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
             return new UInt32(<u32>decValue.value);
@@ -133,7 +132,7 @@ export class System {
      * Computes the extrinsicsRoot for the given data and populates storage
      * @param data 
      */
-    static deriveExtrinsics(): void{
+    static computeExtrinsicsRoot(): void{
         let extrinsicsDataU8a = Storage.take(Utils.stringsToBytes(["system", "extcs_data"], true));
         const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).result;
         Storage.set(Utils.stringsToBytes(["system", "exec_phase"], true), Utils.stringsToBytes([System.APPLY_EXTRINSIC], true));
@@ -142,9 +141,7 @@ export class System {
     }
 
     /**
-     * Removes all extrinsic data,
-     * Computes the orderedTrieRoot hash of the extrinsics data
-     * and saves it into the Storage 
+     * Computes the ordered trie root hash of the extrinsics data
      * @param data enumerated values
      */
     static extrinsicsDataRoot(data: u8[]): Hash{
@@ -186,6 +183,19 @@ export class System {
         let extIndex = this.extrinsicIndex();
         Storage.set(Utils.stringsToBytes(["system", "extcs_cout"], true), extIndex.toU8a());
         Storage.set(Utils.stringsToBytes(["system", "exec_phase"], true), Utils.stringsToBytes([System.FINALIZATION], true));
+    }
+
+    /**
+     * Get hash of the block by the block number
+     */
+    static getHashAtBlock(number: CompactInt): Hash{
+        let blockHash = Storage.get(Utils.stringsToBytes(["system", "block_hash"], true).concat(number.toU8a()));
+        let blockHashU8a: u8[] = blockHash.isSome() ? (<ByteArray>blockHash.unwrap()).values : [];
+        return Hash.fromU8a(blockHashU8a);
+    }
+    static setHashAtBlock(number: CompactInt, parentHash: Hash): void{
+        const blockHashKey: u8[] = Utils.stringsToBytes(["system", "block_hash"], true).concat(number.toU8a());
+        Storage.set(blockHashKey, parentHash.toU8a());
     }
 }
 

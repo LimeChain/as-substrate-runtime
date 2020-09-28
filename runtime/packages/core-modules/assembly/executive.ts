@@ -28,10 +28,8 @@ export namespace Executive{
         let header = block.header;
         let n: CompactInt = header.number;
         // check that parentHash is valid
-        const previousHash: CompactInt = new CompactInt(n.value - 1);
-        const blockHash = Storage.get(Utils.stringsToBytes(["system", "block_hash"], true).concat(previousHash.toU8a()));
-        let blockHashU8a: u8[] = blockHash.isSome() ? (<ByteArray>blockHash.unwrap()).values : [];
-        const parentHash: Hash = Hash.fromU8a(blockHashU8a);
+        const previousBlock: CompactInt = new CompactInt(n.value - 1);
+        const parentHash: Hash = System.getHashAtBlock(previousBlock);
 
         if(n.value == 0 && parentHash != header.parentHash){
             Log.error("Initial checks: Parent hash should be valid.");
@@ -72,7 +70,7 @@ export namespace Executive{
      */
     export function finalizeBlock(): Header {
         System.noteFinishedExtrinsics();
-        System.deriveExtrinsics();
+        System.computeExtrinsicsRoot();
         return System.finalize();
     }
     /**
@@ -95,7 +93,6 @@ export namespace Executive{
         // if applying extrinsic succeeded, notify System about it
         if(Utils.areArraysEqual(result, ResponseCodes.SUCCESS)){
             System.noteAppliedExtrinsic(ext);
-            return result;
         }
         return result;
     }
