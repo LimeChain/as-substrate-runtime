@@ -39,14 +39,32 @@ export namespace Executive{
     }
 
     /**
+     * Final checks before including block in the chain
+     * @param header 
+     */
+    export function finalChecks(header: Header): void{
+        Log.info("final checks");
+        let newHeader = System.finalize();
+        let storageRoot = newHeader.stateRoot;
+        if(header.stateRoot != storageRoot){
+            Log.error("Storage root must match that calculated");
+        }
+    }
+
+
+
+    /**
      * Actually execute all transactions for Block
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
+        Log.info("executing a block");
+        Executive.initialChecks(block);
         Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
-        let header = block.header;
-        // TO-DO
+
+        Executive.executeExtrinsicsWithBookKeeping(block.extrinsics, block.header.number);
+        Executive.finalChecks(block.header);
     }
     /**
      * Finalize the block - it is up the caller to ensure that all header fields are valid
@@ -104,6 +122,23 @@ export namespace Executive{
             return BalancesModule.applyExtrinsic(extrinsic);
         }
         return ResponseCodes.CALL_ERROR;
+    }
+
+    /**
+     * Execute given extrinsics and take care of post-extrinsics book-keeping
+     * @param extrinsics byte array of extrinsics 
+     * @param number block number
+     */
+    export function executeExtrinsicsWithBookKeeping(extrinsics: u8[], number: CompactInt): void{
+        const arrLen = Bytes.decodeCompactInt(extrinsics);
+        extrinsics = extrinsics.slice(arrLen.decBytes);
+        for(let i=0; i < <i32>arrLen.value; i++){
+            const extLen = Bytes.decodeCompactInt(extrinsics);
+            extrinsics = extrinsics.slice(extLen.decBytes);
+            Executive.applyExtrinsic(extrinsics.slice(0, <i32>extLen.value));
+            extrinsics = extrinsics.slice(<i32>extLen.value);
+        }
+        System.noteFinishedExtrinsics();
     }
 
     /**
