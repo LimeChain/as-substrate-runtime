@@ -23,23 +23,23 @@ export class System {
      * System storage keys
      */
     // execution phase
-    static readonly EXEC_PHASE = ["system", "exec_phase"];
+    static readonly EXEC_PHASE: string[] = ["system", "exec_phase"];
     // parent hash
-    static readonly PARENT_HSH = ["system", "parent_hsh"];
+    static readonly PARENT_HSH: string[] = ["system", "parent_hsh"];
     // block number
-    static readonly BLOCK_NUM0 = ["system", "block_num0"];
+    static readonly BLOCK_NUM0: string[] = ["system", "block_num0"];
     // extrinsics root
-    static readonly EXTCS_ROOT = ["system", "extcs_root"];
+    static readonly EXTCS_ROOT: string[] = ["system", "extcs_root"];
     // digest items
-    static readonly DIGESTS_00 = ["system", "digests_00"];
+    static readonly DIGESTS_00: string[] = ["system", "digests_00"];
     // block hash
-    static readonly BLOCK_HASH = ["system", "block_hash"];
+    static readonly BLOCK_HASH: string[] = ["system", "block_hash"];
     // extrinsics count
-    static readonly EXTCS_COUT = ["system", "extcs_cout"];
+    static readonly EXTCS_COUT: string[] = ["system", "extcs_cout"];
     // extrinsics data 
-    static readonly EXTCS_DATA = ["system", "extcs_data"];
+    static readonly EXTCS_DATA: string[] = ["system", "extcs_data"];
     // block hash count (max number of blocks to be stored)
-    static readonly BHSH_COUNT = ["system", "bhash_cout"];
+    static readonly BHSH_COUNT: string[] = ["system", "bhash_cout"];
     
     /**
      * Sets up the environment necessary for block production
