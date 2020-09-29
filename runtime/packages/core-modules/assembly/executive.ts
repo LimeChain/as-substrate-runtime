@@ -107,11 +107,11 @@ export namespace Executive{
      * @param encoded encoded extrinsic
      */
     export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
-        // if the length of the encoded extrinsic is less than 144, it's inherent
-        // in our case, we have only timestamp inherent
-        if(Inherent.isInherent(ext)){
-            const inherent = Inherent.fromU8Array(ext).result;
-            Timestamp.applyInherent(inherent);
+
+        const extrinsic = Extrinsic.fromU8Array(ext);
+
+        if(Extrinsic.isInherent(extrinsic)){
+            Timestamp.applyInherent(extrinsic);
             return ResponseCodes.SUCCESS;
         }
         const cmpLen = Bytes.decodeCompactInt(ext);
