@@ -1,6 +1,6 @@
 import { 
     Block, Header, 
-    InherentData, Blocks, 
+    InherentData, 
     Extrinsic, Inherent, 
     ValidTransaction, TransactionTag, ResponseCodes
 } from '@as-substrate/models';
@@ -8,7 +8,7 @@ import { Timestamp } from '@as-substrate/timestamp-module';
 import { AuraModule } from '@as-substrate/aura-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
-import { CompactInt, ByteArray, Bool, UInt64, Bytes } from 'as-scale-codec';
+import { CompactInt, ByteArray, Bool, UInt64, Bytes, Hash } from 'as-scale-codec';
 import { System, Log, Storage, Crypto } from '.';
 
 export namespace Executive{
@@ -27,12 +27,11 @@ export namespace Executive{
     export function initialChecks(block: Block): void{
         let header = block.header;
         let n: CompactInt = header.number;
+        // check that parentHash is valid
+        const previousBlock: CompactInt = new CompactInt(n.value - 1);
+        const parentHash: Hash = System.getHashAtBlock(previousBlock);
 
-        const result = Storage.get(Utils.stringsToU8a(["system", "block_hash"]));
-        let blockHashU8a: u8[] = result.isSome() ? (<ByteArray>result.unwrap()).values : [];
-        const blockHash = Blocks.fromU8Array(blockHashU8a).result;
-
-        if(n.value == 0 &&  blockHash.data.get(new CompactInt(n.value - 1)) == header.parentHash){
+        if(n.value == 0 && parentHash != header.parentHash){
             Log.error("Initial checks: Parent hash should be valid.");
         }
     }
@@ -52,6 +51,8 @@ export namespace Executive{
 	 * except state-root.
      */
     export function finalizeBlock(): Header {
+        System.noteFinishedExtrinsics();
+        System.computeExtrinsicsRoot();
         return System.finalize();
     }
     /**
@@ -70,7 +71,12 @@ export namespace Executive{
      */
     export function applyExtrinsic(ext: u8[]): u8[] {
         const encodedLen = Bytes.decodeCompactInt(ext);
-        return Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
+        const result = Executive.applyExtrinsicWithLen(ext, encodedLen.value as u32);
+        // if applying extrinsic succeeded, notify System about it
+        if(Utils.areArraysEqual(result, ResponseCodes.SUCCESS)){
+            System.noteAppliedExtrinsic(ext);
+        }
+        return result;
     }
     
     /**

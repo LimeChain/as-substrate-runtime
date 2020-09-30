@@ -47,6 +47,26 @@ fn get_inherent_data_instance() -> InherentData {
     return inh;
 }
 
+fn get_timestamp_inherent() -> Vec<u8>{
+    const ALL_MODULES: Compact<u8> = Compact(1);
+    const SIZE: Compact<u8> = Compact(10);
+    const OPTION: Compact<u8> = Compact(1);
+    let call_index: Vec<u8> = vec![2, 0];
+    const COMPACT_PREFIX: u8 = 11;
+    const MIN_PERIOD: u64 = 5000;
+    const DEFAULT_VALUE: u64 = 4;
+
+    let mut exp_inherent: Vec<u8> = vec![];
+    exp_inherent.extend(ALL_MODULES.encode());
+    exp_inherent.extend(SIZE.encode());
+    exp_inherent.extend(OPTION.encode());
+    exp_inherent.extend(call_index);
+    exp_inherent.push(COMPACT_PREFIX);
+    exp_inherent.extend((MIN_PERIOD+DEFAULT_VALUE).encode());
+
+    exp_inherent
+}
+
 fn call_in_wasm<E: Externalities> (
     function: &str,
     call_data: &[u8],
@@ -119,21 +139,7 @@ fn test_block_builder_inherent_extrinsics() {
     let mut ext = setup.ext;
     let mut ext = ext.ext();
 
-    const ALL_MODULES: Compact<u8> = Compact(1);
-    const SIZE: Compact<u8> = Compact(10);
-    const OPTION: Compact<u8> = Compact(1);
-    let call_index: Vec<u8> = vec![2, 0];
-    const COMPACT_PREFIX: u8 = 11;
-    const MIN_PERIOD: u64 = 5000;
-    const DEFAULT_VALUE: u64 = 4;
-
-    let mut exp_inherent: Vec<u8> = vec![];
-    exp_inherent.extend(ALL_MODULES.encode());
-    exp_inherent.extend(SIZE.encode());
-    exp_inherent.extend(OPTION.encode());
-    exp_inherent.extend(call_index);
-    exp_inherent.push(COMPACT_PREFIX);
-    exp_inherent.extend((MIN_PERIOD+DEFAULT_VALUE).encode());
+    let exp_inherent = get_timestamp_inherent();
 
     let inh = get_inherent_data_instance();
 
@@ -185,6 +191,14 @@ fn test_block_builder_finalize_block() {
         &mut ext,
     );
 
+    let timestamp_inherent: Vec<u8> = get_timestamp_inherent();
+    let _res = call_in_wasm(
+        "BlockBuilder_apply_extrinsic",
+        &timestamp_inherent[1..],
+        WasmExecutionMethod::Interpreted,
+        &mut ext,
+    ).unwrap();
+
     let result = call_in_wasm(
         "BlockBuilder_finalize_block",
         &[],
@@ -204,7 +218,6 @@ fn test_block_builder_finalize_block() {
 
     let cmp_headers: bool = header.parent_hash == final_header.parent_hash
         && header.number == final_header.number
-        && header.extrinsics_root == final_header.extrinsics_root
         && header.digest == final_header.digest;
     
     assert_eq!(cmp_headers, true);
