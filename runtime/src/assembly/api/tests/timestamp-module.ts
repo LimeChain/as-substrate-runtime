@@ -10,8 +10,7 @@ import { UInt64 } from 'as-scale-codec';
 export function test_timestamp_get(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const now = Timestamp.get();
-    const res = new UInt64(now)
-    return Serialiser.serialiseResult(res.toU8a());
+    return Serialiser.serialiseResult(now.toU8a());
 }
 
 /**

@@ -28,6 +28,8 @@ export abstract class Extrinsic{
         this.typeId = typeId;
     }
 
+    abstract toU8a(): u8[];
+
     /**
      * Checks whether the extrinsic is inherent
      * @param ext 

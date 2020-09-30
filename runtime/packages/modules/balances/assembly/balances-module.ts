@@ -1,5 +1,5 @@
 import { AccountData, AccountId } from ".";
-import { Extrinsic, TransactionValidity, ResponseCodes } from '@as-substrate/models';
+import { SignedTransaction, TransactionValidity, ResponseCodes } from '@as-substrate/models';
 import { Storage, Log, System } from "@as-substrate/core-modules";
 import { ByteArray, UInt128 } from "as-scale-codec";
 import { u128 } from "as-bignum";
@@ -63,7 +63,7 @@ export class BalancesModule {
      * Apply extrinsic for the module
      * @param extrinsic 
      */
-    static applyExtrinsic(extrinsic: Extrinsic): u8[]{
+    static applyExtrinsic(extrinsic: SignedTransaction): u8[]{
         const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
         const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
         const validated = this.validateTransaction(extrinsic);
@@ -78,7 +78,7 @@ export class BalancesModule {
     /**
      * 
      */
-    static validateTransaction(extrinsic: Extrinsic): TransactionValidity{
+    static validateTransaction(extrinsic: SignedTransaction): TransactionValidity{
         const from: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
         const fromBalance = BalancesModule.getAccountData(from);
         const balance: UInt128 = fromBalance.getFree();

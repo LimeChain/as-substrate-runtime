@@ -1,7 +1,7 @@
 import { 
     Block, Header, 
     InherentData, 
-    Extrinsic, Inherent, 
+    Extrinsic, Inherent, SignedTransaction, DecodedData,
     ValidTransaction, TransactionTag, ResponseCodes
 } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
@@ -63,7 +63,7 @@ export namespace Executive{
         Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
 
-        Executive.executeExtrinsicsWithBookKeeping(block.extrinsics, block.header.number);
+        Executive.executeExtrinsicsWithBookKeeping(block.body, block.header.number);
         Executive.finalChecks(block.header);
     }
     /**
@@ -107,21 +107,15 @@ export namespace Executive{
      * @param encoded encoded extrinsic
      */
     export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
+        const extrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(ext);
 
-        const extrinsic = Extrinsic.fromU8Array(ext);
-
-        if(Extrinsic.isInherent(extrinsic)){
-            Timestamp.applyInherent(extrinsic);
+        if(Extrinsic.isInherent(extrinsic.result)){
+            const inherent: Inherent = <Inherent>extrinsic.result;
+            Timestamp.applyInherent(inherent);
             return ResponseCodes.SUCCESS;
         }
-        const cmpLen = Bytes.decodeCompactInt(ext);
-        ext = ext.slice(cmpLen.decBytes);
-        const result = ext.shift();
-        if (result as bool){
-            const extrinsic = Extrinsic.fromU8Array(ext).result;
-            return BalancesModule.applyExtrinsic(extrinsic);
-        }
-        return ResponseCodes.CALL_ERROR;
+        const signedTransaction: SignedTransaction = <SignedTransaction>extrinsic.result;
+        return BalancesModule.applyExtrinsic(signedTransaction);
     }
 
     /**
@@ -129,14 +123,9 @@ export namespace Executive{
      * @param extrinsics byte array of extrinsics 
      * @param number block number
      */
-    export function executeExtrinsicsWithBookKeeping(extrinsics: u8[], number: CompactInt): void{
-        const arrLen = Bytes.decodeCompactInt(extrinsics);
-        extrinsics = extrinsics.slice(arrLen.decBytes);
-        for(let i=0; i < <i32>arrLen.value; i++){
-            const extLen = Bytes.decodeCompactInt(extrinsics);
-            extrinsics = extrinsics.slice(extLen.decBytes);
-            Executive.applyExtrinsic(extrinsics.slice(0, <i32>extLen.value));
-            extrinsics = extrinsics.slice(<i32>extLen.value);
+    export function executeExtrinsicsWithBookKeeping(extrinsics: Extrinsic[], number: CompactInt): void{
+        for(let i=0; i<extrinsics.length; i++){
+            Executive.applyExtrinsic(extrinsics[0].toU8a());
         }
         System.noteFinishedExtrinsics();
     }
@@ -146,7 +135,7 @@ export namespace Executive{
      * @param source source of the transaction (external, inblock, etc.)
      * @param utx transaction
      */
-    export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
+    export function validateTransaction(utx: SignedTransaction): u8[] {
         const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
         const transfer = utx.getTransferBytes();
 
