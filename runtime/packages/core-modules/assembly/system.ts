@@ -46,6 +46,9 @@ export class System {
      * @param header Header instance
     */
     static initialize(header: Header): void{
+        // maximum number of blocks
+        const bhshCount = new UInt32(1000);
+        Storage.set(Utils.stringsToBytes(this.BHSH_COUNT, true), bhshCount.toU8a());
         Storage.set(Utils.stringsToBytes([this.EXTRINSIC_INDEX], true), [<u8>0]);
         Storage.set(Utils.stringsToBytes(this.EXEC_PHASE, true), Utils.stringsToBytes([System.INITIALIZATION], true));
         Storage.set(Utils.stringsToBytes(this.PARENT_HSH, true), header.parentHash.toU8a());

@@ -21,6 +21,7 @@ export function BabeApi_configuration(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
+    Log.info("session keys called");
     return Serialiser.serialiseResult([]);
 }
 
@@ -33,6 +34,7 @@ export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
  * len + source + ext
  */
 export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32): u64 {
+    Log.info("validate_tx called");
     let input = Serialiser.deserialiseInput(data, len);
     const uxt = Extrinsic.fromU8Array(input);
     const result = Executive.validateTransaction(<SignedTransaction>uxt.result);
@@ -54,5 +56,6 @@ export function OffchainWorkerApi_offchain_worker(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function Metadata_metadata(data: i32, len: i32): u64 {
+    Log.info("metadata called");
     return Serialiser.serialiseResult([]);
 }
