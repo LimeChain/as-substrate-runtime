@@ -1,4 +1,4 @@
-import { Hash, UInt64, BIT_LENGTH, Bool } from "as-scale-codec";
+import { Hash, UInt64, BIT_LENGTH, Bool, CompactInt } from "as-scale-codec";
 import { Signature, DecodedData } from "..";
 import { Extrinsic, ExtrinsicType } from "./extrinsic";
 
@@ -51,7 +51,9 @@ export class SignedTransaction extends Extrinsic {
     * SCALE Encodes the Header into u8[]
     */
     toU8a(): u8[] {
-        return this.from.toU8a()
+        let len = new CompactInt(ExtrinsicType.SignedTransaction);
+        return len.toU8a()
+            .concat(this.from.toU8a())
             .concat(this.to.toU8a())
             .concat(this.amount.toU8a())
             .concat(this.nonce.toU8a())
