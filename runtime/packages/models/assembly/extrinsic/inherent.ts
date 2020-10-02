@@ -42,17 +42,21 @@ export class Inherent extends Extrinsic{
      * Convert SCALE encoded bytes to an instance of Inherent
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic>{
-        const version = input[0];
-        input = input.slice(1);
-        const callIndex = input.slice(0, 2);
-        input = input.slice(2);
-        const compactPrx = input[0];
-        input = input.slice(1);
+        // get only inherent bytes
+        let inherentU8a = input.slice(0, ExtrinsicType.Inherent);
+        input = input.slice(ExtrinsicType.Inherent);
+
+        const version = inherentU8a[0];
+        inherentU8a = inherentU8a.slice(1);
+        const callIndex = inherentU8a.slice(0, 2);
+        inherentU8a = inherentU8a.slice(2);
+        const compactPrx = inherentU8a[0];
+        inherentU8a = inherentU8a.slice(1);
         
-        const initLen = input.length;
-        input.length = BIT_LENGTH.INT_64;
-        const arg = UInt64.fromU8a(input.fill(0, initLen, input.length));
-        input = input.slice(arg.encodedLength());
+        const initLen = inherentU8a.length;
+        inherentU8a.length = BIT_LENGTH.INT_64;
+        const arg = UInt64.fromU8a(inherentU8a.fill(0, initLen, inherentU8a.length));
+        inherentU8a = inherentU8a.slice(arg.encodedLength());
 
         const inherent = new Inherent(callIndex, version, compactPrx, arg);
         return new DecodedData(inherent, input);

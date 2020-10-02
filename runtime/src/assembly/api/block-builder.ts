@@ -9,7 +9,6 @@ import { Bool } from 'as-scale-codec';
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
-    Log.info("apply ext called");
     const input = Serialiser.deserialiseInput(data, len);
     const applyExtResult = Executive.applyExtrinsic(input);
     return Serialiser.serialiseResult(applyExtResult);
@@ -22,7 +21,6 @@ export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
-    Log.info("inherent ext called");
     const input = Serialiser.deserialiseInput(data, len);
     const inherent = InherentData.fromU8Array(input);
     const inherents = Executive.createExtrinsics(inherent.result);
@@ -47,7 +45,6 @@ export function BlockBuilder_finalize_block(data: i32, len: i32): u64 {
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function BlockBuilder_check_inherents(data: i32, len: i32): u64 {
-    Log.info("check inherents called");
     return Serialiser.serialiseResult((new Bool(true)).toU8a());
 }
 
@@ -58,7 +55,6 @@ export function BlockBuilder_check_inherents(data: i32, len: i32): u64 {
  */
 
 export function BlockBuilder_random_seed(data: i32, len: i32): u64 {
-    Log.info("random called");
     return Serialiser.serialiseResult([]);
 }
 

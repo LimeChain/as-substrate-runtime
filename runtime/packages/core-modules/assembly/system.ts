@@ -4,7 +4,6 @@ import { Header, ExtrinsicData } from '@as-substrate/models';
 import { Utils, Serialiser } from '@as-substrate/core-utils';
 import { AccountId } from '@as-substrate/balances-module';
 import { ext_trie_blake2_256_ordered_root_version_1 } from '.';
-import { Log } from './log';
 
 export class System {
     // execution phases
@@ -94,7 +93,6 @@ export class System {
             .concat(stateRoot)
             .concat(extrinsicsRoot)
             .concat(digests);
-
         const decodedHeader = Header.fromU8Array(result);
         return decodedHeader.result;
     }
@@ -163,7 +161,6 @@ export class System {
         const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).result;
         Storage.set(Utils.stringsToBytes(this.EXEC_PHASE, true), Utils.stringsToBytes([System.APPLY_EXTRINSIC], true));
         const extcsRoot = this.extrinsicsDataRoot(extcsData.toEnumeratedValues());
-        Log.info(extcsData.toEnumeratedValues().toString());
         Storage.set(Utils.stringsToBytes(this.EXTCS_ROOT, true), extcsRoot.toU8a());
     }
 

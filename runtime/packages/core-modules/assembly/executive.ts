@@ -42,6 +42,7 @@ export namespace Executive{
      */
     export function finalChecks(header: Header): void{
         Log.info("final checks");
+        System.computeExtrinsicsRoot();
         let newHeader = System.finalize();
         let storageRoot = newHeader.stateRoot;
         if(header.stateRoot != storageRoot){
@@ -57,7 +58,6 @@ export namespace Executive{
      */
     export function executeBlock(block: Block): void{
         Log.info("executing a block");
-        Executive.initialChecks(block);
         Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
 
@@ -122,7 +122,7 @@ export namespace Executive{
      */
     export function executeExtrinsicsWithBookKeeping(extrinsics: Extrinsic[], number: CompactInt): void{
         for(let i=0; i<extrinsics.length; i++){
-            Executive.applyExtrinsic(extrinsics[0].toU8a());
+            Executive.applyExtrinsic(extrinsics[i].toU8a());
         }
         System.noteFinishedExtrinsics();
     }

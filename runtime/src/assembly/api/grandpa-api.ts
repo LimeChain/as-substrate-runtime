@@ -1,5 +1,4 @@
 import {Serialiser} from '@as-substrate/core-utils';
-import { Log } from "@as-substrate/core-modules";
 
 
 /**
@@ -8,7 +7,6 @@ import { Log } from "@as-substrate/core-modules";
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function GrandpaApi_grandpa_pending_change(data: i32, len: i32): u64{
-    Log.info("pending change called");
     return Serialiser.serialiseResult([]);
 }
 
@@ -27,6 +25,5 @@ export function GrandpaApi_grandpa_forced_change(data: i32, len: i32): u64{
  * @param len i32 length (in bytes) of the arguments passed
  */
 export function GrandpaApi_grandpa_authorities(data: i32, len: i32): u64{
-    Log.info("grandpas called");
     return Serialiser.serialiseResult([]);
 }

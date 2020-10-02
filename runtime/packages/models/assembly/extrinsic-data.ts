@@ -36,7 +36,9 @@ export class ExtrinsicData{
         let lenData: CompactInt = new CompactInt(<u8>(keys.length));
         result = result.concat(lenData.toU8a());
         for(let i=0; i < keys.length; i++){
+            let extLength = new CompactInt(this.data.get(keys[i]).toU8a().length);
             result = result
+            .concat(extLength.toU8a())
             .concat(this.data.get(keys[i]).toU8a());
         }
         return result;

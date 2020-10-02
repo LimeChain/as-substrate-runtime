@@ -1,5 +1,4 @@
 import { Serialiser } from '@as-substrate/core-utils';
-import { Log } from "@as-substrate/core-modules";
 
 /**
  * The API for querying the state of parachains on-chain.
@@ -12,7 +11,6 @@ import { Log } from "@as-substrate/core-modules";
  * @param len i32 length (in bytes) of the arguments passed
 */
 export function ParachainHost_validators(data: i32, len: i32): u64 {
-    Log.info("metadata called");
     return Serialiser.serialiseResult([]);
 }
 
