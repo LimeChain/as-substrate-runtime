@@ -21,6 +21,6 @@ export function test_timestamp_get(data: i32, len: i32): u64 {
 export function test_timestamp_set(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const now = UInt64.fromU8a(input);
-    Timestamp.set(now.value);
+    const res = Timestamp.set(now.value);
     return Serialiser.serialiseResult([]);
 }
