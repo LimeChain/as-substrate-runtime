@@ -61,7 +61,7 @@ export namespace Executive{
         Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
 
-        Executive.executeExtrinsicsWithBookKeeping(block.body, block.header.number);
+        Executive.executeExtrinsicsWithBookKeeping(block.body);
         Executive.finalChecks(block.header);
     }
     /**
@@ -118,9 +118,8 @@ export namespace Executive{
     /**
      * Execute given extrinsics and take care of post-extrinsics book-keeping
      * @param extrinsics byte array of extrinsics 
-     * @param number block number
      */
-    export function executeExtrinsicsWithBookKeeping(extrinsics: Extrinsic[], number: CompactInt): void{
+    export function executeExtrinsicsWithBookKeeping(extrinsics: Extrinsic[]): void{
         for(let i=0; i<extrinsics.length; i++){
             Executive.applyExtrinsic(extrinsics[i].toU8a());
         }

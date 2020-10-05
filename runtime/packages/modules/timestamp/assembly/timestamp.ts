@@ -76,7 +76,8 @@ export class Timestamp{
      */
     static get(): UInt64 {
         const now = Storage.get(Timestamp.SCALE_TIMESTAMP_NOW);
-        const res = now.isSome() ? (<ByteArray>now.unwrap()).values : [0, 0, 0, 0, 0, 0, 0, 0];
+        const zero = new UInt64(0);
+        const res = now.isSome() ? (<ByteArray>now.unwrap()).values : zero.toU8a();
         const val: UInt64 = UInt64.fromU8a(res);
         return val;
     }

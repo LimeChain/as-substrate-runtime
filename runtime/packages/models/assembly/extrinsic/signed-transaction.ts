@@ -78,28 +78,24 @@ export class SignedTransaction extends Extrinsic {
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic> {
         assert(input.length >= 144, "Extrinsic: Invalid bytes provided. EOF");
-        // get only signed transaction bytes
-        let signedTxu8a = input.slice(0, ExtrinsicType.SignedTransaction);
-        
-        input = input.slice(ExtrinsicType.SignedTransaction);
 
-        const from = Hash.fromU8a(signedTxu8a);
-        signedTxu8a = signedTxu8a.slice(from.encodedLength());
+        const from = Hash.fromU8a(input);
+        input = input.slice(from.encodedLength());
 
-        const to = Hash.fromU8a(signedTxu8a);
-        signedTxu8a = signedTxu8a.slice(to.encodedLength());
+        const to = Hash.fromU8a(input);
+        input = input.slice(to.encodedLength());
 
-        const amount = UInt64.fromU8a(signedTxu8a.slice(0, BIT_LENGTH.INT_64));
-        signedTxu8a = signedTxu8a.slice(amount.encodedLength());
+        const amount = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(amount.encodedLength());
 
-        const nonce = UInt64.fromU8a(signedTxu8a.slice(0, BIT_LENGTH.INT_64));
-        signedTxu8a = signedTxu8a.slice(nonce.encodedLength());
+        const nonce = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(nonce.encodedLength());
 
-        const signature = new Signature(signedTxu8a.slice(0, Signature.SIGNATURE_LENGTH));
-        signedTxu8a = signedTxu8a.slice(signature.value.length);
+        const signature = new Signature(input.slice(0, Signature.SIGNATURE_LENGTH));
+        input = input.slice(signature.value.length);
 
-        const exhaustResourcesWhenNotFirst = Bool.fromU8a(signedTxu8a.slice(0, 1));
-        signedTxu8a = signedTxu8a.slice(exhaustResourcesWhenNotFirst.encodedLength());
+        const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
+        input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
 
         const extrinsic = new SignedTransaction(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
 

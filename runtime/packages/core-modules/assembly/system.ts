@@ -18,6 +18,10 @@ export class System {
     static readonly ALL_MODULES: u8[] = [4];
     // nonce key
     static readonly NONCE_KEY: string = "nonce";
+    /**
+     * Number of block hashes to store in the storage, pruning starts with the oldest block 
+    */
+    static readonly NUMBER_OF_BLOCKS_TO_KEEP: i32 = 1000;
 
     /**
      * System storage keys
@@ -47,7 +51,7 @@ export class System {
     */
     static initialize(header: Header): void{
         // maximum number of blocks
-        const bhshCount = new UInt32(1000);
+        const bhshCount = new UInt32(this.NUMBER_OF_BLOCKS_TO_KEEP);
         Storage.set(Utils.stringsToBytes(this.BHSH_COUNT, true), bhshCount.toU8a());
         Storage.set(Utils.stringsToBytes([this.EXTRINSIC_INDEX], true), [<u8>0]);
         Storage.set(Utils.stringsToBytes(this.EXEC_PHASE, true), Utils.stringsToBytes([System.INITIALIZATION], true));
