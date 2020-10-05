@@ -1,0 +1,22 @@
+{
+    "nodes": [
+        {
+            "url": "http://localhost:9933",
+            "address": "....",
+            "privateKey": "....",
+            "mnemonic": "..."
+        },
+        {
+            "url": "http://localhost:9933",
+            "address": "....",
+            "privateKey": "....",
+            "mnemonic": "..."
+        },
+        {
+            "url": "http://localhost:9933",
+            "address": "....",
+            "privateKey": "....",
+            "mnemonic": "..."
+        }
+    ]
+}
