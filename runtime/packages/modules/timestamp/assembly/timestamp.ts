@@ -1,6 +1,7 @@
 import { Storage } from '@as-substrate/core-modules';
-import { InherentData, Inherent } from '@as-substrate/models';
-import { UInt64, Bool, ByteArray, CompactInt } from 'as-scale-codec';
+import { InherentData, Inherent, ResponseCodes } from '@as-substrate/models';
+import { Utils } from '@as-substrate/core-utils';
+import { UInt64, Bool, ByteArray } from 'as-scale-codec';
 import { Log } from '@as-substrate/core-modules';
 
 export class Timestamp{
@@ -51,23 +52,24 @@ export class Timestamp{
      * it must be greater than the last one (set into storage) with at least a MinimumPeriod
      * @param now timestamp number
      */
-    static set(now: u64): void {
+    static set(now: u64): u8[] {
         const didUpdate = Storage.get(Timestamp.SCALE_TIMESTAMP_DID_UPDATE);
         const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
         if(didUpdateValue.value){
             Log.error('Validation error: Timestamp must be updated only once in the block');
-            throw new Error();
+            return ResponseCodes.dispatchError(1, 1);
         }
         const prev: UInt64 = Timestamp.get();
         if(now < prev.value + Timestamp.MINIMUM_PERIOD){
             Log.error('Validation error: Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
-            throw new Error();
+            return ResponseCodes.dispatchError(1, 2);
         }
 
         const nowu8 = new UInt64(now);
         const trueu8 = new Bool(true);
         Storage.set(Timestamp.SCALE_TIMESTAMP_DID_UPDATE, trueu8.toU8a());
         Storage.set(Timestamp.SCALE_TIMESTAMP_NOW, nowu8.toU8a());
+        return ResponseCodes.SUCCESS;
     }
 
     /**
@@ -126,9 +128,12 @@ export class Timestamp{
      * 
      * @param inherent 
      */
-    static applyInherent(inherent: Inherent): void {
-        Timestamp.set(inherent.arg.value);
-        Timestamp.toggleUpdate();
+    static applyInherent(inherent: Inherent): u8[] {
+        const resCode = Timestamp.set(inherent.arg.value);
+        if(Utils.areArraysEqual(resCode, ResponseCodes.SUCCESS)){
+            Timestamp.toggleUpdate();
+        }
+        return resCode;
     }
 }
  

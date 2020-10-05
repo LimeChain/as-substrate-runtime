@@ -108,8 +108,7 @@ export namespace Executive{
 
         if(Extrinsic.isInherent(extrinsic.result)){
             const inherent: Inherent = <Inherent>extrinsic.result;
-            Timestamp.applyInherent(inherent);
-            return ResponseCodes.SUCCESS;
+            return Timestamp.applyInherent(inherent);
         }
         const signedTransaction: SignedTransaction = <SignedTransaction>extrinsic.result;
         return BalancesModule.applyExtrinsic(signedTransaction);
