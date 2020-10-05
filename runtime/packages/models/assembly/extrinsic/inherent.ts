@@ -1,6 +1,7 @@
 import { CompactInt, UInt64, BIT_LENGTH, Bytes } from 'as-scale-codec';
 import { DecodedData } from '../decoded-data';
 import { Extrinsic, ExtrinsicType } from './extrinsic';
+import { Utils } from '@as-substrate/core-utils';
 
 export class Inherent extends Extrinsic{
     /**
@@ -60,5 +61,18 @@ export class Inherent extends Extrinsic{
 
         const inherent = new Inherent(callIndex, version, compactPrx, arg);
         return new DecodedData(inherent, input);
+    }
+
+    @inline @operator('==')
+    static eq(a: Inherent, b: Inherent): bool{
+        return Utils.areArraysEqual(a.callIndex, b.callIndex) &&
+            a.prefix == b.prefix &&
+            a.version == b.version &&
+            a.arg == b.arg;
+    }
+
+    @inline @operator('!=')
+    static notEq(a: Inherent, b: Inherent): bool{
+        return !Inherent.eq(a, b);
     }
 }

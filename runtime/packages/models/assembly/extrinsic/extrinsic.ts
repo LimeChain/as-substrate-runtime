@@ -54,4 +54,23 @@ export abstract class Extrinsic{
             }
         }
     }
+
+    @inline @operator('==')
+    static eq(a: Extrinsic, b: Extrinsic): bool{
+        switch(<i32>a.typeId){
+            case ExtrinsicType.Inherent:{
+                return Inherent.eq(<Inherent>a, <Inherent>b);
+            }
+            case ExtrinsicType.SignedTransaction:{
+                return SignedTransaction.eq(<SignedTransaction>a, <SignedTransaction>b);
+            }
+            default: {
+                return false;
+            }
+        }
+    }
+    @inline @operator("!=")
+    static notEq(a: Extrinsic, b: Extrinsic): bool{
+        return !this.eq(a, b);
+    }
 }
