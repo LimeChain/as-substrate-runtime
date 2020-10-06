@@ -1,22 +1,28 @@
 {
     "nodes": [
         {
-            "url": "http://localhost:9933",
+            "name": "Node01",
+            "port": 9933,
             "address": "....",
-            "privateKey": "....",
-            "mnemonic": "..."
+            "publicKey": "....",
+            "mnemonic": "...",
+            "validator": true
         },
         {
-            "url": "http://localhost:9933",
+            "name": "Node02",
+            "port": 9934,
             "address": "....",
-            "privateKey": "....",
-            "mnemonic": "..."
+            "publicKey": "....",
+            "mnemonic": "...",
+            "validator": false
         },
         {
-            "url": "http://localhost:9933",
+            "name": "Node03",
+            "port": 9935,
             "address": "....",
-            "privateKey": "....",
-            "mnemonic": "..."
+            "publicKey": "....",
+            "mnemonic": "...",
+            "validator": true
         }
     ]
 }

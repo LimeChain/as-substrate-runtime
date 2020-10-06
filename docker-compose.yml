@@ -1,14 +1,27 @@
-version: "1.0.0"
+version: "3.8"
 services:
     node01:
-        image: as-substrate:latest
-        ports:
+        build: .
+        expose:
             - "9933"
             - "9944"
             - "30333"
-        args:
-            base-path: "tmp/node01"
-            execution: "wasm"
-            name: node01
-            validator: ""
-        
+        entrypoint: 
+            ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm", "--rpc-port", "9933", "--ws-port", "9944", "--port", "30333", "--name", "Node01", "--base-path", "/tmp/node01", "--validator"]
+    node02:
+        build: .
+        expose:
+            - "9934"
+            - "9944"
+            - "30334"
+        entrypoint:
+            ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm", "--rpc-port", "9934", "--ws-port", "9945", "--port", "30334", "--name", "Node02", "--base-path", "/tmp/node02", "--validator"]
+    
+    node03:
+        build: .
+        expose:
+            - "9935"
+            - "9945"
+            - "30335"
+        entrypoint:
+            ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm", "--rpc-port", "9935", "--ws-port", "9946", "--port", "30335", "--name", "Node03", "--base-path", "/tmp/node03", "--validator"]

@@ -37,5 +37,4 @@ FROM ubuntu:18.04
 WORKDIR /usr/src/app
 COPY --from=node-builder /usr/src/node/target/release/node-template ./node-template
 COPY --from=node-builder /usr/src/node/customSpecRaw.json ./customSpecRaw.json
-EXPOSE 9933 9944/tcp 30333
-ENTRYPOINT ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external"]
+ENTRYPOINT ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm"]

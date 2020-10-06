@@ -1,19 +1,44 @@
+const axios = require("axios").default;
+const RpcCall = require('./rpc-call');
 
+/**
+ * A class that represents a substrate node
+ */
 class NodeClient {
-
-    constructor(url) {
-
+    static baseUrl = "http://localhost";
+    constructor(port, name, publicKey, mnemonic, validator) {
+        this.nodeUrl = `${this.nodeUrl}:${port}`;
+        this.name = name;
+        this.publicKey = publicKey;
+        this.mnemonic = mnemonic;
+        this.validator = validator;
     }
 
-    // ADD any reusable rpc calls
-    async static get(url) {
-        // do an RPC call for get status or smth like that
-        // if its okay -> return new NodeClient() instance
-        // if not throw
+    /**
+     * Insert aura key for this node
+     */
+    async insertAuraKey(){
+        if(!this.validator){
+            return "Node is not a validator";
+        }
+        const params = [
+            "aura", this.publicKey, this.mnemonic
+        ];
+        const rpcCall = new RpcCall("author_insertKey", params);
+        const { data, error } = await axios.post(this.nodeUrl, rpcCall.toJson);
+        return error ? error : data;
     }
 
-    async getBlock() {
-        // return the current block of the node
+    /**
+     * Get state of the network, i.e peerId, connected peers, etc.
+     */
+    async getNetworkState() {
+        const rpcCall = new RpcCall("system_networkState", []);
+        return await axios.post(this.nodeUrl, rpcCall.toJson);
+    }
+
+    async getBlockHash(number) {
+        const 
     }
 
     async getBalance(account) {
@@ -21,4 +46,4 @@ class NodeClient {
     }
 }
 
-module.exports = NodeClient
+module.exports = NodeClient;
