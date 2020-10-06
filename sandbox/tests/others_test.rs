@@ -7,7 +7,6 @@ use sp_wasm_interface::HostFunctions as _;
 use sp_runtime::{ traits::{BlakeTwo256 }};
 use sc_executor::{WasmExecutor, WasmExecutionMethod};
 use sp_core::{ traits::{ CallInWasm, Externalities, MissingHostFunctions }};
-use std::convert::{TryFrom};
 type HostFunctions = sp_io::SubstrateHostFunctions;
 pub type TestExternalities = CoreTestExternalities<BlakeTwo256, u64>;
 
@@ -73,6 +72,8 @@ fn test_tagged_transaction_queue_validate_transaction() {
     let mut ext = ext.ext();
 
     let init_balance: u64 = 1234567;
+    const EXTRINSIC_LEN: u16 = 145;
+    
 
     let from: AccountId = AccountKeyring::Alice.into();
     let to: AccountId = AccountKeyring::Bob.into();
@@ -88,11 +89,12 @@ fn test_tagged_transaction_queue_validate_transaction() {
         nonce: 5,
     }.into_signed_tx();
 
-    let len: Compact<u16> = Compact(u16::try_from(ex.encode().len()).unwrap());
+    let len: Compact<u16> = Compact(EXTRINSIC_LEN);
 
     let mut bytes = len.encode();
 
-    bytes.extend(ex.encode());
+    bytes.extend(&ex.encode()[1..]);
+    println!("bytes: {:?}", bytes);
     let result = call_in_wasm(
         "TaggedTransactionQueue_validate_transaction",
         &bytes,

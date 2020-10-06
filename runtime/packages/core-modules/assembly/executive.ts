@@ -2,7 +2,8 @@ import {
     Block, Header, 
     InherentData, 
     Extrinsic, Inherent, SignedTransaction, DecodedData,
-    ValidTransaction, TransactionTag, ResponseCodes
+    ValidTransaction, TransactionTag, ResponseCodes,
+    ExtrinsicType
 } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { AuraModule } from '@as-substrate/aura-module';
@@ -152,7 +153,7 @@ export namespace Executive{
         /**
          * If all the validations are passed, construct validTransaction instance
          */
-        const priority: UInt64 = new UInt64(utx.toU8a().length);
+        const priority: UInt64 = new UInt64(<u64>ExtrinsicType.SignedTransaction);
         const requires: TransactionTag[] = [];
         const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
         const longevity: UInt64 = new UInt64(64);

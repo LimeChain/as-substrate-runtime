@@ -18,7 +18,7 @@ fn get_inherent_data_instance() -> InherentData {
     let mut inh = InherentData::new();
     
     const TM_KEY: InherentIdentifier = *b"timstap0";
-    let tm_value: u64 = 1;
+    let tm_value: u64 = 5001;
     
     const BS_KEY: InherentIdentifier = *b"babeslot";
     let bs_value: u64 = 2;
@@ -53,6 +53,7 @@ fn get_timestamp_inherent() -> Vec<u8>{
     let call_index: Vec<u8> = vec![2, 0];
     const COMPACT_PREFIX: u8 = 11;
     const DEFAULT_VALUE: u64 = 1;
+    const MINIMUM_PERIOD: u64 = 5000;
 
     let mut exp_inherent: Vec<u8> = vec![];
     exp_inherent.extend(ALL_MODULES.encode());
@@ -60,7 +61,7 @@ fn get_timestamp_inherent() -> Vec<u8>{
     exp_inherent.extend(OPTION.encode());
     exp_inherent.extend(call_index);
     exp_inherent.push(COMPACT_PREFIX);
-    exp_inherent.extend((DEFAULT_VALUE).encode());
+    exp_inherent.extend((MINIMUM_PERIOD + DEFAULT_VALUE).encode());
 
     exp_inherent
 }
@@ -194,12 +195,13 @@ fn test_block_builder_finalize_block() {
     let timestamp_inherent: Vec<u8> = get_timestamp_inherent();
     println!("timstmp: {:?}", &timestamp_inherent[1..12]);
 
-    let _res = call_in_wasm(
+    let res = call_in_wasm(
         "BlockBuilder_apply_extrinsic",
         &timestamp_inherent[1..12],
         WasmExecutionMethod::Interpreted,
         &mut ext,
     ).unwrap();
+    println!("applyTimestamp: {:?}", res);
 
     let result = call_in_wasm(
         "BlockBuilder_finalize_block",

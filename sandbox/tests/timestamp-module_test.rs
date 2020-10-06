@@ -98,6 +98,9 @@ fn double_timestamp_should_fail() {
     let mut now = vec![];
     let mut did_update = vec![];
 
+    //error code for setting timestamp more than once in one block
+    let dispact_error_code: Vec<u8> = vec![0, 1, 1, 1];
+
     now.extend(b"timestamp".to_vec().encode());
     did_update.extend(b"timestamp".to_vec().encode());
     now.extend(b"now".to_vec().encode());
@@ -112,17 +115,17 @@ fn double_timestamp_should_fail() {
         &value.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
-    );
+    ).unwrap();
     let value1: u64 = 10044;
     let result1 = call_in_wasm(
         "test_timestamp_set", 
         &value1.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
-    );
-    assert_eq!(result.is_ok(), true);
+    ).unwrap();
+    assert_eq!(result, &[0, 0]);
     assert_eq!(ext.storage(&now).unwrap(), value.to_le_bytes());
-    assert_eq!(result1.is_err(), true);
+    assert_eq!(result1, dispact_error_code);
 }
 
 #[test]
@@ -133,6 +136,8 @@ fn block_period_minimum_enforced() {
 
     let mut now = vec![];
     let mut did_update = vec![];
+    // error code for minimum period
+    let dispatch_error_code: Vec<u8> = vec![0, 1, 1, 2];
 
     now.extend(b"timestamp".to_vec().encode());
     did_update.extend(b"timestamp".to_vec().encode());
@@ -148,8 +153,8 @@ fn block_period_minimum_enforced() {
         &value.encode(),
         WasmExecutionMethod::Interpreted,
         &mut ext
-    );
-    assert_eq!(result.is_err(), true);
+    ).unwrap();
+    assert_eq!(result, dispatch_error_code);
     assert_eq!(ext.storage(&now).unwrap(), init_value.to_le_bytes());
     assert_eq!(ext.storage(&did_update), std::option::Option::None);
 }
