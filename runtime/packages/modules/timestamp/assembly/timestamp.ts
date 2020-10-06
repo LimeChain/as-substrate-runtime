@@ -32,6 +32,11 @@ export class Timestamp{
     public static readonly PREFIX: u8 = 11;
 
     /**
+     * index of the timestamp module
+     */
+    public static readonly MODULE_INDEX: u8 = 1;
+
+    /**
      * Toggles the current value of didUpdate
      */
     static toggleUpdate(): void {
@@ -57,12 +62,12 @@ export class Timestamp{
         const didUpdateValue: Bool = didUpdate.isSome() ? Bool.fromU8a((<ByteArray>didUpdate.unwrap()).values) : new Bool(false);
         if(didUpdateValue.value){
             Log.error('Validation error: Timestamp must be updated only once in the block');
-            return ResponseCodes.dispatchError(1, 1);
+            return this._tooFrequentResponseCode();
         }
         const prev: UInt64 = Timestamp.get();
         if(now < prev.value + Timestamp.MINIMUM_PERIOD){
             Log.error('Validation error: Timestamp must increment by at least <MinimumPeriod> between sequential blocks');
-            return ResponseCodes.dispatchError(1, 2);
+            return this._timeframeTooLowResponceCode();
         }
 
         const nowu8 = new UInt64(now);
@@ -78,10 +83,7 @@ export class Timestamp{
      */
     static get(): UInt64 {
         const now = Storage.get(Timestamp.SCALE_TIMESTAMP_NOW);
-        const zero = new UInt64(0);
-        const res = now.isSome() ? (<ByteArray>now.unwrap()).values : zero.toU8a();
-        const val: UInt64 = UInt64.fromU8a(res);
-        return val;
+        return now.isSome() ? UInt64.fromU8a((<ByteArray>now.unwrap()).values) : new UInt64(0);
     }
 
     /**
@@ -134,6 +136,13 @@ export class Timestamp{
             Timestamp.toggleUpdate();
         }
         return resCode;
+    }
+
+    static _tooFrequentResponseCode(): u8[]{
+        return ResponseCodes.dispatchError(this.MODULE_INDEX, 1);
+    }
+    static _timeframeTooLowResponceCode(): u8[]{
+        return ResponseCodes.dispatchError(this.MODULE_INDEX, 2);
     }
 }
  

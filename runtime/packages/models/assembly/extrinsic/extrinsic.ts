@@ -57,7 +57,8 @@ export abstract class Extrinsic{
 
     @inline @operator('==')
     static eq(a: Extrinsic, b: Extrinsic): bool{
-        switch(<i32>a.typeId){
+        const extrinsicType: i32 = a.typeId == b.typeId ? <i32>a.typeId : 0;
+        switch(extrinsicType){
             case ExtrinsicType.Inherent:{
                 return Inherent.eq(<Inherent>a, <Inherent>b);
             }
