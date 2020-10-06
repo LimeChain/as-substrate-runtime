@@ -1,6 +1,12 @@
 import { MockResult } from "./mock-result";
 import { Hash, CompactInt, UInt64, Bool, ByteArray, UInt128 } from "as-scale-codec";
-import { Signature, Block, Option, Header, Extrinsic, InherentData, DigestItem, Other, ChangeTrieRoot, Consensus, Seal, PreRuntime } from "@as-substrate/models";
+import { 
+    Signature, Block, Option, 
+    Header, Extrinsic, InherentData, 
+    DigestItem, Other, ChangeTrieRoot, 
+    Consensus, Seal, PreRuntime,
+    SignedTransaction, Inherent
+} from "@as-substrate/models";
 import { AccountData } from "@as-substrate/balances-module";
 import { MockConstants } from "./mock-constants";
 
@@ -23,9 +29,10 @@ export namespace MockBuilder {
      */
     export function getBlockWithExtrinsics(): MockResult<Block> {
         const header = MockHelper._getHeaderInstanceWithoutDigest();
-        const extrinsic1 = MockHelper._getExtrinsicInstance1();
-        const extrinsic2 = MockHelper._getExtrinsicInstance2();
-        return new MockResult(new Block(header, [extrinsic1, extrinsic2]), MockConstants.BLOCK_WITH_EXTRINSIC)
+        const extrinsic1 = MockHelper._getSignedTransactionInstance2();
+        const extrinsic2 = MockHelper._getSignedTransactionInstance1();
+        const extrinsic3 = MockHelper._getInherentInstance();
+        return new MockResult(new Block(header, [extrinsic1, extrinsic2, extrinsic3]), MockConstants.BLOCK_WITH_EXTRINSIC)
     }
 
     /**
@@ -33,9 +40,10 @@ export namespace MockBuilder {
      */
     export function getBlockWithExtrinsicsAndDigests(): MockResult<Block> {
         const header = MockHelper._getHeaderInstanceWithDigests();
-        const extrinsic1 = MockHelper._getExtrinsicInstance1();
-        const extrinsic2 = MockHelper._getExtrinsicInstance2();
-        return new MockResult(new Block(header, [extrinsic1, extrinsic2]), MockConstants.BLOCK_WITH_EXTRINSIC_AND_DIGESTS)
+        const extrinsic1 = MockHelper._getSignedTransactionInstance1();
+        const extrinsic2 = MockHelper._getSignedTransactionInstance2();
+        const extrinsic3 = MockHelper._getInherentInstance();
+        return new MockResult(new Block(header, [extrinsic1, extrinsic2, extrinsic3]), MockConstants.BLOCK_WITH_EXTRINSIC_AND_DIGESTS)
     }
 
     /**
@@ -56,7 +64,7 @@ export namespace MockBuilder {
      * Returns SCALE encoded Inherent Mock and Instance of that Mock
      */
     export function getInherentDataMock(): MockResult<InherentData> {
-        return new MockResult(MockHelper._getInherentDataInstance(), MockConstants.DEFAULT_INHERENT);
+        return new MockResult(MockHelper._getInherentDataInstance(), MockConstants.DEFAULT_INHERENT_DATA);
      }
     /**
      * Returns a map with keys with invalid length
@@ -73,7 +81,7 @@ export namespace MockBuilder {
      * Returns SCALE encoded extrinsic mock and Instance of that mock
      */
     export function getDefaultExtrinsic(): MockResult<Extrinsic> {
-        return new MockResult(MockHelper._getExtrinsicInstance1(), MockConstants.DEFAULT_EXTRINSIC);
+        return new MockResult(MockHelper._getSignedTransactionInstance1(), MockConstants.DEFAULT_SIGNED_TX_INSTANCE);
     }
 
     /**
@@ -199,24 +207,32 @@ export namespace MockHelper {
         return new InherentData(data);
     }
     
-    export function _getExtrinsicInstance1(): Extrinsic {
+    export function _getSignedTransactionInstance1(): SignedTransaction {
         const from = Hash.fromU8a(MockConstants.ALICE_ADDRESS);
         const to = Hash.fromU8a(MockConstants.BOB_ADDRESS);
         const amount: UInt64 = new UInt64(69);
         const nonce: UInt64 = new UInt64(5);
         const signature = new Signature([72, 43, 234, 45, 159, 200, 43, 162, 117, 34, 73, 0, 41, 24, 219, 106, 202, 41, 220, 128, 114, 102, 33, 40, 235, 200, 34, 98, 249, 135, 134, 116, 39, 94, 159, 122, 148, 102, 158, 5, 178, 195, 144, 165, 149, 149, 118, 250, 97, 192, 228, 0, 216, 37, 219, 207, 7, 240, 82, 75, 243, 191, 237, 138]);
         const exhaustResource = new Bool(false);
-        return new Extrinsic(from, to, amount, nonce, signature, exhaustResource);
+        return new SignedTransaction(from, to, amount, nonce, signature, exhaustResource);
     }
 
-    export function _getExtrinsicInstance2(): Extrinsic {
+    export function _getSignedTransactionInstance2(): SignedTransaction {
         const from = Hash.fromU8a(MockConstants.ALICE_ADDRESS);
         const to = Hash.fromU8a(MockConstants.BOB_ADDRESS);
         const amount: UInt64 = new UInt64(70);
         const nonce: UInt64 = new UInt64(16);
         const signature = new Signature([154, 181, 53, 178, 59, 111, 32, 130, 99, 37, 197, 152, 241, 213, 158, 82, 17, 131, 141, 106, 171, 61, 147, 104, 43, 78, 86, 206, 167, 192, 161, 114, 180, 8, 163, 76, 243, 226, 237, 59, 227, 71, 85, 169, 227, 4, 83, 111, 224, 122, 159, 232, 29, 105, 13, 120, 202, 114, 188, 86, 78, 67, 177, 140]);
         const exhaustResource = new Bool(false);
-        return new Extrinsic(from, to, amount, nonce, signature, exhaustResource);
+        return new SignedTransaction(from, to, amount, nonce, signature, exhaustResource);
+    }
+
+    export function _getInherentInstance(): Inherent {
+        const callIndex: u8[] = [2, 0];
+        const version: u8 = 4;
+        const prefix: u8 = 11;
+        const argument: UInt64 = new UInt64(100323113);
+        return new Inherent(callIndex, version, prefix, argument);
     }
 
     export function _getDigests(): DigestItem[] {

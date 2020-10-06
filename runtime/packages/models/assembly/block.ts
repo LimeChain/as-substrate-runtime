@@ -87,5 +87,4 @@ export class Block {
     static eq(a: Block, b: Block): bool {
         return a.header == b.header && Utils.areArraysEqual(a.body, b.body);
     }
-
 }

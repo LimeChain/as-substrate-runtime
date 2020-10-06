@@ -1,15 +1,16 @@
 import { 
     Block, Header, 
     InherentData, 
-    Extrinsic, Inherent, 
-    ValidTransaction, TransactionTag, ResponseCodes
+    Extrinsic, Inherent, SignedTransaction, DecodedData,
+    ValidTransaction, TransactionTag, ResponseCodes,
+    ExtrinsicType
 } from '@as-substrate/models';
 import { Timestamp } from '@as-substrate/timestamp-module';
 import { AuraModule } from '@as-substrate/aura-module';
 import { Utils } from '@as-substrate/core-utils';
 import { AccountId, BalancesModule } from '@as-substrate/balances-module';
-import { CompactInt, ByteArray, Bool, UInt64, Bytes, Hash } from 'as-scale-codec';
-import { System, Log, Storage, Crypto } from '.';
+import { CompactInt, Bool, UInt64, Bytes, Hash } from 'as-scale-codec';
+import { System, Log, Crypto } from '.';
 
 export namespace Executive{
     /**
@@ -37,14 +38,32 @@ export namespace Executive{
     }
 
     /**
+     * Final checks before including block in the chain
+     * @param header 
+     */
+    export function finalChecks(header: Header): void{
+        Log.info("final checks");
+        System.computeExtrinsicsRoot();
+        let newHeader = System.finalize();
+        let storageRoot = newHeader.stateRoot;
+        if(header.stateRoot != storageRoot){
+            Log.error("Storage root must match that calculated");
+        }
+    }
+
+
+
+    /**
      * Actually execute all transactions for Block
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
+        Log.info("executing a block");
         Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
-        let header = block.header;
-        // TO-DO
+
+        Executive.executeExtrinsicsWithBookKeeping(block.body);
+        Executive.finalChecks(block.header);
     }
     /**
      * Finalize the block - it is up the caller to ensure that all header fields are valid
@@ -86,21 +105,25 @@ export namespace Executive{
      * @param encoded encoded extrinsic
      */
     export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
-        // if the length of the encoded extrinsic is less than 144, it's inherent
-        // in our case, we have only timestamp inherent
-        if(Inherent.isInherent(ext)){
-            const inherent = Inherent.fromU8Array(ext).result;
-            Timestamp.applyInherent(inherent);
-            return ResponseCodes.SUCCESS;
+        const extrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(ext);
+
+        if(Extrinsic.isInherent(extrinsic.result)){
+            const inherent: Inherent = <Inherent>extrinsic.result;
+            return Timestamp.applyInherent(inherent);
         }
-        const cmpLen = Bytes.decodeCompactInt(ext);
-        ext = ext.slice(cmpLen.decBytes);
-        const result = ext.shift();
-        if (result as bool){
-            const extrinsic = Extrinsic.fromU8Array(ext).result;
-            return BalancesModule.applyExtrinsic(extrinsic);
+        const signedTransaction: SignedTransaction = <SignedTransaction>extrinsic.result;
+        return BalancesModule.applyExtrinsic(signedTransaction);
+    }
+
+    /**
+     * Execute given extrinsics and take care of post-extrinsics book-keeping
+     * @param extrinsics byte array of extrinsics 
+     */
+    export function executeExtrinsicsWithBookKeeping(extrinsics: Extrinsic[]): void{
+        for(let i=0; i<extrinsics.length; i++){
+            Executive.applyExtrinsic(extrinsics[i].toU8a());
         }
-        return ResponseCodes.CALL_ERROR;
+        System.noteFinishedExtrinsics();
     }
 
     /**
@@ -108,7 +131,7 @@ export namespace Executive{
      * @param source source of the transaction (external, inblock, etc.)
      * @param utx transaction
      */
-    export function validateTransaction(source: u8[], utx: Extrinsic): u8[] {
+    export function validateTransaction(utx: SignedTransaction): u8[] {
         const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
         const transfer = utx.getTransferBytes();
 
@@ -130,7 +153,7 @@ export namespace Executive{
         /**
          * If all the validations are passed, construct validTransaction instance
          */
-        const priority: UInt64 = new UInt64(utx.toU8a().length);
+        const priority: UInt64 = new UInt64(<u64>ExtrinsicType.SignedTransaction);
         const requires: TransactionTag[] = [];
         const provides: TransactionTag[] = [new TransactionTag(from, utx.nonce)];
         const longevity: UInt64 = new UInt64(64);

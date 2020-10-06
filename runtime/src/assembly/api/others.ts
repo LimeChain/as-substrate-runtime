@@ -3,9 +3,8 @@
  * These methods are mocked for this iteration and they return an empty u8 array by default
  */
 import {Serialiser} from "@as-substrate/core-utils";
-import { Extrinsic } from '@as-substrate/models';
+import { Extrinsic, SignedTransaction } from '@as-substrate/models';
 import { Executive } from '@as-substrate/core-modules';
-import { CompactInt } from "as-scale-codec";
 
 /**
  * 
@@ -30,23 +29,13 @@ export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
  * Returns ValidTransaction or TransactionError code
  * @param data i32 pointer to the start of the argument passed
  * @param len i32 length (in bytes) of the arguments passed
+ * source: TransactionSource, utx: Block::Extrinsic
+ * len + source + ext
  */
 export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
-    const size = CompactInt.fromU8a(input);
-    input = input.slice(size.encodedLength());
-    /**
-     * first element of the input is the source of Extrinsic
-     * Depending on source, we use different validation schemes (TO-DO)
-     * Possible values:
-     * InBlock - 1
-     * Local - 2
-     * External - 3
-    */  
-    const _source = input.slice(0, 1);
-    input = input.slice(1);
     const uxt = Extrinsic.fromU8Array(input);
-    const result = Executive.validateTransaction(_source, uxt.result);
+    const result = Executive.validateTransaction(<SignedTransaction>uxt.result);
     return Serialiser.serialiseResult(result);
 }
 

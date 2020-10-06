@@ -1,10 +1,11 @@
-import { Hash, UInt64, BIT_LENGTH, Bool } from "as-scale-codec";
-import { Signature, DecodedData } from ".";
+import { Hash, UInt64, BIT_LENGTH, Bool, CompactInt } from "as-scale-codec";
+import { Signature, DecodedData } from "..";
+import { Extrinsic, ExtrinsicType } from "./extrinsic";
 
 /**
  * Class representing an Extrinsic in the Substrate Runtime
  */
-export class Extrinsic {
+export class SignedTransaction extends Extrinsic {
     
     /**
      * from address 
@@ -37,6 +38,7 @@ export class Extrinsic {
     public exhaustResourcesWhenNotFirst: Bool
 
     constructor(from: Hash, to: Hash, amount: UInt64, nonce: UInt64, signature: Signature, exhaustResourcesWhenNotFirst: Bool) {
+        super(ExtrinsicType.SignedTransaction);
         this.from = from;
         this.to = to;
         this.amount = amount;
@@ -49,7 +51,9 @@ export class Extrinsic {
     * SCALE Encodes the Header into u8[]
     */
     toU8a(): u8[] {
-        return this.from.toU8a()
+        let len = new CompactInt(ExtrinsicType.SignedTransaction);
+        return len.toU8a()
+            .concat(this.from.toU8a())
             .concat(this.to.toU8a())
             .concat(this.amount.toU8a())
             .concat(this.nonce.toU8a())
@@ -93,13 +97,13 @@ export class Extrinsic {
         const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
         input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
 
-        const extrinsic = new Extrinsic(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
+        const extrinsic = new SignedTransaction(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
 
         return new DecodedData(extrinsic, input);
     }
 
     @inline @operator('==')
-    static eq(a: Extrinsic, b: Extrinsic): bool {
+    static eq(a: SignedTransaction, b: SignedTransaction): bool {
         let equal = 
             a.from == b.from 
             && a.to == b.to
@@ -110,8 +114,8 @@ export class Extrinsic {
     }
 
     @inline @operator('!=')
-    static notEq(a: Extrinsic, b: Extrinsic): bool {
-        return !Extrinsic.eq(a, b);
+    static notEq(a: SignedTransaction, b: SignedTransaction): bool {
+        return !SignedTransaction.eq(a, b);
     }
 
 }
