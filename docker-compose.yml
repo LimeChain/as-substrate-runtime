@@ -14,3 +14,8 @@ services:
         image: limechain/as-substrate:stable
         expose:
             - "9933"
+    
+    node04:
+        image: limechain/as-substrate:stable
+        expose:
+            - "9933"
