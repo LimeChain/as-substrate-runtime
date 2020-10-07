@@ -6,7 +6,7 @@ const RpcCall = require('./rpc-call');
  */
 class NodeClient {
     static baseUrl = "http://localhost";
-    constructor(port, validator) {
+    constructor(validator) {
         this.nodeUrl = `${this.nodeUrl}:${port}`;
         this.validator = validator;
     }
@@ -34,12 +34,14 @@ class NodeClient {
         return await axios.post(this.nodeUrl, rpcCall.toJson);
     }
 
-    async getBlockHash(number) {
-        const 
+    async getBlockHash(num) {
+        const hexNumber = num.toString(16);
+        const rpcCall = new RpcCall("chain_getBlockHash", [hexNumber]);
+        return await axios.post(this.nodeUrl, rpcCall.toJson());
     }
 
     async getBalance(account) {
-        // return the balance of the account
+
     }
 }
 
