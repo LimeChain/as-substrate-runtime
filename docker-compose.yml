@@ -3,19 +3,19 @@ version: "3.8"
 services:
     node01:
         image: limechain/as-substrate:stable
-        expose:
-            - "9933"
+        ports:
+            - "5000:9933"
     node02:
         image: limechain/as-substrate:stable
-        expose:
-            - "9933"
+        ports:
+            - "5001:9933"
     
     node03:
         image: limechain/as-substrate:stable
-        expose:
-            - "9933"
+        ports:
+            - "5002:9933"
     
     node04:
         image: limechain/as-substrate:stable
-        expose:
-            - "9933"
+        ports:
+            - "5003:9933"
