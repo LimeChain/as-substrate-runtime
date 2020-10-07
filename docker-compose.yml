@@ -3,15 +3,18 @@ services:
     node01:
         image: limechain/as-substrate:stable
         ports:
-            - target: 9933
-              published: 9933
-              mode: host
+            - "5000:9933"
     node02:
         image: limechain/as-substrate:stable
         ports:
-            - "0.0.0.0:9934:9933"
+            - "5001:9933"
     
     node03:
         image: limechain/as-substrate:stable
         ports:
-            - "0.0.0.0:9935:9933"
+            - "5002:9933"
+    
+    node04:
+        image: limechain/as-substrate:stable
+        ports:
+            - "5003:9933"
