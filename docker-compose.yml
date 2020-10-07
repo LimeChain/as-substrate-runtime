@@ -1,27 +1,15 @@
 version: "3.8"
 services:
     node01:
-        build: .
+        image: limechain/as-substrate:stable
         expose:
             - "9933"
-            - "9944"
-            - "30333"
-        entrypoint: 
-            ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm", "--rpc-port", "9933", "--ws-port", "9944", "--port", "30333", "--name", "Node01", "--base-path", "/tmp/node01", "--validator"]
     node02:
-        build: .
+        image: limechain/as-substrate:stable
         expose:
-            - "9934"
-            - "9944"
-            - "30334"
-        entrypoint:
-            ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm", "--rpc-port", "9934", "--ws-port", "9945", "--port", "30334", "--name", "Node02", "--base-path", "/tmp/node02", "--validator"]
+            - "9933"
     
     node03:
-        build: .
+        image: limechain/as-substrate:stable
         expose:
-            - "9935"
-            - "9945"
-            - "30335"
-        entrypoint:
-            ["./node-template", "--chain=./customSpecRaw.json", "--rpc-methods=Unsafe", "--rpc-external", "--execution", "Wasm", "--rpc-port", "9935", "--ws-port", "9946", "--port", "30335", "--name", "Node03", "--base-path", "/tmp/node03", "--validator"]
+            - "9933"

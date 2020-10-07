@@ -6,11 +6,8 @@ const RpcCall = require('./rpc-call');
  */
 class NodeClient {
     static baseUrl = "http://localhost";
-    constructor(port, name, publicKey, mnemonic, validator) {
+    constructor(port, validator) {
         this.nodeUrl = `${this.nodeUrl}:${port}`;
-        this.name = name;
-        this.publicKey = publicKey;
-        this.mnemonic = mnemonic;
         this.validator = validator;
     }
 
