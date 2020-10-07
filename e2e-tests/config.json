@@ -4,17 +4,17 @@
             "name": "Node01",
             "port": 9933,
             "address": "....",
-            "publicKey": "....",
-            "mnemonic": "...",
+            "publicKey": "0xdcc1461cba689c60dcae053ef09bc9e9524cdceb696ce39c7ed43bf3a5fa9659",
+            "mnemonic": "dice height enter anger ahead chronic easily wave curious banana era happy",
             "validator": true
         },
         {
             "name": "Node02",
             "port": 9934,
             "address": "....",
-            "publicKey": "....",
-            "mnemonic": "...",
-            "validator": false
+            "publicKey": "0x203d05ced7e80c58db6ca60ceb28041dc28be0066ce9b1d75fd92597adae124f",
+            "mnemonic": "spray later man depth auction tape autumn rocket bullet grunt adult flight",
+            "validator": true
         },
         {
             "name": "Node03",
@@ -22,7 +22,7 @@
             "address": "....",
             "publicKey": "....",
             "mnemonic": "...",
-            "validator": true
+            "validator": false
         }
     ]
 }

@@ -6,7 +6,7 @@ const RpcCall = require('./rpc-call');
  */
 class NodeClient {
     static baseUrl = "http://localhost";
-    constructor(validator) {
+    constructor(port, validator) {
         this.nodeUrl = `${this.nodeUrl}:${port}`;
         this.validator = validator;
     }
@@ -41,7 +41,9 @@ class NodeClient {
     }
 
     async getBalance(account) {
-
+        const accId = account;
+        const rpcCall = new RpcCall("state_getStorage", [account]);
+        return await axios.post(this.nodeUrl);
     }
 }
 
