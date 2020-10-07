@@ -29,9 +29,10 @@ class NodeClient {
     /**
      * Get state of the network, i.e peerId, connected peers, etc.
      */
-    async getNetworkState() {
+    async getConnectedPeers() {
         const rpcCall = new RpcCall("system_networkState", []);
-        return await axios.post(this.nodeUrl, rpcCall.toJson);
+        const { data, error } = await axios.post(this.nodeUrl, rpcCall.toJson);
+        return data.result.connectedPeers;
     }
 
     async getBlockHash(num) {
@@ -41,9 +42,8 @@ class NodeClient {
     }
 
     async getBalance(account) {
-        const accId = account;
         const rpcCall = new RpcCall("state_getStorage", [account]);
-        return await axios.post(this.nodeUrl);
+        return await axios.post(this.nodeUrl, rpcCall.toJson());
     }
 }
 

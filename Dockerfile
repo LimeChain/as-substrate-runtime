@@ -1,5 +1,5 @@
 # Building node and running it with the customSpecRaw.json
-FROM rust:1.45 AS node-builder
+FROM rust:1.45.2 AS node-builder
 
 WORKDIR /usr/src/node
 
