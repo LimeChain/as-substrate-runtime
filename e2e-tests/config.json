@@ -3,7 +3,7 @@
         {
             "name": "Node01",
             "port": 9933,
-            "address": "....",
+            "privateKey": "0x0b21d0616362fe166383785eab14de273156f7501ea0b8d93661bf90f8b59466",
             "publicKey": "0xdcc1461cba689c60dcae053ef09bc9e9524cdceb696ce39c7ed43bf3a5fa9659",
             "mnemonic": "dice height enter anger ahead chronic easily wave curious banana era happy",
             "validator": true
@@ -11,7 +11,7 @@
         {
             "name": "Node02",
             "port": 9934,
-            "address": "....",
+            "privateKey": "0xe7573cad9a26149edf0c3b1d069b98d34e1a0f3eefbe894e668600916503561f",
             "publicKey": "0x203d05ced7e80c58db6ca60ceb28041dc28be0066ce9b1d75fd92597adae124f",
             "mnemonic": "spray later man depth auction tape autumn rocket bullet grunt adult flight",
             "validator": true
@@ -19,9 +19,9 @@
         {
             "name": "Node03",
             "port": 9935,
-            "address": "....",
-            "publicKey": "....",
-            "mnemonic": "...",
+            "privateKey": "0x2917c06015bf502f5d97df0a1ef07cc663e645b3ff44bf16ff3470cbacfccfb9",
+            "publicKey": "0x8a9ace8c8590a0f6fc56041657ad020375883d843b3ee58fc4b8746c1d04d801",
+            "mnemonic": "scissors fix height guitar climb curtain depend area shoe bomb tired decorate",
             "validator": false
         }
     ]
