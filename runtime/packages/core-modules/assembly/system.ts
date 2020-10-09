@@ -112,10 +112,9 @@ export class System {
         const nonceKey: u8[] = Utils.stringsToBytes([System.NONCE_KEY], true);
         const value = Storage.get(who.getAddress().concat(nonceKey));
         if(value.isSome()){
-            const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
-            return new UInt64(decValue.value);
+            return UInt64.fromU8a((<ByteArray>value.unwrap()).values);
         }
-        return new UInt64(0);
+        return new UInt64(1);
     }
 
     /**

@@ -90,12 +90,16 @@ Substrate provides a template node that uses `Aura` consensus for block producti
 Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate Nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
 
 ## Playing with the Runtime
-The runtime has 2 types of tests so far -> Integration and Unit tests
+The runtime has 3 types of tests so far -> Integration and Unit tests and End-to-End tests for the account transactions
 The Unit tests are written in AssemblyScript and are testing f.e the instantiation or encoding of a `Block` from a SCALE encoded Byte Array.
 
 The Integration tests are written in Rust. They are calling into the WASM code and are validating:
 1. Whether the WASM code exposes the required API functions.
 2. Whether the API functions are returning the correct responses.
+
+## End-to-End tests
+
+End-to-end tests are designed to test the account transactions and for the Runtime workflow. Before starting running tests, you need to make sure to run `docker-compose` which runs three Substrate nodes.
 
 ### 0. Prerequisite
 - Have `rust` installed so that you can build and run the Integration tests
@@ -157,6 +161,12 @@ bash compile-purge.sh
     --base-path /tmp/node01 \
     --execution Wasm
 ```    
+
+### 7. Run End-to-End tests 
+1. Execute `docker-compose up` which runs 4 instances of Substrate nodes
+2. Go to `./e2e-tests`
+3. Run `npm install` to load all dependencies
+4. Run `npm test` 
 
 The Node should start, but no blocks will be produced. For activating block production see the Block Production section.
 

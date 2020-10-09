@@ -23,6 +23,15 @@
             "publicKey": "0x8a9ace8c8590a0f6fc56041657ad020375883d843b3ee58fc4b8746c1d04d801",
             "mnemonic": "scissors fix height guitar climb curtain depend area shoe bomb tired decorate",
             "validator": false
+        },
+        {
+            "name": "InvalidNode",
+            "port": 9936,
+            "privateKey": "0x136cb082fd9814ec0856a0e76a176616ba643edddd8af97af303eca3577d243f",
+            "publicKey": "0x1e965d7da0db5a638a5e12e0c25d23128ce3939197ae0ab39f9760d6b10b5918",
+            "mnemonic": "install number deal turkey box involve dinner primary arch old head exclude",
+            "validator": false
+
         }
     ]
 }
