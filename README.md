@@ -145,7 +145,7 @@ yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-
 5. Build the node `cargo build --release` (may take a while)
 6. (Optional) Purge the existing db with the following command:
 ```
-rm -f /tmp/node0*
+rm -rf /tmp/node0*
 ```
 7. Run the node with the generated chain spec:  
 ```
@@ -226,7 +226,7 @@ curl --location --request POST 'localhost:9933' \
 --data-raw '{
     "jsonrpc": "2.0",
     "method": "author_insertKey",
-    "params": ["aura","stool celery junk extend panther shock pact sorry violin spring degree odor","0x82b3f9330690e5a74aa9806d71298e68a03d80e773332f615e3bdd64ee71f050"],
+    "params": ["aura","dice height enter anger ahead chronic easily wave curious banana era happy","0xdcc1461cba689c60dcae053ef09bc9e9524cdceb696ce39c7ed43bf3a5fa9659"],
     "id": 1
 }'
 ```
