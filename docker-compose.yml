@@ -1,20 +1,20 @@
 version: "3.3"
 services:
     node01:
-        image: limechain/as-substrate:stable
+        image: limechain/as-substrate:stable-v1
         ports:
             - "5000:9933"
     node02:
-        image: limechain/as-substrate:stable
+        image: limechain/as-substrate:stable-v1
         ports:
             - "5001:9933"
     
     node03:
-        image: limechain/as-substrate:stable
+        image: limechain/as-substrate:stable-v1
         ports:
             - "5002:9933"
     
     node04:
-        image: limechain/as-substrate:stable
+        image: limechain/as-substrate:stable-v1
         ports:
             - "5003:9933"
