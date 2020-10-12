@@ -1,6 +1,6 @@
 import { Serialiser } from "@as-substrate/core-utils";
 import { RuntimeVersion, SupportedAPIs, Block, Header } from "@as-substrate/models";
-import { Executive, Log } from '@as-substrate/core-modules';
+import { Executive } from '@as-substrate/core-modules';
 import { Bool } from "as-scale-codec";
 
 /**
@@ -19,7 +19,6 @@ export function Core_version(data: i32, len: i32): u64 {
  * @param len - i32 length (in bytes) of the arguments passed
  */
 export function Core_execute_block(data: i32, len: i32): u64 {
-    Log.info("executing a block");
     const input = Serialiser.deserialiseInput(data, len);
     const block = Block.fromU8Array(input);
     Executive.executeBlock(block.result);

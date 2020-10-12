@@ -4,7 +4,6 @@ import { Header, ExtrinsicData } from '@as-substrate/models';
 import { Utils, Serialiser } from '@as-substrate/core-utils';
 import { AccountId } from '@as-substrate/balances-module';
 import { ext_trie_blake2_256_ordered_root_version_1 } from '.';
-import { Log } from './log';
 
 export class System {
     // execution phases
@@ -66,7 +65,6 @@ export class System {
         Storage.set(Utils.stringsToBytes(this.DIGESTS_00, true), digests);
         
         const blockNumber: CompactInt = new CompactInt(header.number.value - 1);
-        Log.info("setting " + header.parentHash.toU8a().toString() + " at: " + blockNumber.toString());
         this.setHashAtBlock(blockNumber, header.parentHash);
     }
     /**

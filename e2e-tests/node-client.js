@@ -106,9 +106,9 @@ class NodeClient {
      */
     async unsafeTransfer(to, amount, nonce, privateKey){
         const from = await Utils.getKeyringPair(privateKey);
-        const rawNonce = !nonce ? "0x" : u8aToHex((new U64(TypeRegistry, nonce)).toU8a());
-        amount = !amount ? "0x" : u8aToHex((new U64(TypeRegistry, amount)).toU8a());
-        const signedTx = Utils.signTransaction(from, to, amount, rawNonce);
+        const rawNonce = nonce ? u8aToHex((new U64(TypeRegistry, nonce)).toU8a()) : "0x";
+        const rawAmount = amount ? u8aToHex((new U64(TypeRegistry, amount)).toU8a()) : "0x";
+        const signedTx = Utils.signTransaction(from, to, rawAmount, rawNonce);
         const rpcCall = new RpcCall("author_submitExtrinsic", [signedTx]);
         const { data } = await axios.post(this.nodeUrl, rpcCall.toJson());
         return data;

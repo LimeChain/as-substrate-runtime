@@ -1,10 +1,6 @@
 const { Keyring } = require("@polkadot/api");
 const { Compact } = require("@polkadot/types");
-const { hexToU8a, u8aToHex } = require('@polkadot/util');
-const { cryptoWaitReady } = require('@polkadot/util-crypto');
-
-cryptoWaitReady()
-    .then((res) => {return ;});
+const { hexToU8a, u8aToHex, hexAddPrefix, hexStripPrefix } = require('@polkadot/util');
 
 class Utils {
     static TRANSACTION_LENGTH = 145;
@@ -34,29 +30,15 @@ class Utils {
         };
         let concatStr = "";
         Object.values(tx).forEach(value => {
-            concatStr += this._saveRemove0x(value.toString());
+            concatStr += hexStripPrefix(value.toString());
         });
-        const signature = from.sign(this._saveAdd0x(concatStr));
+        const signature = from.sign(hexAddPrefix(concatStr));
         // add exhaustResources property at the end
-        concatStr = concatStr + this._saveRemove0x(u8aToHex(signature)) + "00";
+        concatStr = concatStr + hexStripPrefix(u8aToHex(signature)) + "00";
+        // each hexadecimal digit represents 4 bits
         const len = Compact.encodeU8a(concatStr.length/2);
         concatStr = u8aToHex(len) + concatStr;
-        return this._saveAdd0x(concatStr);
-    }
-
-    /**
-     * Remove 0x prefix of Hex string
-     * @param {} str 
-     */
-    static _saveRemove0x(str){
-        return str.startsWith("0x") ? str.slice(2) : str;
-    }
-    /**
-     * Add 0x prefix to a string 
-     * @param {*} str 
-     */
-    static _saveAdd0x(str){
-        return str.startsWith("0x") ? str : "0x" + str;
+        return hexAddPrefix(concatStr);
     }
 }
 
