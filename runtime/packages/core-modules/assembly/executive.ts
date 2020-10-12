@@ -140,7 +140,7 @@ export namespace Executive{
             return ResponseCodes.INVALID_SIGNATURE;
         }   
         const nonce = System.accountNonce(from);
-        if (<u64>nonce.value > <u64>utx.nonce.value){
+        if (<u64>nonce.value >= <u64>utx.nonce.value){
             Log.error("Validation error: Nonce value is less than or equal to the latest nonce");
             return ResponseCodes.NONCE_TOO_LOW;
         }

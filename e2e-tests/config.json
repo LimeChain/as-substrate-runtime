@@ -25,7 +25,7 @@
             "validator": false
         },
         {
-            "name": "InvalidNode",
+            "name": "Node04",
             "port": 5003,
             "privateKey": "0x136cb082fd9814ec0856a0e76a176616ba643edddd8af97af303eca3577d243f",
             "publicKey": "0x1e965d7da0db5a638a5e12e0c25d23128ce3939197ae0ab39f9760d6b10b5918",

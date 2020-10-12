@@ -114,7 +114,7 @@ export class System {
         if(value.isSome()){
             return UInt64.fromU8a((<ByteArray>value.unwrap()).values);
         }
-        return new UInt64(1);
+        return new UInt64(0);
     }
 
     /**

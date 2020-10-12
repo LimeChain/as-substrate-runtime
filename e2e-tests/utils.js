@@ -2,6 +2,10 @@ const { Keyring } = require("@polkadot/api");
 const { Compact } = require("@polkadot/types");
 const { hexToU8a, u8aToHex } = require('@polkadot/util');
 const { cryptoWaitReady } = require('@polkadot/util-crypto');
+
+cryptoWaitReady()
+    .then((res) => {return ;});
+
 class Utils {
     static TRANSACTION_LENGTH = 145;
 
@@ -11,9 +15,7 @@ class Utils {
      */
     static async getKeyringPair(privateKey){
         const keyring = new Keyring({ type: 'sr25519' });
-        await cryptoWaitReady();
-        const pair = keyring.addFromSeed(hexToU8a(privateKey));
-        return pair;
+        return keyring.addFromSeed(hexToU8a(privateKey));
     }
 
     /**
@@ -23,21 +25,38 @@ class Utils {
      * @param {*} amount 
      * @param {*} nonce 
      */
-    static async signTransaction(from, to, amount, nonce){
-        const len = Compact.encodeU8a(Utils.TRANSACTION_LENGTH);
+    static signTransaction(from, to, amount, nonce){
         const tx = {
             from: u8aToHex(from.publicKey),
             to,
             amount,
             nonce
         };
-        let concatStr = "0x";
+        let concatStr = "";
         Object.values(tx).forEach(value => {
-            concatStr += value.slice(2);
+            concatStr += this._saveRemove0x(value.toString());
         });
-        const signature = from.sign(concatStr);
-        concatStr = u8aToHex(len) + concatStr.slice(2);
-        return concatStr.concat([u8aToHex(signature).slice(2) + "00"]);
+        const signature = from.sign(this._saveAdd0x(concatStr));
+        // add exhaustResources property at the end
+        concatStr = concatStr + this._saveRemove0x(u8aToHex(signature)) + "00";
+        const len = Compact.encodeU8a(concatStr.length/2);
+        concatStr = u8aToHex(len) + concatStr;
+        return this._saveAdd0x(concatStr);
+    }
+
+    /**
+     * Remove 0x prefix of Hex string
+     * @param {} str 
+     */
+    static _saveRemove0x(str){
+        return str.startsWith("0x") ? str.slice(2) : str;
+    }
+    /**
+     * Add 0x prefix to a string 
+     * @param {*} str 
+     */
+    static _saveAdd0x(str){
+        return str.startsWith("0x") ? str : "0x" + str;
     }
 }
 
