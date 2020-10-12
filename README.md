@@ -186,14 +186,7 @@ docker pull limechain/as-substrate:stable
 Then run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime \
-limechain/as-substrate:stable \
-    --validator \
-    --rpc-methods=Unsafe \
-    --name Node01 \
-    --base-path /tmp/node01 \
-    --execution Wasm \
-    --rpc-external
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 limechain/as-substrate:stable
 ```
 
 ### Build the image (option 2)
