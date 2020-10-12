@@ -1,4 +1,4 @@
-name: e2e Tests
+name: End-to-end Tests
 
 on: [push]
 jobs:
