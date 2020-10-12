@@ -40,8 +40,8 @@ class NodeClient {
     async getBalance(account) {
         const rpcCall = new RpcCall("state_getStorage", [account]);
         const { data } = await axios.post(this.nodeUrl, rpcCall.toJson());
-        const balance = Compact.decodeU8a(hexToU8a(data.result));
-        return data.result ? new U128(TypeRegistry, balance[1]) : data.error;
+        const [len, value] = Compact.decodeU8a(hexToU8a(data.result));
+        return data.result ? new U128(TypeRegistry, value) : data.error;
     }
     /**
      * Get the latest used nonce for the account
