@@ -145,7 +145,7 @@ yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-
 5. Build the node `cargo build --release` (may take a while)
 6. (Optional) Purge the existing db with the following command:
 ```
-bash compile-purge.sh 
+rm -f /tmp/node0*
 ```
 7. Run the node with the generated chain spec:  
 ```

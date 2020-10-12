@@ -129,14 +129,13 @@ export class System {
     /**
     * Maximum number of block number to block hash mappings to keep (oldest pruned first).
     */
-    static blockHashCount(): UInt32 {
-        const value = Storage.get(Utils.stringsToBytes(this.BHSH_COUNT, true));
-        if(value.isSome()){
-            const decValue = CompactInt.fromU8a((<ByteArray>value.unwrap()).values);
-            return new UInt32(<u32>decValue.value);
-        }
-        return new UInt32(0);
+   static blockHashCount(): UInt32 {
+    const value = Storage.get(Utils.stringsToBytes(this.BHSH_COUNT, true));
+    if(value.isSome()){
+        return UInt32.fromU8a((<ByteArray>value.unwrap()).values);
     }
+    return new UInt32(0);
+}
 
     /**
      * Gets the index of extrinsic that is currently executing.
