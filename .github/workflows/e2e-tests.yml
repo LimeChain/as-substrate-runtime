@@ -1,0 +1,14 @@
+name: End-to-end Tests
+
+on: [push]
+jobs:
+    e2e-tests:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - name: Run nodes
+            run: docker-compose up -d
+          - name: Install dependencies for testing
+            run: cd e2e-tests && npm install
+          - name: Run tests
+            run: cd e2e-tests && npm test

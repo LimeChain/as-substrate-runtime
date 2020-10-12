@@ -42,7 +42,6 @@ export namespace Executive{
      * @param header 
      */
     export function finalChecks(header: Header): void{
-        Log.info("final checks");
         System.computeExtrinsicsRoot();
         let newHeader = System.finalize();
         let storageRoot = newHeader.stateRoot;
@@ -58,7 +57,6 @@ export namespace Executive{
      * @param block Block instance
      */
     export function executeBlock(block: Block): void{
-        Log.info("executing a block");
         Executive.initializeBlock(block.header);
         Executive.initialChecks(block);
 

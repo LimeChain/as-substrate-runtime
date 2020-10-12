@@ -56,7 +56,7 @@ export class BalancesModule {
         this.setBalance(sender, senderNewBalance, senderAccData.getReserved());
         this.setBalance(receiver, receiverNewBalance, receiverAccData.getReserved());
         System.incAccountNonce(sender);
-        Log.info("done transfering: " + amount.toString());
+        Log.info("Done transfering: " + amount.toString());
     }
 
     /**

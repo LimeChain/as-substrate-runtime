@@ -4,7 +4,8 @@
  */
 import {Serialiser} from "@as-substrate/core-utils";
 import { Extrinsic, SignedTransaction } from '@as-substrate/models';
-import { Executive } from '@as-substrate/core-modules';
+import { AccountId } from '@as-substrate/balances-module';
+import { Executive, System } from '@as-substrate/core-modules';
 
 /**
  * 
@@ -55,4 +56,16 @@ export function OffchainWorkerApi_offchain_worker(data: i32, len: i32): u64 {
  */
 export function Metadata_metadata(data: i32, len: i32): u64 {
     return Serialiser.serialiseResult([]);
+}
+
+/**
+ * Get the latest nonce for the account
+ * @param data 
+ * @param len 
+ */
+export function System_account_nonce(data: i32, len: i32): u64 {
+    const input = Serialiser.deserialiseInput(data, len);
+    const who = AccountId.fromU8Array(input).result;
+    const nonce = System.accountNonce(who);
+    return Serialiser.serialiseResult(nonce.toU8a());
 }

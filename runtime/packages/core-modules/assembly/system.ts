@@ -110,8 +110,7 @@ export class System {
         const nonceKey: u8[] = Utils.stringsToBytes([System.NONCE_KEY], true);
         const value = Storage.get(who.getAddress().concat(nonceKey));
         if(value.isSome()){
-            const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
-            return new UInt64(decValue.value);
+            return UInt64.fromU8a((<ByteArray>value.unwrap()).values);
         }
         return new UInt64(0);
     }
@@ -133,7 +132,7 @@ export class System {
     static blockHashCount(): UInt32 {
         const value = Storage.get(Utils.stringsToBytes(this.BHSH_COUNT, true));
         if(value.isSome()){
-            const decValue = Bytes.decodeCompactInt((<ByteArray>value.unwrap()).values);
+            const decValue = CompactInt.fromU8a((<ByteArray>value.unwrap()).values);
             return new UInt32(<u32>decValue.value);
         }
         return new UInt32(0);
