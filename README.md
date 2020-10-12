@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Unit Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/Unit%20Tests/badge.svg)
 ![Integration Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/Integration%20Tests/badge.svg)
+![End-to-end Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/End-to-end%20Tests/badge.svg)
 
 
 Account-Based Substrate PoC Runtime written in AssemblyScript.
