@@ -176,17 +176,18 @@ You should have [Docker](https://docker.io) installed.
 
 ### Docker image from Docker hub (option 1)
 
-We have a Docker Hub repository where we host the latest stable image of the executable file of the project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
+We have a Docker Hub repository where we host the latest stable image of the executable file of the project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime. To run the container, you need to provide raw chain specs file with genesis configuration.
 
 First, pull the image from the Docker Hub. 
 ``` 
 docker pull limechain/as-substrate:stable
 ```
 
-Then run the executable:
+Assuming you have the generated raw chain specs file in the current directory, run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 limechain/as-substrate:stable
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(pwd)/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable /customSpecRaw.json
+
 ```
 
 ### Build the image (option 2)
