@@ -186,7 +186,7 @@ docker pull limechain/as-substrate:stable
 Assuming you have the generated raw chain specs file in the current directory, run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(pwd)/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable /customSpecRaw.json
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(pwd)/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable --chain=./customSpecRaw.json
 
 ```
 
