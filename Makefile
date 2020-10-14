@@ -16,7 +16,7 @@ generate_chain_spec: build_runtime
 	@yarn --cwd=./runtime build-spec -f ../node-template/customSpec.json -o ../customSpecRaw.json -w ./wasm-code > /dev/null
 
 # Run Docker container in a detached mode
-# Stop the container and delete if it is running	
+# Stop the container if it is running and delete it
 
 run_docker_container: generate_chain_spec
 	@echo "Running the container in detached mode"
