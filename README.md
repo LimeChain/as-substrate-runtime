@@ -186,7 +186,7 @@ docker pull limechain/as-substrate:stable
 Assuming you have the generated raw chain specs file in the current directory, run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(pwd)/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable --chain=/customSpecRaw.json
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "{path-to-custom-spec-raw}/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable --chain=/customSpecRaw.json
 
 ```
 
@@ -196,18 +196,13 @@ docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(pwd)/customSpecRaw.jso
 2. Build the Docker image:
 
 ```
-docker build -t substrate/runtime .
+docker build -t as-substrate/runtime .
 ```
 It might take a while for Rust to compile the project (~30-40 minutes). After you built the image, run the node:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrate/runtime \
-    --validator \
-    --rpc-methods=Unsafe \
-    --name Node01 \
-    --base-path /tmp/node01 \
-    --execution Wasm \
-    --rpc-external
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "{path-to-custom-spec-raw}/customSpecRaw.json":/customSpecRaw.json as-substrate/runtime --chain=/customSpecRaw.json
+
 ```
 And the node should start running and attempting to produce blocks. However, we first need to insert our keys for node to start actually producing blocks. Note that `rpc-external` option is required for accessing the node with RPC calls.
 
