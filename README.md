@@ -189,6 +189,7 @@ Assuming you have the generated raw chain specs file in the current directory, r
 docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "{path-to-custom-spec-raw}/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable --chain=/customSpecRaw.json
 
 ```
+NOTE: Make sure the path to `customSpecRaw.json` is absolute, otherwise Docker will throw an error.
 
 ### Build the image (option 2)
 
