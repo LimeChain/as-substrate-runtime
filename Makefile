@@ -1,0 +1,45 @@
+all: run-node-demo
+
+# Name of our Docker image
+DOCKER_IMAGE=limechain/as-substrate:stable
+# Name of our Docker container
+DOCKER_CONTAINER=as-substrate-node
+
+# build the runtime wasm code
+build_runtime:
+	@echo "Building runtime"
+	@cd runtime && yarn build > /dev/null
+
+# generate raw chain spec for the node
+generate_chain_spec: build_runtime
+	@echo "Generating raw chain spec file"
+	@yarn --cwd=./runtime build-spec -f ../node-template/customSpec.json -o ../customSpecRaw.json -w ./wasm-code > /dev/null
+
+# Run Docker container in a detached mode
+# Stop the container and delete if it is running	
+
+run_docker_container: generate_chain_spec
+	@echo "Running the container in detached mode"
+	@docker ps -q --filter "name=$(DOCKER_CONTAINER)" | grep -q . && docker stop $(DOCKER_CONTAINER) || true && docker rm $(DOCKER_CONTAINER) || true
+	@docker pull limechain/as-substrate:stable > /dev/null
+	@docker run --name $(DOCKER_CONTAINER) -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/customSpecRaw.json":/customSpecRaw.json -d $(DOCKER_IMAGE)
+
+# Insert the Aura keys and re-attach the container to the shell
+# for some reason, if I don't do lsof, curl returns `empty reply from server` error
+
+run-node-demo: run_docker_container
+	@lsof -n | grep LISTEN > /dev/null
+	@echo "Inserting Aura keys"
+	@curl --request POST 'http://localhost:9933' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{ \
+			"jsonrpc": "2.0", \
+			"method": "author_insertKey", \
+			"params": ["aura","dice height enter anger ahead chronic easily wave curious banana era happy","0xdcc1461cba689c60dcae053ef09bc9e9524cdceb696ce39c7ed43bf3a5fa9659"], \
+			"id": 1 \
+		}'
+	@echo "Re-attach the container"
+	@docker attach $(DOCKER_CONTAINER)
+
+run-network: generate_chain_spec
+	@docker-compose up

@@ -10,13 +10,13 @@ class Utils{
      * @param file to read
      * @param output file to write raw json 
      */
-    static buildSpec(file, output) {
+    static buildSpec(file, output, wasmCode) {
         return new Promise(function(resolve, reject) {
             const defaults = {
                 cwd: process.cwd(),
                 env: process.env
             }
-            const command = spawn('node', ['index.js', '-f', file, '-o', output], defaults);
+            const command = spawn('node', ['index.js', '-f', file, '-o', output, '-w', wasmCode], defaults);
 
             command.stderr.setEncoding('utf-8');
             
