@@ -95,14 +95,20 @@ Substrate Runtimes compile to both native executable and WASM binary, therefore 
 ## Playing with the Runtime
 ### Makefile
 We have a Makefile in the root directory, that has two actions that demonstrate the AssemblyScript runtime in action. 
-- ```make run-node-demo ```
+- ```
+  make run-node-demo 
+  
+  ```
     Executes all the necessary actions for a Substrate node to start producing blocks using AssemblyScript runtime. 
     The steps include:
       - Building AssemblyScript runtime
       - Generating raw chain spec file using `wasm-code`
       - Run a Substrate node with raw chain spec file as a Docker container
       - Insert Aura keys for node to start producing blocks
-- ```make run-network```
+- ```
+  make run-network
+  
+  ```
     Starts the network of Substrate nodes that use AssemblyScript runtime.
 
 ### Tests
