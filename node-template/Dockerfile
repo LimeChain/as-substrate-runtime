@@ -1,4 +1,4 @@
-# Pull node binary from the hub
+# Build image of the modified Substrate Node
 FROM paritytech/ci-linux:production
 
 WORKDIR /usr/src/node
