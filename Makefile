@@ -8,7 +8,7 @@ DOCKER_CONTAINER=as-substrate-node
 # build the runtime wasm code
 build_runtime:
 	@echo "Building runtime"
-	@cd runtime && yarn build > /dev/null
+	@cd runtime && yarn install 1> /dev/null && yarn build 1> /dev/null
 
 # generate raw chain spec for the node
 generate_chain_spec: build_runtime
