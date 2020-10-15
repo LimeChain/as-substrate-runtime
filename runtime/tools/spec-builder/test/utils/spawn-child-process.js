@@ -16,7 +16,7 @@ class Utils{
                 cwd: process.cwd(),
                 env: process.env
             }
-            const command = spawn('node', ['index.js', '-f', file, '-o', output, '-w', wasmCode], defaults);
+            const command = spawn('node', ['index.js', '-f', file, '-o', output, '-c', wasmCode], defaults);
 
             command.stderr.setEncoding('utf-8');
             

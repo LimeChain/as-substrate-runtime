@@ -162,22 +162,23 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 3. Execute `yarn run test`
 
 ### 6. Build and Run the node with WASM code
-1. Copy `wasm-code` generated earlier in the `../runtime` directory
-2. Go to `./node-template`
-3. Paste the whole content of `wasm-code` with a prefix `0x`, as a value of `code` property in `customSpec.json`
-4. Build WASM module and generate chain spec by executing:
+1. Go to `./node-template`
+2. Build WASM module and generate chain spec by executing:
 ```
-yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json
-```
-5. Build the node `cargo build --release` (may take a while)
-6. (Optional) Purge the existing db with the following command:
+yarn --cwd=../runtime build-spec -f ../spec-files/customSpec.json -o ../spec-files/customSpecRaw.json -c ../runtime/wasm-code
+```  
+3. Substrate node   
+      1. (Option 1) Build the node `cargo build --release` (may take a while)  
+      2. (Option 2) Pull the Docker image of the Substrate node (see `Running in Docker section`)  
+
+4. (Optional) Purge the existing db with the following command:
 ```
 rm -rf /tmp/node0*
 ```
-7. Run the node with the generated chain spec:  
+5. Run the node with the generated chain spec:  
 ```
 ./target/release/node-template \
-    --chain=./customSpecRaw.json \
+    --chain=../spec-files/customSpecRaw.json \
     --port 30333 \
     --ws-port 9944 \
     --rpc-port 9933 \
@@ -246,7 +247,7 @@ In order to do that, execute the following command:
 
 `docker-compose up`
 
-Keep in mind that you still have to import the Aura keys into the validtor nodes in order for them to start producing blocks. You can do that by performing the following requests:  
+Keep in mind that you still have to import the Aura keys into the validtor nodes in order for them to start producing blocks. You can do that by performing the following requests: 
 Validator 1:
 
 ```

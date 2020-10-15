@@ -13,10 +13,10 @@ build_runtime:
 # generate raw chain spec for the node
 generate_chain_spec: build_runtime
 	@echo "Generating raw chain spec file"
-	@yarn --cwd=./runtime build-spec -f ../spec-files/customSpec.json -o ../spec-files/customSpecRaw.json -w ./wasm-code > /dev/null
+	@yarn --cwd=./runtime build-spec -f ../spec-files/customSpec.json -o ../spec-files/customSpecRaw.json -c ./wasm-code > /dev/null
 
 # Run Docker container in a detached mode
-run-node: 
+run-node: build_runtime
 	@echo "Running the container in detached mode"
 	@docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/spec-files/customSpecRaw.json":/customSpecRaw.json $(DOCKER_IMAGE)
 

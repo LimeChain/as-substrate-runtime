@@ -18,7 +18,7 @@ let argv = require('yargs')
         alias: 'output',
         describe: 'output file'
     })
-    .option('w', {
+    .option('c', {
         alias: 'wasmCode',
         describe: 'wasm-code file'
     })
