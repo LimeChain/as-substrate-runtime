@@ -223,7 +223,7 @@ Follow this [link](https://documenter.getpostman.com/view/12337614/T1LSC6Qb?vers
 
 ## Run a network of 4 nodes
 
-You can run a network of 4 nodes using the stable image published in the LimeChain DocerHub repository.
+You can run a network of 4 nodes using the stable image published in the LimeChain DockerHub repository.
 In order to do that, execute the following command:
 
 `docker-compose up`
