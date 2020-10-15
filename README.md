@@ -16,6 +16,66 @@ Currently the most matured way of developing Runtimes is using the Substrate fra
 
 This PoC can be considered the first step towards a general framework for developing runtimes in AssemblyScript.
 
+## Demo
+
+### Makefile
+We have a Makefile in the root directory, that has 3 actions that demonstrate the AssemblyScript runtime in action. 
+
+- ```
+  make run-node-demo 
+  ```
+    Executes all the necessary actions for a Substrate node to start producing blocks using AssemblyScript runtime. 
+
+    This action performs the following operations:  
+    - Runs a Substrate node with a demo raw chain spec file as a Docker container  
+    - Inserts Aura keys for node to start producing blocks
+
+
+- ```
+  make run-node
+  ```
+    Executes all the necessary actions for a Substrate node to run with AssemblyScript runtime
+
+    This action performs the following operations:  
+    - Builds the AssemblyScript Runtime
+    - Generates the Raw Chain spec file using `wasm-code` of the Runtime
+    - Runs a Substrate node with a generated Raw Chain Spec file as a Docker container  
+  
+  NOTE: You must insert the Aura keys for the node to start producing blocks (see `Block Production` section)  
+
+- ```
+  make run-network
+  ```
+    - Builds the AssemblyScript Runtime and generates the Raw Chain Spec
+    - Starts a network of 4 Substrate nodes
+  
+  NOTE: You must insert the Aura keys for the nodes to start producing blocks. You can do that by performing the following:
+
+Validator 1:
+
+```
+curl --location --request POST 'localhost:5000' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "jsonrpc": "2.0",
+    "method": "author_insertKey",
+    "params": ["aura","dice height enter anger ahead chronic easily wave curious banana era happy","0xdcc1461cba689c60dcae053ef09bc9e9524cdceb696ce39c7ed43bf3a5fa9659"],
+    "id": 1
+}'
+```
+
+Validator 2:
+```
+curl --location --request POST 'localhost:5001' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "jsonrpc": "2.0",
+    "method": "author_insertKey",
+    "params": ["aura","spray later man depth auction tape autumn rocket bullet grunt adult flight","0x203d05ced7e80c58db6ca60ceb28041dc28be0066ce9b1d75fd92597adae124f"],
+    "id": 1
+}'
+```
+
 ## Roadmap
 
 #### Milestone 1 - WASM API Mock :white_check_mark: 
@@ -97,6 +157,7 @@ Substrate provides a template node that uses `Aura` consensus for block producti
 Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
 
 ## Playing with the Runtime
+
 The runtime has 3 types of tests so far -> Integration, Unit and End-to-End tests.
 The Unit tests are written in AssemblyScript and are testing f.e the instantiation or encoding of a `Block` from a SCALE encoded Byte Array.
 
@@ -139,22 +200,23 @@ New `wasm-code` binary file will be generated in the `runtime` folder.
 3. Execute `yarn run test`
 
 ### 6. Build and Run the node with WASM code
-1. Copy `wasm-code` generated earlier in the `../runtime` directory
-2. Go to `./node-template`
-3. Paste the whole content of `wasm-code` with a prefix `0x`, as a value of `code` property in `customSpec.json`
-4. Build WASM module and generate chain spec by executing:
+1. Go to `./node-template`
+2. Build WASM module and generate chain spec by executing:
 ```
-yarn --cwd=../runtime build-spec -f ../node-template/customSpec.json -o ../node-template/customSpecRaw.json
-```
-5. Build the node `cargo build --release` (may take a while)
-6. (Optional) Purge the existing db with the following command:
+yarn --cwd=../runtime build-spec -f ../spec-files/customSpec.json -o ../spec-files/customSpecRaw.json -c ../runtime/wasm-code
+```  
+3. Substrate node   
+      1. (Option 1) Build the node `cargo build --release` (may take a while)  
+      2. (Option 2) Pull the Docker image of the Substrate node (see `Running in Docker section`)  
+
+4. (Optional) Purge the existing db with the following command:
 ```
 rm -rf /tmp/node0*
 ```
-7. Run the node with the generated chain spec:  
+5. Run the node with the generated chain spec:  
 ```
 ./target/release/node-template \
-    --chain=./customSpecRaw.json \
+    --chain=../spec-files/customSpecRaw.json \
     --port 30333 \
     --ws-port 9944 \
     --rpc-port 9933 \
@@ -215,40 +277,6 @@ Now, node will start producing blocks.
 We have created a Postman collection with some useful RPC calls that access the Runtime API entries.
 
 Follow this [link](https://documenter.getpostman.com/view/12337614/T1LSC6Qb?version=latest) to play around with the Postman collection. You need to have the a Substrate node running with the `chain spec` generated by our runtime and `rpc-external` option enabled if you are running with Docker.
-
-## Run a network of 4 nodes
-
-You can run a network of 4 nodes using the stable image published in the LimeChain DockerHub repository.
-In order to do that, execute the following command:
-
-`docker-compose up`
-
-Keep in mind that you still have to import the Aura keys into the validtor nodes in order for them to start producing blocks. You can do that by performing the following requests:
-Validator 1:
-
-```
-curl --location --request POST 'localhost:5000' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "jsonrpc": "2.0",
-    "method": "author_insertKey",
-    "params": ["aura","dice height enter anger ahead chronic easily wave curious banana era happy","0xdcc1461cba689c60dcae053ef09bc9e9524cdceb696ce39c7ed43bf3a5fa9659"],
-    "id": 1
-}'
-```
-
-Validator 2:
-```
-curl --location --request POST 'localhost:5001' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "jsonrpc": "2.0",
-    "method": "author_insertKey",
-    "params": ["aura","spray later man depth auction tape autumn rocket bullet grunt adult flight","0x203d05ced7e80c58db6ca60ceb28041dc28be0066ce9b1d75fd92597adae124f"],
-    "id": 1
-}'
-```
-
 
 # **License**
 This repository is licensed under [Apache 2.0 license](https://github.com/LimeChain/as-substrate-runtime/blob/master/LICENSE)

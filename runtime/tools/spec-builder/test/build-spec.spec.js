@@ -9,7 +9,7 @@ describe('Build spec tests', () => {
     });
 
     it('correctly converts customSpec with all properties', async function() {
-        await Utils.buildSpec('./test/json-files/customSpec.json', './test/actual-raw-files/customSpecRaw.json');
+        await Utils.buildSpec('./test/json-files/customSpec.json', './test/actual-raw-files/customSpecRaw.json', './test/wasm-code');
         
         assert(fs.existsSync('./test/actual-raw-files/customSpecRaw.json'), 'file does not exist');
         
@@ -18,7 +18,7 @@ describe('Build spec tests', () => {
     })
 
     it('correctly converts customSpec without Aura authorities', async function() {
-        await Utils.buildSpec('./test/json-files/customSpec-noAura.json', './test/actual-raw-files/customSpecRaw-noAura.json');
+        await Utils.buildSpec('./test/json-files/customSpec-noAura.json', './test/actual-raw-files/customSpecRaw-noAura.json', './test/wasm-code');
         
         assert(fs.existsSync('./test/actual-raw-files/customSpecRaw-noAura.json'), 'file does not exist');
         
@@ -27,7 +27,7 @@ describe('Build spec tests', () => {
     })
 
     it('correctly converts customSpec with system property only', async function() {
-        await Utils.buildSpec('./test/json-files/customSpec-code.json', './test/actual-raw-files/customSpecRaw-code.json');
+        await Utils.buildSpec('./test/json-files/customSpec-code.json', './test/actual-raw-files/customSpecRaw-code.json', './test/wasm-code');
         
         assert(fs.existsSync('./test/actual-raw-files/customSpecRaw-code.json'), 'file does not exist');
         
@@ -46,7 +46,7 @@ describe('Build spec tests', () => {
     })
 
     it('should fail if balances property is not given', async function(){
-        const result = await Utils.buildSpec('./test/json-files/customSpec-noBalances.json', './test/actual-raw-files/customSpecRaw-noBalances.json');
+        const result = await Utils.buildSpec('./test/json-files/customSpec-noBalances.json', './test/actual-raw-files/customSpecRaw-noBalances.json', './test/wasm-code');
         assert.match(result, /Error: Balances: Invalid or no balances array provided/);
     })
 
