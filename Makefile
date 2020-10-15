@@ -39,5 +39,5 @@ run-node-demo:
 	@echo "Re-attach the container"
 	@docker attach $(DOCKER_CONTAINER)
 
-run-network: generate_chain_spec
+run-network:
 	@docker-compose up
