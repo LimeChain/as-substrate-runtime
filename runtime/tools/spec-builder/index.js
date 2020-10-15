@@ -7,7 +7,7 @@ const { hexAddPrefix } = require("@polkadot/util");
 
 let argv = require('yargs')
     .usage('\n \n Usage: $0 [options]')
-    .example('$0 -f customSpec.json -o customSpecRaw.json -w wasm-code', 'convert given file to raw and write to output')
+    .example('$0 -f customSpec.json -o customSpecRaw.json -c wasm-code', 'convert given file to raw and write to output')
     .option('f', 
     {
         alias: 'file',
@@ -53,5 +53,4 @@ customSpec.genesis = rawGenesis;
 // set default file to write, if output file isn't provided
 const outputFile = argv.output ? argv.output : `${curPath}/customSpecRaw.json`;
 fs.writeFileSync(outputFile, JSON.stringify(customSpec, null, 2));
-
 console.log("succesfully converted to raw json");

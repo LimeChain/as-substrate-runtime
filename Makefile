@@ -16,7 +16,7 @@ generate_chain_spec: build_runtime
 	@yarn --cwd=./runtime build-spec -f ../spec-files/customSpec.json -o ../spec-files/customSpecRaw.json -c ./wasm-code > /dev/null
 
 # Run Docker container in a detached mode
-run-node: build_runtime
+run-node: generate_chain_spec
 	@echo "Running the container in detached mode"
 	@docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/spec-files/customSpecRaw.json":/customSpecRaw.json $(DOCKER_IMAGE)
 
@@ -24,9 +24,9 @@ run-node: build_runtime
 # for some reason, if I don't do lsof, curl returns `empty reply from server` error
 
 run-node-demo:
-	@docker ps -q --filter "name=$(DOCKER_CONTAINER)" | grep -q . && docker stop $(DOCKER_CONTAINER) || true && docker rm $(DOCKER_CONTAINER) || true
+	@docker ps -q --filter "name=$(DOCKER_CONTAINER)" | grep -q . && docker stop $(DOCKER_CONTAINER) || true && docker rm $(DOCKER_CONTAINER) || true > /dev/null
 	@docker run --name=$(DOCKER_CONTAINER) -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/spec-files/demoSpecRaw.json":/customSpecRaw.json -d $(DOCKER_IMAGE)
-	@lsof -n | grep LISTEN
+	@lsof -n | grep LISTEN > /dev/null
 	@echo "Inserting Aura keys"
 	@curl --request POST 'http://localhost:9933' \
 		--header 'Content-Type: application/json' \
