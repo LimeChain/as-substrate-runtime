@@ -182,12 +182,7 @@ You should have [Docker](https://docker.io) installed.
 
 We have a Docker Hub repository where we host the latest stable image of the Substrate node. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
 
-First, pull the image from the Docker Hub. 
-``` 
-docker pull limechain/as-substrate:stable
-```
-
-Then run the executable:
+Run the executable:
 
 ```
 docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v {path-to-chain-spec-raw}/customSpecRaw.json:/customSpecRaw.json limechain/as-substrate:stable 
