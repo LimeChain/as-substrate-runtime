@@ -27,16 +27,29 @@ We have a Makefile in the root directory, that has two actions that demonstrate 
     Executes all the necessary actions for a Substrate node to start producing blocks using AssemblyScript runtime. 
 
     This action performs following steps:  
-    - Building AssemblyScript runtime  
-    - Generating raw chain spec file using `wasm-code`  
-    - Run a Substrate node with raw chain spec file as a Docker container  
+    - Run a Substrate node with a demo raw chain spec file as a Docker container  
     - Insert Aura keys for node to start producing blocks
+
+
+- ```
+  make run-node
+  ```
+    Executes all the necessary actions for a Substrate node to run with AssemblyScript runtime
+
+    This action performs following steps:  
+    - Building AssemblyScript runtime  
+    - Generating raw chain spec file using `wasm-code` of the Runtime
+    - Run a Substrate node with a generated raw chain spec file as a Docker container  
+  
+  NOTE: Insert Aura keys for node to start producing blocks (see `Block Production` section)  
 
 - ```
   make run-network
   ```
     - Build runtime and generate raw chain spec
-    - Starts the network of Substrate nodes that use AssemblyScript runtime.
+    - Starts the network of Substrate nodes that use AssemblyScript runtime.  
+  
+  NOTE: Insert Aura keys for node to start producing blocks (see `Block Production` section)  
 
 ## Roadmap
 
