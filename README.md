@@ -183,10 +183,10 @@ First, pull the image from the Docker Hub.
 docker pull limechain/as-substrate:stable
 ```
 
-Assuming you have the generated raw chain specs file in the current directory, run the executable:
+Run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "{path-to-custom-spec-raw}/customSpecRaw.json":/customSpecRaw.json limechain/as-substrate:stable
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v {path-to-custom-spec-raw}/customSpecRaw.json:/customSpecRaw.json limechain/as-substrate:stable
 
 ```
 NOTE: Make sure the path to `customSpecRaw.json` is absolute, otherwise Docker will throw an error.
