@@ -46,7 +46,7 @@ as-substrate-runtime
 │
 └───sandbox    <--- Rust environment for testing the Runtime
 │
-└───end-to-end    <--- End-to-end tests of the Runtime
+└───e2e-tests   <--- End-to-end tests of the Runtime
 ```
 
 ### Packaging
@@ -61,7 +61,9 @@ Runtime
 │   └───core-utils         
 │   └───models              
 │   └───modules        <--- Modules packages. Contains the top-level "pallets" used in the Runtime
-│       └───balances       
+│       └───balances    
+│       └───aura       
+│       └───timestamp       
 │       ....
 │
 └───src
@@ -71,7 +73,9 @@ All of the packagings are done using `yarn` workspaces. Thus so far we have the 
 - [`@core-modules`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/core-modules) - The core-modules that are used by most of the modules (f.e Storage, Crypto etc.)
 - [`@core-utils`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/core-utils) - Package containing utility functions
 - [`@models`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/models) - Package containing model classes (block, header, extrinsic, etc...)
-- [`@balances`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/modules/balances) - Balances modules package. Responsible for the Balances functionality (setting/getting/changing balances of the accounts) 
+- [`@balances`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/modules/balances) - Balances module package. Responsible for the Balances functionality (setting/getting/changing balances of the accounts) 
+- [`@aura`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/modules/aura) - Aura module package. Aura consensus pallet, responsible for block production
+- [`@timestamp`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/packages/modules/timestamp) - Timestamp module package. Provides functionality to get and set the on-chain time.
 - [`@runtime`](https://github.com/LimeChain/as-substrate-runtime/tree/master/runtime/src) - Top-level code that complies into the Runtime
 
 ## Tools
@@ -90,7 +94,7 @@ node-template
 
 Substrate provides a template node that uses `Aura` consensus for block production and `Granpda` for block finalization. Since our AssemblyScript runtime currently does not support `Grandpa`, we have modified the Node-template to not use `Grandpa` at all.
 
-Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate Nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
+Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
 
 ## Playing with the Runtime
 The runtime has 3 types of tests so far -> Integration, Unit and End-to-End tests.
@@ -174,41 +178,16 @@ End-to-end tests are designed to test the account transactions.
 
 You should have [Docker](https://docker.io) installed.
 
-### Docker image from Docker hub (option 1)
+### Docker image
 
-We have a Docker Hub repository where we host the latest stable image of the executable file of the project. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
+We have a Docker Hub repository where we host the latest stable image of the Substrate node. This is the easiest and fastest way to run the Substrate node with Assemblyscript Runtime.
 
-First, pull the image from the Docker Hub. 
-``` 
-docker pull limechain/as-substrate:stable
-```
-
-Then run the executable:
+Run the executable:
 
 ```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 limechain/as-substrate:stable
+docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v {path-to-chain-spec-raw}/customSpecRaw.json:/customSpecRaw.json limechain/as-substrate:stable 
 ```
-
-### Build the image (option 2)
-
-1. Go to the root directory of the repo
-2. Build the Docker image:
-
-```
-docker build -t substrate/runtime .
-```
-It might take a while for Rust to compile the project (~30-40 minutes). After you built the image, run the node:
-
-```
-docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 --name node-runtime substrate/runtime \
-    --validator \
-    --rpc-methods=Unsafe \
-    --name Node01 \
-    --base-path /tmp/node01 \
-    --execution Wasm \
-    --rpc-external
-```
-And the node should start running and attempting to produce blocks. However, we first need to insert our keys for node to start actually producing blocks. Note that `rpc-external` option is required for accessing the node with RPC calls.
+NOTE: Path to `customSpecRaw.json` must be absolute
 
 ## Block production
 
@@ -239,7 +218,7 @@ Follow this [link](https://documenter.getpostman.com/view/12337614/T1LSC6Qb?vers
 
 ## Run a network of 4 nodes
 
-You can run a network of 4 nodes using the stable images published in the LimeChain DocerHub repository.
+You can run a network of 4 nodes using the stable image published in the LimeChain DockerHub repository.
 In order to do that, execute the following command:
 
 `docker-compose up`
