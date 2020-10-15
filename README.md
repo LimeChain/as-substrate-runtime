@@ -16,6 +16,28 @@ Currently the most matured way of developing Runtimes is using the Substrate fra
 
 This PoC can be considered the first step towards a general framework for developing runtimes in AssemblyScript.
 
+## Demo
+
+### Makefile
+We have a Makefile in the root directory, that has two actions that demonstrate the AssemblyScript runtime in action. 
+
+- ```
+  make run-node-demo 
+  ```
+    Executes all the necessary actions for a Substrate node to start producing blocks using AssemblyScript runtime. 
+
+    This action performs following steps:  
+    - Building AssemblyScript runtime  
+    - Generating raw chain spec file using `wasm-code`  
+    - Run a Substrate node with raw chain spec file as a Docker container  
+    - Insert Aura keys for node to start producing blocks
+
+- ```
+  make run-network
+  ```
+    - Build runtime and generate raw chain spec
+    - Starts the network of Substrate nodes that use AssemblyScript runtime.
+
 ## Roadmap
 
 #### Milestone 1 - WASM API Mock :white_check_mark: 
@@ -97,25 +119,7 @@ Substrate provides a template node that uses `Aura` consensus for block producti
 Substrate Runtimes compile to both native executable and WASM binary, therefore we need native executable for initializing our Node. Then, we provide WASM binary generated from AssemblyScript Runtime with the `chainspec` file. After the intialization, with the correct execution flags, the Substrate should be able to upgrade from the native runtime to the WASM binary. To learn more about how Substrate nodes execute the runtime, please refer to [this](https://substrate.dev/docs/en/knowledgebase/advanced/executor)
 
 ## Playing with the Runtime
-### Makefile
-We have a Makefile in the root directory, that has two actions that demonstrate the AssemblyScript runtime in action. 
-- ```
-  make run-node-demo 
-  
-  ```
-    Executes all the necessary actions for a Substrate node to start producing blocks using AssemblyScript runtime. 
-    The steps include:
-      - Building AssemblyScript runtime
-      - Generating raw chain spec file using `wasm-code`
-      - Run a Substrate node with raw chain spec file as a Docker container
-      - Insert Aura keys for node to start producing blocks
-- ```
-  make run-network
-  
-  ```
-    Starts the network of Substrate nodes that use AssemblyScript runtime.
 
-### Tests
 The runtime has 3 types of tests so far -> Integration, Unit and End-to-End tests.
 The Unit tests are written in AssemblyScript and are testing f.e the instantiation or encoding of a `Block` from a SCALE encoded Byte Array.
 
@@ -242,7 +246,7 @@ In order to do that, execute the following command:
 
 `docker-compose up`
 
-Keep in mind that you still have to import the Aura keys into the validtor nodes in order for them to start producing blocks. You can do that by performing the following requests:
+Keep in mind that you still have to import the Aura keys into the validtor nodes in order for them to start producing blocks. You can do that by performing the following requests:  
 Validator 1:
 
 ```

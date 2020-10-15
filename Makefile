@@ -1,4 +1,4 @@
-all: run-node-demo
+all: run-node-demo run-node
 
 # Name of our Docker image
 DOCKER_IMAGE=limechain/as-substrate:stable
@@ -13,22 +13,20 @@ build_runtime:
 # generate raw chain spec for the node
 generate_chain_spec: build_runtime
 	@echo "Generating raw chain spec file"
-	@yarn --cwd=./runtime build-spec -f ../node-template/customSpec.json -o ../customSpecRaw.json -w ./wasm-code > /dev/null
+	@yarn --cwd=./runtime build-spec -f ../spec-files/customSpec.json -o ../spec-files/customSpecRaw.json -w ./wasm-code > /dev/null
 
 # Run Docker container in a detached mode
-# Stop the container if it is running and delete it
-
-run_docker_container: generate_chain_spec
+run-node: 
 	@echo "Running the container in detached mode"
-	@docker ps -q --filter "name=$(DOCKER_CONTAINER)" | grep -q . && docker stop $(DOCKER_CONTAINER) || true && docker rm $(DOCKER_CONTAINER) || true
-	@docker pull limechain/as-substrate:stable > /dev/null
-	@docker run --name $(DOCKER_CONTAINER) -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/customSpecRaw.json":/customSpecRaw.json -d $(DOCKER_IMAGE)
+	@docker run -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/spec-files/customSpecRaw.json":/customSpecRaw.json $(DOCKER_IMAGE)
 
 # Insert the Aura keys and re-attach the container to the shell
 # for some reason, if I don't do lsof, curl returns `empty reply from server` error
 
-run-node-demo: run_docker_container
-	@lsof -n | grep LISTEN > /dev/null
+run-node-demo:
+	@docker ps -q --filter "name=$(DOCKER_CONTAINER)" | grep -q . && docker stop $(DOCKER_CONTAINER) || true && docker rm $(DOCKER_CONTAINER) || true
+	@docker run --name=$(DOCKER_CONTAINER) -p 9933:9933 -p 9944:9944 -p 30333:30333 -v "$(CURDIR)/spec-files/demoSpecRaw.json":/customSpecRaw.json -d $(DOCKER_IMAGE)
+	@lsof -n | grep LISTEN
 	@echo "Inserting Aura keys"
 	@curl --request POST 'http://localhost:9933' \
 		--header 'Content-Type: application/json' \
