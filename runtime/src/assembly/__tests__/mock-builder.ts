@@ -1,11 +1,12 @@
 import { MockResult } from "./mock-result";
-import { Hash, CompactInt, UInt64, Bool, ByteArray, UInt128 } from "as-scale-codec";
+import { Hash, CompactInt, UInt64, Bool, ByteArray, UInt128, UInt32 } from "as-scale-codec";
 import { 
     Signature, Block, Option, 
     Header, Extrinsic, InherentData, 
     DigestItem, Other, ChangeTrieRoot, 
     Consensus, Seal, PreRuntime,
-    SignedTransaction, Inherent
+    SignedTransaction, Inherent,
+    ExtrinsicData
 } from "@as-substrate/models";
 import { AccountData } from "@as-substrate/balances-module";
 import { MockConstants } from "./mock-constants";
@@ -154,6 +155,12 @@ export namespace MockBuilder {
         const accountData = new AccountData(UInt128.Zero, UInt128.Zero);
         return new MockResult(accountData, accountDataBytes);
     }
+
+    export function getExtrinsicDataMock(): MockResult<ExtrinsicData> {
+        const extDataBytes: u8[] = MockConstants.EXTRINSIC_DATA;
+        const extData = MockHelper._getExtrinsicDataInstance();
+        return new MockResult(extData, extDataBytes);
+    }
 }
 
 /**
@@ -250,5 +257,13 @@ export namespace MockHelper {
         const hashBytes: u8[] = new Array<u8>(32);
         hashBytes.fill(byte);
         return Hash.fromU8a(hashBytes);
+    }
+
+    export function _getExtrinsicDataInstance(): ExtrinsicData{
+        const data: Map<UInt32, ByteArray> = new Map();
+        data.set((new UInt32(0)), (ByteArray.fromU8a([40, 4, 2, 0, 11, 41, 207, 250, 5, 0, 0])))
+        data.set((new UInt32(1)), (ByteArray.fromU8a(MockConstants.EXT_1)));
+        data.set((new UInt32(2)), (ByteArray.fromU8a(MockConstants.EXT_2)));
+        return new ExtrinsicData(data);
     }
  }

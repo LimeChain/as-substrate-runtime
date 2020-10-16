@@ -1,4 +1,4 @@
-import { CompactInt, UInt32, Bytes, ByteArray } from 'as-scale-codec';
+import { CompactInt, UInt32, Bytes, ByteArray, BIT_LENGTH } from 'as-scale-codec';
 import { DecodedData } from './decoded-data';
 export class ExtrinsicData{
     /**
@@ -56,7 +56,7 @@ export class ExtrinsicData{
         const lenKeys = Bytes.decodeCompactInt(input);
         input = input.slice(lenKeys.decBytes);
         for (let i: u64 = 0; i < lenKeys.value; i++){
-            const key = UInt32.fromU8a(input);
+            const key = UInt32.fromU8a(input.slice(0, BIT_LENGTH.INT_32));
             input = input.slice(key.encodedLength());
             const value = ByteArray.fromU8a(input);
             input = input.slice(value.encodedLength());
@@ -65,5 +65,26 @@ export class ExtrinsicData{
         const extcsData = new ExtrinsicData(data);
         return new DecodedData<ExtrinsicData>(extcsData, input);
     }
+/**
+     * Overloaded equals operator
+     * @param a instance of ExtrinsicData
+     * @param b Instance of ExtrinsicData
+     */
+    @inline @operator('==')
+    static eq(a: ExtrinsicData, b: ExtrinsicData): bool {
+        let areEqual = true;
+        const aKeys = a.data.keys();
+        const bKeys = b.data.keys();
 
+        if(aKeys.length != bKeys.length){
+            return false;
+        }
+        for (let i=0; i<aKeys.length; i++){
+            if(aKeys[i] != bKeys[i]){
+                areEqual = false;
+                break;
+            }
+        }
+        return areEqual;
+    }
 }
