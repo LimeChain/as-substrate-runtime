@@ -67,8 +67,8 @@ export class ExtrinsicData{
     }
 /**
      * Overloaded equals operator
-     * @param a instance of InherentData
-     * @param b Instance of InherentData
+     * @param a instance of ExtrinsicData
+     * @param b Instance of ExtrinsicData
      */
     @inline @operator('==')
     static eq(a: ExtrinsicData, b: ExtrinsicData): bool {
@@ -87,5 +87,4 @@ export class ExtrinsicData{
         }
         return areEqual;
     }
-
 }
