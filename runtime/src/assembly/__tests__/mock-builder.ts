@@ -261,9 +261,9 @@ export namespace MockHelper {
 
     export function _getExtrinsicDataInstance(): ExtrinsicData{
         const data: Map<UInt32, ByteArray> = new Map();
-        data.set((new UInt32(0)), (new ByteArray([40, 4, 2, 0, 11, 41, 207, 250, 5, 0, 0])))
-        data.set((new UInt32(1)), (new ByteArray(MockConstants.EXT_1)));
-        data.set((new UInt32(2)), (new ByteArray(MockConstants.EXT_2)));
+        data.set((new UInt32(0)), (ByteArray.fromU8a([40, 4, 2, 0, 11, 41, 207, 250, 5, 0, 0])))
+        data.set((new UInt32(1)), (ByteArray.fromU8a(MockConstants.EXT_1)));
+        data.set((new UInt32(2)), (ByteArray.fromU8a(MockConstants.EXT_2)));
         return new ExtrinsicData(data);
     }
  }

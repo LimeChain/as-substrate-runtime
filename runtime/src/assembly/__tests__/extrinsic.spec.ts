@@ -1,6 +1,5 @@
 import { Extrinsic } from '@as-substrate/models';
-import {MockBuilder} from './mock-builder';
-
+import { MockBuilder } from './mock-builder';
 describe("Extrinsic", () => {
     it("should instanciate default extrinsic from the SCALE encoded byte array", () => {
         const mock = MockBuilder.getDefaultExtrinsic();
