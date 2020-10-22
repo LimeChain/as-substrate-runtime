@@ -1,4 +1,4 @@
-import { CompactInt, UInt64, BIT_LENGTH, Bytes } from 'as-scale-codec';
+import { CompactInt, UInt64, BytesReader } from 'as-scale-codec';
 import { DecodedData } from '../decoded-data';
 import { Extrinsic, ExtrinsicType } from './extrinsic';
 import { Utils } from '@as-substrate/core-utils';
@@ -43,24 +43,14 @@ export class Inherent extends Extrinsic{
      * Convert SCALE encoded bytes to an instance of Inherent
      */
     static fromU8Array(input: u8[]): DecodedData<Extrinsic>{
-        // get only inherent bytes
-        let inherentU8a = input.slice(0, ExtrinsicType.Inherent);
-        input = input.slice(ExtrinsicType.Inherent);
+        const bytesReader = new BytesReader(input);
+        const version: u8 = bytesReader.readByte();
+        const callIndex: u8[] = bytesReader.readBytes(2);
+        const compactPrefix: u8 = bytesReader.readByte();
+        const arg: UInt64 = bytesReader.readUInt64();
 
-        const version = inherentU8a[0];
-        inherentU8a = inherentU8a.slice(1);
-        const callIndex = inherentU8a.slice(0, 2);
-        inherentU8a = inherentU8a.slice(2);
-        const compactPrx = inherentU8a[0];
-        inherentU8a = inherentU8a.slice(1);
-        
-        const initLen = inherentU8a.length;
-        inherentU8a.length = BIT_LENGTH.INT_64;
-        const arg = UInt64.fromU8a(inherentU8a.fill(0, initLen, inherentU8a.length));
-        inherentU8a = inherentU8a.slice(arg.encodedLength());
-
-        const inherent = new Inherent(callIndex, version, compactPrx, arg);
-        return new DecodedData(inherent, input);
+        const inherent = new Inherent(callIndex, version, compactPrefix, arg);
+        return new DecodedData(inherent, bytesReader.getLeftoverBytes());
     }
 
     @inline @operator('==')
