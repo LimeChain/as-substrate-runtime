@@ -36,7 +36,7 @@ export function SessionKeys_generate_session_keys(data: i32, len: i32): u64 {
 export function TaggedTransactionQueue_validate_transaction(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
     const uxt = Extrinsic.fromU8Array(input);
-    const result = Executive.validateTransaction(<SignedTransaction>uxt.result);
+    const result = Executive.validateTransaction(<SignedTransaction>uxt.getResult());
     return Serialiser.serialiseResult(result);
 }
 
@@ -65,7 +65,7 @@ export function Metadata_metadata(data: i32, len: i32): u64 {
  */
 export function System_account_nonce(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
-    const who = AccountId.fromU8Array(input).result;
+    const who = AccountId.fromU8Array(input).getResult();
     const nonce = System.accountNonce(who);
     return Serialiser.serialiseResult(nonce.toU8a());
 }

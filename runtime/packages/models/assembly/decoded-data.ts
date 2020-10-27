@@ -13,6 +13,14 @@ export class DecodedData<T> {
      */
     public input: u8[];
 
+    getResult(): T {
+        return this.result;
+    }
+
+    getInput(): u8[]{
+        return this.input;
+    }
+
     constructor(result: T, input: u8[]) {
         this.result = result;
         this.input = input;

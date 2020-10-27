@@ -1,6 +1,7 @@
 import { CompactInt, UInt32, Bytes, ByteArray, BIT_LENGTH } from 'as-scale-codec';
 import { DecodedData } from './decoded-data';
-export class ExtrinsicData{
+import { IExtrinsicData } from './interfaces';
+export class ExtrinsicData implements IExtrinsicData{
     /**
      * Extrinsic data for the current block 
      * (maps an extrinsic's index to its data/bytes)
@@ -44,8 +45,16 @@ export class ExtrinsicData{
         return result;
     }
 
+    getData(): Map<UInt32, ByteArray>{
+        return this.data; 
+    }
+
     insert(key: UInt32, value: ByteArray): void {
         this.data.set(key, value);
+    }
+
+    encodedLength(): i32{
+        return this.toU8a().length;
     }
     /**
      * Initializes ExtrinsicData from bytes

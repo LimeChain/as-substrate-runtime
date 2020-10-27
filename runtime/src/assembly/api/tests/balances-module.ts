@@ -15,7 +15,7 @@ export function test_balances_get_account_data(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
 
     const decodedAccountId = AccountId.fromU8Array(input);
-    const accountData = BalancesModule.getAccountData(decodedAccountId.result);
+    const accountData = BalancesModule.getAccountData(decodedAccountId.getResult());
 
     return Serialiser.serialiseResult(accountData.toU8a());
 }
@@ -28,7 +28,7 @@ export function test_balances_get_account_data(data: i32, len: i32): u64 {
 export function test_balances_set_account_data(data: i32, len: i32): u64 {
     let input = Serialiser.deserialiseInput(data, len);
     const decodedAccountId = AccountId.fromU8Array(input);
-    input = decodedAccountId.input;
+    input = decodedAccountId.getInput();
 
     const freeBalance = UInt128.fromU8a(input);
     input = input.slice(freeBalance.encodedLength());
@@ -36,6 +36,6 @@ export function test_balances_set_account_data(data: i32, len: i32): u64 {
     const reservedBalance = UInt128.fromU8a(input);
     input = input.slice(reservedBalance.encodedLength());
     
-    const accData = BalancesModule.setBalance(decodedAccountId.result, freeBalance, reservedBalance);
+    const accData = BalancesModule.setBalance(decodedAccountId.getResult(), freeBalance, reservedBalance);
     return Serialiser.serialiseResult(accData.toU8a());
 }

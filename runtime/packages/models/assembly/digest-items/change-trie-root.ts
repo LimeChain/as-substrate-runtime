@@ -1,5 +1,5 @@
 import { DigestItem, DigestItemType } from ".";
-import { DecodedData } from "./..";
+import { DecodedData } from "..";
 import { Hash } from "as-scale-codec";
 
 /**
@@ -26,6 +26,9 @@ export class ChangeTrieRoot extends DigestItem {
         return new DecodedData<DigestItem>(new ChangeTrieRoot(value), input);
     }
 
+    encodedLength(): i32{
+        return this.value.encodedLength() + 1;
+    }
     /**
      * SCALE Encodes the ChangeTrieRoot DigestItem into u8[]
      */

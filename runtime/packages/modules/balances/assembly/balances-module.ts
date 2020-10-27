@@ -19,7 +19,7 @@ export class BalancesModule {
     static getAccountData(accountId: AccountId): AccountData {
         const accDataBytes = Storage.get(accountId.getAddress());
         if (accDataBytes.isSome()) {
-            return AccountData.fromU8Array((<ByteArray>accDataBytes.unwrap()).values).result;
+            return AccountData.fromU8Array((<ByteArray>accDataBytes.unwrap()).values).getResult();
         } else {
             return AccountData.getDefault();
         }
@@ -64,8 +64,8 @@ export class BalancesModule {
      * @param extrinsic 
      */
     static applyExtrinsic(extrinsic: SignedTransaction): u8[]{
-        const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
-        const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).result;
+        const sender: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).getResult();
+        const receiver: AccountId = AccountId.fromU8Array(extrinsic.to.toU8a()).getResult();
         const validated = this.validateTransaction(extrinsic);
         if(!validated.valid){
             Log.error(validated.message);
@@ -79,7 +79,7 @@ export class BalancesModule {
      * 
      */
     static validateTransaction(extrinsic: SignedTransaction): TransactionValidity{
-        const from: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).result;
+        const from: AccountId = AccountId.fromU8Array(extrinsic.from.toU8a()).getResult();
         const fromBalance = BalancesModule.getAccountData(from);
         const balance: UInt128 = fromBalance.getFree();
         if(balance.value < u128.fromU64(extrinsic.amount.value)){

@@ -1,8 +1,8 @@
 import { DigestItem, DigestItemType } from ".";
-import { ByteArray } from "as-scale-codec";
+import { ByteArray, Codec } from "as-scale-codec";
 import { Utils } from "@as-substrate/core-utils";
 
-export abstract class BaseConsensusItem extends DigestItem {
+export abstract class BaseConsensusItem extends DigestItem{
 
     /**
      * Number of bytes for the Consensus Engine IDs
@@ -26,7 +26,15 @@ export abstract class BaseConsensusItem extends DigestItem {
         this.consensusEngineId = consensusEngineId;
         this.value = value;
     }
-
+    /**
+     * Unwraps the value of the digest item
+     */
+    unwrap(): Codec{
+        return this.value;
+    }
+    encodedLength(): i32{
+        return this.value.encodedLength() + 1;
+    }
     /**
      * Checks whether the value passed is equal to this instance
      * @param other

@@ -23,7 +23,7 @@ export function BlockBuilder_apply_extrinsic(data: i32, len: i32): u64 {
 export function BlockBuilder_inherent_extrinsics(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const inherent = InherentData.fromU8Array(input);
-    const inherents = Executive.createExtrinsics(inherent.result);
+    const inherents = Executive.createExtrinsics(inherent.getResult());
     return Serialiser.serialiseResult(inherents);
 }
 

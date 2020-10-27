@@ -1,5 +1,5 @@
 import { Other, Consensus, ChangeTrieRoot, Seal, PreRuntime } from ".";
-import { DecodedData } from "./..";
+import { DecodedData } from "..";
 
 /**
  * Types of the digest items
@@ -42,7 +42,7 @@ export enum DigestItemType {
 /**
  * Abstract class representing the different digest items in Substrate Runtime
  */
-export abstract class DigestItem {
+export abstract class DigestItem{
 
     /**
      * DigestItem type ID
@@ -83,7 +83,14 @@ export abstract class DigestItem {
             }
         }
     }
+    /**
+     * Get Type Id of the digest item
+     */
+    getTypeId(): u64{
+        return this.typeId;
+    }
 
+    abstract encodedLength(): i32;
     abstract toU8a(): u8[];
     abstract equals(other:DigestItem): bool;
     

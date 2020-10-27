@@ -1,5 +1,5 @@
-import { Hash, UInt64, Bool, CompactInt, BytesReader } from "as-scale-codec";
-import { Signature, DecodedData } from "..";
+import { Hash, UInt64, BIT_LENGTH, Bool, CompactInt } from "as-scale-codec";
+import { Signature, DecodedData, IExtrinsic } from "..";
 import { Extrinsic, ExtrinsicType } from "./extrinsic";
 
 /**
@@ -76,19 +76,30 @@ export class SignedTransaction extends Extrinsic {
      * @param input - SCALE encoded Extrinsic
      * TODO - avoid slicing the aray for better performance
      */
-    static fromU8Array(input: u8[]): DecodedData<Extrinsic> {
+    static fromU8Array(input: u8[]): DecodedData<IExtrinsic> {
         assert(input.length >= 144, "Extrinsic: Invalid bytes provided. EOF");
 
-        const bytesReader = new BytesReader(input);
-        const from: Hash = bytesReader.readHash();
-        const to: Hash = bytesReader.readHash();
-        const amount: UInt64 = bytesReader.readUInt64();
-        const nonce: UInt64 = bytesReader.readUInt64();
-        const signature: Signature = new Signature(bytesReader.readBytes(Signature.SIGNATURE_LENGTH));
-        const exhaustResourcesWhenNotFirst: Bool = bytesReader.readBool();
+        const from = Hash.fromU8a(input);
+        input = input.slice(from.encodedLength());
+
+        const to = Hash.fromU8a(input);
+        input = input.slice(to.encodedLength());
+
+        const amount = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(amount.encodedLength());
+
+        const nonce = UInt64.fromU8a(input.slice(0, BIT_LENGTH.INT_64));
+        input = input.slice(nonce.encodedLength());
+
+        const signature = new Signature(input.slice(0, Signature.SIGNATURE_LENGTH));
+        input = input.slice(signature.value.length);
+
+        const exhaustResourcesWhenNotFirst = Bool.fromU8a(input.slice(0, 1));
+        input = input.slice(exhaustResourcesWhenNotFirst.encodedLength());
 
         const extrinsic = new SignedTransaction(from, to, amount, nonce, signature, exhaustResourcesWhenNotFirst);
-        return new DecodedData(extrinsic, bytesReader.getLeftoverBytes());
+
+        return new DecodedData(extrinsic, input);
     }
 
     @inline @operator('==')

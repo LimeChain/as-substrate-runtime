@@ -1,12 +1,13 @@
-import { Hash, CompactInt, Bytes } from "as-scale-codec";
+import { Hash, CompactInt, Bytes, BytesReader } from "as-scale-codec";
 import { Utils } from "@as-substrate/core-utils";
-import { Option, DecodedData, DigestItem } from "./";
+import { Option, DecodedData, DigestItem } from ".";
 import { Constants } from "./constants";
+import { IHeader } from "./interfaces/header";
 
 /**
  * Class representing a Block Header into the Substrate Runtime
  */
-export class Header {
+export class Header implements IHeader{
 
     /**
      * 32-byte Blake hash of the header of the parent of the block
@@ -40,6 +41,42 @@ export class Header {
     }
 
     /**
+     * Get block number
+     */
+    getNumber(): CompactInt{
+        return this.number;
+    }
+    /**
+     * Get extriniscsRoot
+     */
+    getExtrinsicsRoot(): Hash{
+        return this.extrinsicsRoot;
+    }
+    /**
+     * Get parentHash
+     */
+    getParentHash(): Hash{
+        return this.parentHash;
+    }
+    /**
+     * Get stateRoot
+     */
+    getStateRoot(): Hash{
+        return this.stateRoot;
+    }
+    getDigests(): DigestItem[]{
+        return <DigestItem[]>this.digests.unwrap();
+    }
+    /**
+     * Encoded length of the header
+     */
+    encodedLength(): i32{
+        return this.stateRoot.encodedLength() + this.parentHash.encodedLength() 
+            + 0 + this.extrinsicsRoot.encodedLength()
+            + this.number.encodedLength();
+    }
+
+    /**
     * SCALE Encodes the Header into u8[]
     */
     toU8a(): u8[] {
@@ -68,20 +105,15 @@ export class Header {
      * @param input - SCALE encoded Header
      * TODO - avoid slicing the aray for better performance
      */
-    static fromU8Array(input: u8[]): DecodedData<Header> {
-        const parentHash = Hash.fromU8a(input);
-        input = input.slice(parentHash.encodedLength());
-        
-        const data = Bytes.decodeCompactInt(input);
-        const number = new CompactInt(data.value);
-        input = input.slice(data.decBytes);
+    static fromU8Array(input: u8[]): DecodedData<IHeader> {
+        const bytesReader = new BytesReader(input);
 
-        const stateRoot = Hash.fromU8a(input);
-        input = input.slice(stateRoot.encodedLength());
+        const parentHash = bytesReader.readHash();
+        const number = bytesReader.readCompactInt();
+        const stateRoot = bytesReader.readHash();
+        const extrinsicsRoot = bytesReader.readHash();
 
-        const extrinsicsRoot = Hash.fromU8a(input);
-        input = input.slice(extrinsicsRoot.encodedLength());
-        const digest = this.decodeOptionalDigest(input);
+        const digest = this.decodeOptionalDigest(bytesReader.getLeftoverBytes());
         
         const result = new Header(parentHash, number, stateRoot, extrinsicsRoot, digest.result);
         return new DecodedData(result, digest.input);

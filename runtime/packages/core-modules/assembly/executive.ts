@@ -1,7 +1,8 @@
 import { 
-    Block, Header, 
-    InherentData, 
-    Extrinsic, Inherent, SignedTransaction, DecodedData,
+    Block, Header, ISignature, IHeader,
+    IBlock, IExtrinsic,
+    InherentData, SignedTransaction,
+    Extrinsic, Inherent, DecodedData,
     ValidTransaction, TransactionTag, ResponseCodes,
     ExtrinsicType
 } from '@as-substrate/models';
@@ -12,12 +13,15 @@ import { AccountId, BalancesModule } from '@as-substrate/balances-module';
 import { CompactInt, Bool, UInt64, Bytes, Hash } from 'as-scale-codec';
 import { System, Log, Crypto } from '.';
 
+type BlockNumber = CompactInt;
+type HashType = Hash;
+type NonceType = UInt64;
 export namespace Executive{
     /**
      * Calls the System function initializeBlock()
      * @param header Header instance
      */
-    export function initializeBlock(header: Header): void{
+    export function initializeBlock(header: IHeader): void{
         System.initialize(header);
     }
 
@@ -25,15 +29,16 @@ export namespace Executive{
      * Performs necessary checks for Block execution
      * @param block Block instance
      */
-    export function initialChecks(block: Block): void{
-        let header = block.header;
-        let n: CompactInt = header.number;
+    export function initialChecks(block: IBlock): void{
+        let header = block.getHeader();
+        let n: BlockNumber = <BlockNumber>header.getNumber();
         // check that parentHash is valid
         const previousBlock: CompactInt = new CompactInt(n.value - 1);
         const parentHash: Hash = System.getHashAtBlock(previousBlock);
 
-        if(n.value == 0 && parentHash != header.parentHash){
+        if(n.value == 0 && parentHash != <HashType>header.getParentHash()){
             Log.error("Initial checks: Parent hash should be valid.");
+            throw new Error("Executive: Initial checks for block execution failed");
         }
     }
 
@@ -41,12 +46,13 @@ export namespace Executive{
      * Final checks before including block in the chain
      * @param header 
      */
-    export function finalChecks(header: Header): void{
+    export function finalChecks(header: IHeader): void{
         System.computeExtrinsicsRoot();
         let newHeader = System.finalize();
-        let storageRoot = newHeader.stateRoot;
-        if(header.stateRoot != storageRoot){
+        let storageRoot = newHeader.getStateRoot();
+        if(<HashType>header.getStateRoot() != <HashType>storageRoot){
             Log.error("Storage root must match that calculated");
+            throw new Error("Executive: Final checks for block execution failed");
         }
     }
 
@@ -56,12 +62,12 @@ export namespace Executive{
      * Actually execute all transactions for Block
      * @param block Block instance
      */
-    export function executeBlock(block: Block): void{
-        Executive.initializeBlock(block.header);
+    export function executeBlock(block: IBlock): void{
+        Executive.initializeBlock(block.getHeader());
         Executive.initialChecks(block);
 
-        Executive.executeExtrinsicsWithBookKeeping(block.body);
-        Executive.finalChecks(block.header);
+        Executive.executeExtrinsicsWithBookKeeping(block.getExtrinsics());
+        Executive.finalChecks(block.getHeader());
     }
     /**
      * Finalize the block - it is up the caller to ensure that all header fields are valid
@@ -70,7 +76,7 @@ export namespace Executive{
     export function finalizeBlock(): Header {
         System.noteFinishedExtrinsics();
         System.computeExtrinsicsRoot();
-        return System.finalize();
+        return System.finalize() as Header;
     }
     /**
      * creates inherents from internal modules
@@ -103,13 +109,13 @@ export namespace Executive{
      * @param encoded encoded extrinsic
      */
     export function applyExtrinsicWithLen(ext: u8[], encodedLen: u32): u8[]{
-        const extrinsic: DecodedData<Extrinsic> = Extrinsic.fromU8Array(ext);
+        const extrinsic: DecodedData<IExtrinsic> = Extrinsic.fromU8Array(ext);
 
-        if(Extrinsic.isInherent(extrinsic.result)){
-            const inherent: Inherent = <Inherent>extrinsic.result;
+        if(Extrinsic.isInherent(extrinsic.getResult())){
+            const inherent: Inherent = <Inherent>extrinsic.getResult();
             return Timestamp.applyInherent(inherent);
         }
-        const signedTransaction: SignedTransaction = <SignedTransaction>extrinsic.result;
+        const signedTransaction: SignedTransaction = <SignedTransaction>extrinsic.getResult();
         return BalancesModule.applyExtrinsic(signedTransaction);
     }
 
@@ -117,7 +123,7 @@ export namespace Executive{
      * Execute given extrinsics and take care of post-extrinsics book-keeping
      * @param extrinsics byte array of extrinsics 
      */
-    export function executeExtrinsicsWithBookKeeping(extrinsics: Extrinsic[]): void{
+    export function executeExtrinsicsWithBookKeeping(extrinsics: IExtrinsic[]): void{
         for(let i=0; i<extrinsics.length; i++){
             Executive.applyExtrinsic(extrinsics[i].toU8a());
         }
@@ -130,7 +136,7 @@ export namespace Executive{
      * @param utx transaction
      */
     export function validateTransaction(utx: SignedTransaction): u8[] {
-        const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).result;
+        const from: AccountId = AccountId.fromU8Array(utx.from.toU8a()).getResult();
         const transfer = utx.getTransferBytes();
 
         if(!Crypto.verifySignature(utx.signature, transfer, from)){

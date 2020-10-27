@@ -21,7 +21,7 @@ export function Core_version(data: i32, len: i32): u64 {
 export function Core_execute_block(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const block = Block.fromU8Array(input);
-    Executive.executeBlock(block.result);
+    Executive.executeBlock(block.getResult());
     return Serialiser.serialiseResult((new Bool(true)).toU8a()); // Return mocked `true`
 }
 
@@ -34,7 +34,7 @@ export function Core_execute_block(data: i32, len: i32): u64 {
 export function Core_initialize_block(data: i32, len: i32): u64 {
     const input = Serialiser.deserialiseInput(data, len);
     const header = Header.fromU8Array(input);
-    Executive.initializeBlock(header.result);
+    Executive.initializeBlock(header.getResult());
     return Serialiser.serialiseResult([]);
 }
 

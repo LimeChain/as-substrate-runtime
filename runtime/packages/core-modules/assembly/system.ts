@@ -1,9 +1,12 @@
 import { CompactInt, ByteArray, Bytes, UInt64, UInt32, Hash } from 'as-scale-codec';
 import { Storage } from './storage';
 import { Header, ExtrinsicData } from '@as-substrate/models';
+import { IHeader } from '@as-substrate/models';
 import { Utils, Serialiser } from '@as-substrate/core-utils';
 import { AccountId } from '@as-substrate/balances-module';
-import { ext_trie_blake2_256_ordered_root_version_1 } from '.';
+import { ext_trie_blake2_256_ordered_root_version_1, Log } from '.';
+
+type BlockNumber = CompactInt;
 
 export class System {
     // execution phases
@@ -49,24 +52,25 @@ export class System {
      * Sets up the environment necessary for block production
      * @param header Header instance
     */
-    static initialize(header: Header): void{
-        // maximum number of blocks
-        const bhshCount = new UInt32(this.NUMBER_OF_BLOCKS_TO_KEEP);
-        Storage.set(Utils.stringsToBytes(this.BHSH_COUNT, true), bhshCount.toU8a());
-        Storage.set(Utils.stringsToBytes([this.EXTRINSIC_INDEX], true), [<u8>0]);
-        Storage.set(Utils.stringsToBytes(this.EXEC_PHASE, true), Utils.stringsToBytes([System.INITIALIZATION], true));
-        Storage.set(Utils.stringsToBytes(this.PARENT_HSH, true), header.parentHash.toU8a());
-        Storage.set(Utils.stringsToBytes(this.BLOCK_NUM0, true), header.number.toU8a());
-        Storage.set(Utils.stringsToBytes(this.EXTCS_ROOT, true), header.extrinsicsRoot.toU8a());
+   static initialize(header: IHeader): void{
+    // maximum number of blocks
+    Log.info("here");
+    const bhshCount = new UInt32(this.NUMBER_OF_BLOCKS_TO_KEEP);
+    Storage.set(Utils.stringsToBytes(this.BHSH_COUNT, true), bhshCount.toU8a());
+    Storage.set(Utils.stringsToBytes([this.EXTRINSIC_INDEX], true), [<u8>0]);
+    Storage.set(Utils.stringsToBytes(this.EXEC_PHASE, true), Utils.stringsToBytes([System.INITIALIZATION], true));
+    Storage.set(Utils.stringsToBytes(this.PARENT_HSH, true), header.getParentHash().toU8a());
+    Storage.set(Utils.stringsToBytes(this.BLOCK_NUM0, true), header.getNumber().toU8a());
+    Storage.set(Utils.stringsToBytes(this.EXTCS_ROOT, true), header.getExtrinsicsRoot().toU8a());
 
-        const digestStartIndex: i32 = header.number.encodedLength() + 3*header.parentHash.encodedLength();
-        const digests = header.toU8a().slice(digestStartIndex);
+    const digestStartIndex: i32 = header.getNumber().encodedLength() + 3*header.getParentHash().encodedLength();
+    const digests = header.toU8a().slice(digestStartIndex);
 
-        Storage.set(Utils.stringsToBytes(this.DIGESTS_00, true), digests);
-        
-        const blockNumber: CompactInt = new CompactInt(header.number.value - 1);
-        this.setHashAtBlock(blockNumber, header.parentHash);
-    }
+    Storage.set(Utils.stringsToBytes(this.DIGESTS_00, true), digests);
+    const cmpNumber: BlockNumber = <BlockNumber>header.getNumber();
+    const blockNumber: CompactInt = new CompactInt(cmpNumber.value - 1);
+    this.setHashAtBlock(blockNumber, <Hash>header.getParentHash());
+}
     /**
      * Remove temporary "environment" entries in storage and finalize block
      */
@@ -98,7 +102,7 @@ export class System {
             .concat(extrinsicsRoot)
             .concat(digests);
         const decodedHeader = Header.fromU8Array(result);
-        return decodedHeader.result;
+        return decodedHeader.getResult() as Header;
     }
     /**
      * Get the nonce value of the given AccountId
@@ -160,7 +164,7 @@ export class System {
      */
     static computeExtrinsicsRoot(): void{
         let extrinsicsDataU8a = Storage.take(Utils.stringsToBytes(this.EXTCS_DATA, true));
-        const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).result;
+        const extcsData = ExtrinsicData.fromU8Array(extrinsicsDataU8a).getResult();
         Storage.set(Utils.stringsToBytes(this.EXEC_PHASE, true), Utils.stringsToBytes([System.APPLY_EXTRINSIC], true));
         const extcsRoot = this.extrinsicsDataRoot(extcsData.toEnumeratedValues());
         Storage.set(Utils.stringsToBytes(this.EXTCS_ROOT, true), extcsRoot.toU8a());
@@ -189,7 +193,7 @@ export class System {
         const extValue = ByteArray.fromU8a(ext);
         if (extrinsics.isSome()){
             let extrinsicsU8a: u8[] = (<ByteArray>extrinsics.unwrap()).values;
-            const extcsData = ExtrinsicData.fromU8Array(extrinsicsU8a).result;
+            const extcsData = ExtrinsicData.fromU8Array(extrinsicsU8a).getResult();
             extcsData.insert(extIndex, extValue);
             Storage.set(Utils.stringsToBytes(this.EXTCS_DATA, true), extcsData.toU8a());
             this.incExtrinsicIndex();

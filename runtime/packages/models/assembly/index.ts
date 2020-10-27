@@ -11,3 +11,4 @@ export * from './transaction-models';
 export * from './response-codes';
 export * from './extrinsic';
 export * from './extrinsic-data';
+export * from './interfaces'
