@@ -6,6 +6,7 @@
 ![Integration Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/Integration%20Tests/badge.svg)
 ![End-to-end Tests](https://github.com/LimeChain/as-substrate-runtime/workflows/End-to-end%20Tests/badge.svg)
 
+**Important** This project was a PoC to verify that Substrate Runtimes could be based on AssemblyScript. As a continuation of the project, we are building a framework for AssemblyScript Runtimes - [Subsembly](https://github.com/LimeChain/subsembly)
 
 Account-Based Substrate PoC Runtime written in AssemblyScript.
 
